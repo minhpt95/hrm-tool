@@ -1,6 +1,7 @@
 package com.vatek.hrmtool.entity;
 
 import com.vatek.hrmtool.entity.common.CommonEntity;
+import com.vatek.hrmtool.entity.enumeration.Role;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +13,9 @@ import java.util.Collection;
 @Getter
 @Setter
 public class RoleEntity extends CommonEntity {
-    private String name;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
     @ManyToMany(mappedBy = "roles")
     private Collection<UserEntity> users;
 

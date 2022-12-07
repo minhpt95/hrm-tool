@@ -9,6 +9,7 @@ import com.vatek.hrmtool.jwt.JwtProvider;
 import com.vatek.hrmtool.jwt.payload.request.TokenRefreshRequest;
 import com.vatek.hrmtool.jwt.payload.response.TokenRefreshResponse;
 import com.vatek.hrmtool.respository.RefreshTokenRepository;
+import com.vatek.hrmtool.respository.UserRepository;
 import com.vatek.hrmtool.service.RefreshTokenService;
 import com.vatek.hrmtool.service.UserService;
 import com.vatek.hrmtool.util.DateUtil;
@@ -26,13 +27,18 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Value("${hrm.app.refreshTokenExpiration}")
     private Long refreshTokenDurationMs;
 
+    private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final UserService userService;
+
     private final JwtProvider jwtProvider;
 
-    public RefreshTokenServiceImpl(RefreshTokenRepository refreshTokenRepository, UserService userService, JwtProvider jwtProvider) {
+    public RefreshTokenServiceImpl(
+            RefreshTokenRepository refreshTokenRepository,
+            UserRepository userRepository,
+            JwtProvider jwtProvider
+    ) {
         this.refreshTokenRepository = refreshTokenRepository;
-        this.userService = userService;
+        this.userRepository = userRepository;
         this.jwtProvider = jwtProvider;
     }
 
@@ -49,7 +55,9 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
             .map(RefreshTokenEntity::getUserEntity)
             .map(user -> {
                 String token = jwtProvider.generateTokenFromEmail(user.getEmail());
-                userService.saveToken(token,user);
+                user.setAccessToken(token);
+                user.setTokenStatus(true);
+                userRepository.saveAndFlush(user);
                 return new TokenRefreshResponse(token, requestRefreshToken);
             })
             .orElseThrow
@@ -93,7 +101,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Override
     @Transactional
     public Long deleteByUserId(Long userId) {
-        refreshTokenRepository.deleteById(userId);
+        refreshTokenRepository.deleteByUserEntityId(userId);
         return userId;
     }
 }

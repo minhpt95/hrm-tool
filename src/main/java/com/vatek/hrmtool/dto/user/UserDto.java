@@ -1,8 +1,13 @@
 package com.vatek.hrmtool.dto.user;
+import com.vatek.hrmtool.entity.PrivilegeEntity;
+import com.vatek.hrmtool.entity.enumeration.Privilege;
+import com.vatek.hrmtool.entity.enumeration.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.Collection;
 
 @Getter
 @Setter
@@ -19,4 +24,6 @@ public class UserDto {
     private String permanentAddress;
     private String description;
     private boolean isEnabled;
+    private Collection<Role> roles;
+    private Collection<Privilege> privileges;
 }

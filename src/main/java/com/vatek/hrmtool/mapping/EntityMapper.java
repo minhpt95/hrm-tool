@@ -8,11 +8,11 @@ public interface EntityMapper <D, E> {
 
     D toDto(E entity);
 
-    List<E> toEntity(List<D> dtoList);
-
-    List <D> toDto(List<E> entityList);
-
-    Set<E> toEntity(Set<D> dtoSet);
-
-    Set <D> toDto(Set<E> entitySet);
+//    List<E> toEntity(List<D> dtoList);
+//
+//    List <D> toDto(List<E> entityList);
+//
+//    Set<E> toEntity(Set<D> dtoSet);
+//
+//    Set <D> toDto(Set<E> entitySet);
 }

@@ -4,6 +4,8 @@ package com.vatek.hrmtool.security.service;
 import com.vatek.hrmtool.entity.PrivilegeEntity;
 import com.vatek.hrmtool.entity.RoleEntity;
 import com.vatek.hrmtool.entity.UserEntity;
+import com.vatek.hrmtool.entity.enumeration.Privilege;
+import com.vatek.hrmtool.entity.enumeration.Role;
 import com.vatek.hrmtool.respository.RoleRepository;
 import com.vatek.hrmtool.respository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -39,20 +41,25 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         Collection<RoleEntity> roleEntities = userEntity.getRoles();
 
-        List<String> roles = roleEntities.stream().map(RoleEntity::getName).toList();
-
-        var privileges = roleEntities
+        var rolesAuthority = roleEntities
                 .stream()
-                .map(roleEntity -> List.copyOf(roleEntity.getPrivileges()))
-                .flatMap(List::stream)
-                .map(PrivilegeEntity::getName)
+                .map(RoleEntity::getRole)
+                .map(Role::getAuthority)
+                .toList();
+
+        var privilegesAuthority = roleEntities
+                .stream()
+                .map(RoleEntity::getPrivileges)
+                .flatMap(Collection::stream)
+                .map(PrivilegeEntity::getPrivilege)
+                .map(Privilege::getAuthority)
                 .toList();
 
         return UserPrinciple
                 .userPrincipleBuilder(userEntity)
                 .authorities(getAuthorities(roleEntities))
-                .roles(roles)
-                .privileges(privileges)
+                .roles(rolesAuthority)
+                .privileges(privilegesAuthority)
                 .build();
     }
 
@@ -66,11 +73,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         List<String> privileges = new ArrayList<>();
         List<PrivilegeEntity> collection = new ArrayList<>();
         for (RoleEntity role : roles) {
-            privileges.add(role.getName());
+            privileges.add(role.getRole().getAuthority());
             collection.addAll(role.getPrivileges());
         }
         for (PrivilegeEntity item : collection) {
-            privileges.add(item.getName());
+            privileges.add(item.getPrivilege().getAuthority());
         }
         return privileges;
     }

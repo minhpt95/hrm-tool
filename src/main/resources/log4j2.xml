@@ -131,7 +131,7 @@
     </Appenders>
 
     <Loggers>
-        <Logger name="com.vatek.highschool" additivity="false" level="info">
+        <Logger name="com.vatek.hrmtool" additivity="false" level="info">
             <AppenderRef ref="infoLog"  />
             <AppenderRef ref="errorLog" />
             <AppenderRef ref="Console"  />

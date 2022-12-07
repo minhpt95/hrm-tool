@@ -4,8 +4,11 @@ import com.vatek.hrmtool.constant.CommonConstant;
 import com.vatek.hrmtool.constant.ErrorConstant;
 import com.vatek.hrmtool.dto.ListResponseDto;
 import com.vatek.hrmtool.dto.user.UserDto;
+import com.vatek.hrmtool.entity.PrivilegeEntity;
 import com.vatek.hrmtool.entity.RefreshTokenEntity;
+import com.vatek.hrmtool.entity.RoleEntity;
 import com.vatek.hrmtool.entity.UserEntity;
+import com.vatek.hrmtool.entity.enumeration.Privilege;
 import com.vatek.hrmtool.exception.ErrorResponse;
 import com.vatek.hrmtool.exception.ProductException;
 import com.vatek.hrmtool.jwt.JwtProvider;
@@ -16,6 +19,8 @@ import com.vatek.hrmtool.readable.form.createForm.CreateUserForm;
 import com.vatek.hrmtool.readable.form.updateForm.UpdateUserForm;
 import com.vatek.hrmtool.readable.request.ChangePasswordReq;
 import com.vatek.hrmtool.readable.request.ChangeStatusAccountReq;
+import com.vatek.hrmtool.respository.PrivilegeRepository;
+import com.vatek.hrmtool.respository.RoleRepository;
 import com.vatek.hrmtool.respository.UserRepository;
 import com.vatek.hrmtool.security.service.UserPrinciple;
 import com.vatek.hrmtool.service.MailService;
@@ -41,6 +46,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -66,6 +72,8 @@ public class UserServiceImpl implements UserService {
     final JwtProvider jwtProvider;
 
     final Environment env;
+
+    final RoleRepository roleRepository;
 
     final RefreshTokenService refreshTokenService;
 
@@ -134,6 +142,8 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @SneakyThrows
     public UserDto createUser(CreateUserForm form) {
+        UserPrinciple userPrinciple = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         Optional<UserEntity> userEntityList = userRepository.findAllByEmail(form.getEmail());
         if (userEntityList.isPresent()) {
             throw new ProductException(
@@ -147,7 +157,6 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = new UserEntity();
 
         userEntity.setCurrentAddress(form.getCurrentAddress());
-        userEntity.setDescription(form.getDescription());
 
         userEntity.setEmail(form.getEmail());
         userEntity.setIdentityCard(form.getIdentityCard());
@@ -156,18 +165,39 @@ public class UserServiceImpl implements UserService {
         userEntity.setPassword(passwordEncoder.encode(form.getPassword()));
         userEntity.setPermanentAddress(form.getPermanentAddress());
         userEntity.setPhoneNumber1(form.getPhoneNumber1());
-        userEntity.setPhoneNumber2(form.getPhoneNumber2());
+
+        Collection<RoleEntity> roleEntity = roleRepository.findByRoleIn(form.getRoles());
+        userEntity.setRoles(roleEntity);
 
         userEntity.setCreatedTime(Instant.now());
-        userEntity.setCreatedBy(userEntity.getId());
+        userEntity.setCreatedBy(userPrinciple.getId());
         userEntity.setModifiedTime(Instant.now());
-        userEntity.setModifiedBy(userEntity.getId());
+        userEntity.setModifiedBy(userPrinciple.getId());
 
         userEntity = userRepository.save(userEntity);
-
         mailService.sendActivationEmail(userEntity);
 
-        return userMapping.toDto(userEntity);
+        UserDto userDto = userMapping.toDto(userEntity);
+
+        var roles = userEntity
+                .getRoles()
+                .stream()
+                .map(RoleEntity::getRole)
+                .toList();
+
+        userDto.setRoles(roles);
+
+        var privileges = userEntity
+                .getRoles()
+                .stream()
+                .map(RoleEntity::getPrivileges)
+                .flatMap(Collection::stream)
+                .map(PrivilegeEntity::getPrivilege)
+                .toList();
+
+        userDto.setPrivileges(privileges);
+
+        return userDto;
     }
 
     @Override
@@ -334,10 +364,10 @@ public class UserServiceImpl implements UserService {
         userEntity.setName(form.getName());
         userEntity.setIdentityCard(form.getIdentityCard());
         userEntity.setPhoneNumber1(form.getPhoneNumber1());
-        userEntity.setPhoneNumber2(form.getPhoneNumber2());
+//        userEntity.setPhoneNumber2(form.getPhoneNumber2());
         userEntity.setCurrentAddress(form.getCurrentAddress());
         userEntity.setPermanentAddress(form.getPermanentAddress());
-        userEntity.setDescription(form.getDescription());
+//        userEntity.setDescription(form.getDescription());
 
         userEntity = userRepository.save(userEntity);
         return userMapping.toDto(userEntity);

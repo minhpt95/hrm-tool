@@ -8,6 +8,7 @@ import com.vatek.hrmtool.exception.ErrorResponse;
 import com.vatek.hrmtool.exception.ProductException;
 import com.vatek.hrmtool.jwt.JwtProvider;
 import com.vatek.hrmtool.jwt.payload.response.TokenRefreshResponse;
+import com.vatek.hrmtool.readable.form.createForm.CreateUserForm;
 import com.vatek.hrmtool.readable.form.updateForm.UpdateUserForm;
 import com.vatek.hrmtool.readable.request.ChangePasswordReq;
 import com.vatek.hrmtool.security.service.UserPrinciple;
@@ -17,13 +18,16 @@ import com.vatek.hrmtool.service.UserService;
 import com.vatek.hrmtool.util.DateUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.MediaType;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
+import javax.print.attribute.standard.Media;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -35,31 +39,8 @@ import javax.validation.Valid;
 public class UserController {
 
     final
-    PasswordEncoder encoder;
-    final
     UserService userService;
 
-    final
-    JavaMailSender emailSender;
-
-    final
-    JwtProvider jwtProvider;
-
-    final
-    RefreshTokenService refreshTokenService;
-
-    @PutMapping(value = "/activateEmail/{id}")
-    public  ResponseDto<?> activateEmail(@PathVariable Long id){
-        ResponseDto<?> responseDto = new ResponseDto<>();
-
-        userService.activateEmail(id, DateUtil.getInstantNow());
-
-        responseDto.setErrorCode(ErrorConstant.Code.SUCCESS);
-        responseDto.setMessage(ErrorConstant.Message.SUCCESS);
-        responseDto.setErrorType(ErrorConstant.Type.SUCCESS);
-        
-        return responseDto;
-    }
 
     @PutMapping(value = "/changePassword")
     public  ResponseDto<Boolean> changePassword(@Valid @RequestBody ChangePasswordReq changePasswordReq){
@@ -72,12 +53,25 @@ public class UserController {
         
         return responseDto;
     }
-
-    @PutMapping(value = "/updateUser")
+    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    @PutMapping(value = "/update")
     public ResponseDto<UserDto> updateUser (@RequestBody UpdateUserForm form) {
         ResponseDto<UserDto> responseDto = new ResponseDto<>();
 
         responseDto.setContent(userService.updateUser(form));
+        responseDto.setErrorCode(ErrorConstant.Code.SUCCESS);
+        responseDto.setMessage(ErrorConstant.Message.SUCCESS);
+        responseDto.setErrorType(ErrorConstant.Type.SUCCESS);
+
+        return responseDto;
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PostMapping(value = "/create",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseDto<UserDto> createUser (@ModelAttribute CreateUserForm createUserForm) {
+        ResponseDto<UserDto> responseDto = new ResponseDto<>();
+
+        responseDto.setContent(userService.createUser(createUserForm));
         responseDto.setErrorCode(ErrorConstant.Code.SUCCESS);
         responseDto.setMessage(ErrorConstant.Message.SUCCESS);
         responseDto.setErrorType(ErrorConstant.Type.SUCCESS);

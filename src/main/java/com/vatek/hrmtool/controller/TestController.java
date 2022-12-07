@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/test")
+@RequestMapping("/api/project")
 public class TestController {
-    @PreAuthorize("hasAnyRole('ROLE_STAFF')")
-    @RequestMapping(value = "/contactUs", method = RequestMethod.GET)
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/create", method = RequestMethod.GET)
     @ResponseBody
     public String contactUs() {
         return "redirect:/contactUs/";

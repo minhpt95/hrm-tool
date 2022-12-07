@@ -31,7 +31,6 @@ public class ProjectEntity extends CommonEntity {
     private UserEntity managerUser;
 
     @ManyToMany(fetch = FetchType.LAZY,mappedBy = "workingProject")
-    @JoinColumn(name = "member_user")
     private Collection<UserEntity> memberUser;
 
     @Column

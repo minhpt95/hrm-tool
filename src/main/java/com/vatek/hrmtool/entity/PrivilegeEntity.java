@@ -1,12 +1,11 @@
 package com.vatek.hrmtool.entity;
 
 import com.vatek.hrmtool.entity.common.CommonEntity;
+import com.vatek.hrmtool.entity.enumeration.Privilege;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Collection;
 
 @Entity
@@ -14,7 +13,8 @@ import java.util.Collection;
 @Getter
 @Setter
 public class PrivilegeEntity extends CommonEntity {
-    private String name;
+    @Enumerated(EnumType.STRING)
+    private Privilege privilege;
 
     @ManyToMany(mappedBy = "privileges")
     private Collection<RoleEntity> roles;

@@ -7,13 +7,7 @@ import com.vatek.hrmtool.jwt.JwtResponse;
 import com.vatek.hrmtool.readable.form.LoginForm;
 import com.vatek.hrmtool.readable.form.createForm.CreateUserForm;
 import com.vatek.hrmtool.service.UserService;
-import com.vatek.hrmtool.constant.ErrorConstant;
-import com.vatek.hrmtool.dto.ResponseDto;
-import com.vatek.hrmtool.dto.user.UserDto;
-import com.vatek.hrmtool.jwt.JwtResponse;
-import com.vatek.hrmtool.readable.form.LoginForm;
-import com.vatek.hrmtool.readable.form.createForm.CreateUserForm;
-import com.vatek.hrmtool.service.UserService;
+import com.vatek.hrmtool.util.DateUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.MediaType;
@@ -52,6 +46,19 @@ public class AuthController {
         responseDto.setErrorType(ErrorConstant.Type.SUCCESS);
         responseDto.setMessage(ErrorConstant.Message.SUCCESS);
         responseDto.setContent(jwtResponse);
+
+        return responseDto;
+    }
+
+    @PutMapping(value = "/activateEmail/{id}")
+    public  ResponseDto<?> activateEmail(@PathVariable Long id){
+        ResponseDto<?> responseDto = new ResponseDto<>();
+
+        userService.activateEmail(id, DateUtil.getInstantNow());
+
+        responseDto.setErrorCode(ErrorConstant.Code.SUCCESS);
+        responseDto.setMessage(ErrorConstant.Message.SUCCESS);
+        responseDto.setErrorType(ErrorConstant.Type.SUCCESS);
 
         return responseDto;
     }
