@@ -10,6 +10,7 @@ import com.vatek.hrmtool.exception.ErrorResponse;
 import com.vatek.hrmtool.exception.ProductException;
 import com.vatek.hrmtool.jwt.JwtProvider;
 import com.vatek.hrmtool.jwt.JwtResponse;
+import com.vatek.hrmtool.mapping.UserMapping;
 import com.vatek.hrmtool.readable.form.LoginForm;
 import com.vatek.hrmtool.readable.form.createForm.CreateUserForm;
 import com.vatek.hrmtool.readable.form.updateForm.UpdateUserForm;
@@ -32,8 +33,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -64,6 +68,8 @@ public class UserServiceImpl implements UserService {
     final Environment env;
 
     final RefreshTokenService refreshTokenService;
+
+    private final UserMapping userMapping;
 
     @Override
     public void saveToken(String token, UserEntity userEntity) {
@@ -114,25 +120,12 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmail(email).orElse(null);
     }
 
-    private UserDto convertToDto(UserEntity userEntity) {
-        UserDto userDto = new UserDto();
-        userDto.setId(userEntity.getId());
-        userDto.setName(userEntity.getName());
-        userDto.setCurrentAddress(userEntity.getCurrentAddress());
-        userDto.setDescription(userEntity.getDescription());
-        userDto.setEmail(userEntity.getEmail());
-        userDto.setIdentityCard(userEntity.getIdentityCard());
-        userDto.setEnabled(userEntity.isEnabled());
-        userDto.setPermanentAddress(userEntity.getPermanentAddress());
-        userDto.setPhoneNumber1(userEntity.getPhoneNumber1());
-        userDto.setPhoneNumber2(userEntity.getPhoneNumber2());
-        return userDto;
-    }
+
 
     @Override
     public ListResponseDto<UserDto> getUserList(int pageIndex, int pageSize) {
         Page<UserEntity> page = userRepository.findAll(CommonUtil.buildPageable(pageIndex, pageSize));
-        Page<UserDto> userDtoPage = page.map(this::convertToDto);
+        Page<UserDto> userDtoPage = page.map(userMapping::toDto);
         ListResponseDto<UserDto> result = new ListResponseDto<>();
         return result.buildResponseList(userDtoPage, pageSize, pageIndex);
     }
@@ -174,11 +167,11 @@ public class UserServiceImpl implements UserService {
 
         mailService.sendActivationEmail(userEntity);
 
-        return convertToDto(userEntity);
+        return userMapping.toDto(userEntity);
     }
 
     @Override
-    public Boolean activateEmail(Long id, Instant currentTime) {
+    public void activateEmail(Long id, Instant currentTime) {
         UserEntity userEntity = userRepository.findUserEntityById(id);
         if (userEntity == null)
         {
@@ -201,7 +194,6 @@ public class UserServiceImpl implements UserService {
         }
         userEntity.setEnabled(true);
         userRepository.save(userEntity);
-        return true;
     }
 
     @Override
@@ -348,6 +340,25 @@ public class UserServiceImpl implements UserService {
         userEntity.setDescription(form.getDescription());
 
         userEntity = userRepository.save(userEntity);
-        return convertToDto(userEntity);
+        return userMapping.toDto(userEntity);
+    }
+
+    @Override
+    public void logout(HttpServletRequest request, HttpServletResponse response) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null) {
+            throw new ProductException(
+                    new ErrorResponse()
+            );
+        }
+
+        UserPrinciple userPrinciple = (UserPrinciple) authentication.getPrincipal();
+
+        UserEntity userEntity = findUserEntityByEmail(userPrinciple.getEmail());
+
+        clearToken(userEntity);
+
+        new SecurityContextLogoutHandler().logout(request,response,authentication);
     }
 }

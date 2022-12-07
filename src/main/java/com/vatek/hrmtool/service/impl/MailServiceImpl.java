@@ -163,6 +163,22 @@ public class MailServiceImpl implements MailService {
             "email",to.getEmail(),
             "activationLink",env.getProperty("url.activate.account") + to.getId()
         );
-        sendEmail(to.getEmail(),"Confirm your email address on Spring Boot App",thymeleafService.getContent("active-user",map));
+
+        String htmlContentEmail = thymeleafService.getContent("active-user",map);
+
+        sendEmail(to.getEmail(),"Confirm your email address on Spring Boot App",htmlContentEmail);
+    }
+
+    @Async
+    @Override
+    public void sendForgotEmail(UserEntity to,String newPassword) {
+        Map<String,Object> map = Map.of(
+                "email",to.getEmail(),
+                "new_password",newPassword
+        );
+
+        String htmlContentEmail = thymeleafService.getContent("active-user",map);
+
+        sendEmail(to.getEmail(),"Confirm your email address on Spring Boot App",htmlContentEmail);
     }
 }

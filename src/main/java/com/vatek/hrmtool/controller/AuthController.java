@@ -55,4 +55,16 @@ public class AuthController {
 
         return responseDto;
     }
+
+    @PostMapping(value = "/forgot/{email}")
+    public ResponseDto<?> forgotPassword(@PathVariable(name = "email") String email){
+        userService.forgotPassword(email);
+
+        var responseDto = new ResponseDto<>();
+        responseDto.setErrorCode(ErrorConstant.Code.SUCCESS);
+        responseDto.setErrorType(ErrorConstant.Type.SUCCESS);
+        responseDto.setMessage(ErrorConstant.Message.SUCCESS);
+
+        return responseDto;
+    }
 }

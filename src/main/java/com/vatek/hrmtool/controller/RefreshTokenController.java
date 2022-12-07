@@ -26,8 +26,7 @@ public class RefreshTokenController {
 
     @PostMapping()
     public ResponseDto<?> refreshToken(
-            @RequestBody TokenRefreshRequest tokenRefreshRequest,
-            HttpServletResponse response
+            @RequestBody TokenRefreshRequest tokenRefreshRequest
     ) {
         var responseDto = new ResponseDto<>();
         responseDto.setContent(refreshTokenService.refreshToken(tokenRefreshRequest));

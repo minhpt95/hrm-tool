@@ -49,10 +49,11 @@ public class UserController {
     RefreshTokenService refreshTokenService;
 
     @PutMapping(value = "/activateEmail/{id}")
-    public  ResponseDto<Boolean> activateEmail(@PathVariable Long id){
-        ResponseDto<Boolean> responseDto = new ResponseDto<>();
+    public  ResponseDto<?> activateEmail(@PathVariable Long id){
+        ResponseDto<?> responseDto = new ResponseDto<>();
 
-        responseDto.setContent(userService.activateEmail(id, DateUtil.getInstantNow()));
+        userService.activateEmail(id, DateUtil.getInstantNow());
+
         responseDto.setErrorCode(ErrorConstant.Code.SUCCESS);
         responseDto.setMessage(ErrorConstant.Message.SUCCESS);
         responseDto.setErrorType(ErrorConstant.Type.SUCCESS);
@@ -87,23 +88,9 @@ public class UserController {
     @PostMapping("/logout")
     public ResponseDto<?> logout(HttpServletRequest request, HttpServletResponse response) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        userService.logout(request,response);
 
-        if (authentication == null) {
-            throw new ProductException(
-                    new ErrorResponse()
-            );
-        }
-
-        UserPrinciple userPrinciple = (UserPrinciple) authentication.getPrincipal();
-
-        UserEntity userEntity = userService.findUserEntityByEmail(userPrinciple.getEmail());
-
-        userService.clearToken(userEntity);
-
-        new SecurityContextLogoutHandler().logout(request,response,authentication);
-
-        ResponseDto<TokenRefreshResponse> responseDto = new ResponseDto<>();
+        ResponseDto<?> responseDto = new ResponseDto<>();
         responseDto.setMessage(ErrorConstant.Message.SUCCESS);
         responseDto.setErrorCode(ErrorConstant.Code.SUCCESS);
         return responseDto;

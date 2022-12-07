@@ -10,6 +10,8 @@ import com.vatek.hrmtool.readable.form.updateForm.UpdateUserForm;
 import com.vatek.hrmtool.readable.request.ChangePasswordReq;
 import com.vatek.hrmtool.readable.request.ChangeStatusAccountReq;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.time.Instant;
 
 public interface UserService {
@@ -31,7 +33,7 @@ public interface UserService {
     
     UserDto createUser(CreateUserForm form);
 
-    Boolean activateEmail(Long id, Instant timeOut);
+    void activateEmail(Long id, Instant timeOut);
 
     void forgotPassword(String email);
 
@@ -42,4 +44,6 @@ public interface UserService {
     UserDto updateUser(UpdateUserForm form);
 
     JwtResponse authenticateUser(LoginForm loginForm);
+
+    void logout(HttpServletRequest request, HttpServletResponse response);
 }

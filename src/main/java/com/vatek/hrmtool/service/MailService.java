@@ -18,4 +18,6 @@ public interface MailService {
 
     @Async
     void sendActivationEmail(UserEntity to);
+
+    void sendForgotEmail(UserEntity to,String newPassword);
 }
