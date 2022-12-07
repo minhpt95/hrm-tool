@@ -5,11 +5,13 @@ import com.vatek.hrmtool.entity.UserEntity;
 import com.vatek.hrmtool.exception.ErrorResponse;
 import com.vatek.hrmtool.exception.ProductException;
 import com.vatek.hrmtool.exception.TokenRefreshException;
+import com.vatek.hrmtool.jwt.JwtProvider;
+import com.vatek.hrmtool.jwt.payload.request.TokenRefreshRequest;
+import com.vatek.hrmtool.jwt.payload.response.TokenRefreshResponse;
 import com.vatek.hrmtool.respository.RefreshTokenRepository;
-import com.vatek.hrmtool.respository.UserRepository;
 import com.vatek.hrmtool.service.RefreshTokenService;
+import com.vatek.hrmtool.service.UserService;
 import com.vatek.hrmtool.util.DateUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -24,17 +26,41 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Value("${highschool.app.refreshTokenExpiration}")
     private Long refreshTokenDurationMs;
 
-    @Autowired
-    private RefreshTokenRepository refreshTokenRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final UserService userService;
+    private final JwtProvider jwtProvider;
 
-    @Autowired
-    private UserRepository userRepository;
-
-
+    public RefreshTokenServiceImpl(RefreshTokenRepository refreshTokenRepository, UserService userService, JwtProvider jwtProvider) {
+        this.refreshTokenRepository = refreshTokenRepository;
+        this.userService = userService;
+        this.jwtProvider = jwtProvider;
+    }
 
     @Override
     public Optional<RefreshTokenEntity> findByToken(String token) {
         return refreshTokenRepository.findByToken(token);
+    }
+    @Override
+    public TokenRefreshResponse refreshToken(TokenRefreshRequest tokenRefreshRequest){
+        String requestRefreshToken = tokenRefreshRequest.getRefreshToken();
+
+        return findByToken(requestRefreshToken)
+            .map(this::verifyExpiration)
+            .map(RefreshTokenEntity::getUserEntity)
+            .map(user -> {
+                String token = jwtProvider.generateTokenFromEmail(user.getEmail());
+                userService.saveToken(token,user);
+                return new TokenRefreshResponse(token, requestRefreshToken);
+            })
+            .orElseThrow
+                (
+                    () ->
+                        new TokenRefreshException
+                            (
+                                requestRefreshToken,
+                                "Refresh token is not in database!"
+                            )
+                );
     }
 
     @Override

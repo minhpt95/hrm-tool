@@ -24,44 +24,16 @@ public class RefreshTokenController {
     final
     RefreshTokenService refreshTokenService;
 
-    final
-    UserService userService;
-
-    final
-    JwtProvider jwtProvider;
-
     @PostMapping()
     public ResponseDto<?> refreshToken(
             @RequestBody TokenRefreshRequest tokenRefreshRequest,
             HttpServletResponse response
     ) {
-        String requestRefreshToken = tokenRefreshRequest.getRefreshToken();
-
-        return refreshTokenService.findByToken(requestRefreshToken)
-                .map(refreshTokenService::verifyExpiration)
-                .map(RefreshTokenEntity::getUserEntity)
-                .map(user -> {
-                    String token = jwtProvider.generateTokenFromEmail(user.getEmail());
-                    userService.saveToken(token,user);
-                    ResponseDto<TokenRefreshResponse> responseDto = new ResponseDto<>();
-                    responseDto.setMessage(ErrorConstant.Message.SUCCESS);
-                    responseDto.setErrorCode(ErrorConstant.Code.SUCCESS);
-                    responseDto.setContent(new TokenRefreshResponse(token, requestRefreshToken));
-                    return responseDto;
-                })
-                .orElseThrow
-                        (
-                                () ->
-                                        new TokenRefreshException
-                                                (
-                                                        requestRefreshToken,
-                                                        "Refresh token is not in database!"
-                                                )
-                        );
-    }
-
-    @GetMapping("/getResponse")
-    public ResponseDto<?> getResponse(){
-        return new ResponseDto<>();
+        var responseDto = new ResponseDto<>();
+        responseDto.setContent(refreshTokenService.refreshToken(tokenRefreshRequest));
+        responseDto.setErrorCode(ErrorConstant.Code.SUCCESS);
+        responseDto.setErrorType(ErrorConstant.Type.SUCCESS);
+        responseDto.setMessage(ErrorConstant.Message.SUCCESS);
+        return responseDto;
     }
 }

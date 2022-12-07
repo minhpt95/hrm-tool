@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vatek.hrmtool.exception.ErrorResponse;
 import com.vatek.hrmtool.exception.ProductException;
 import com.vatek.hrmtool.exception.TokenRefreshException;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -23,10 +24,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
+@AllArgsConstructor
 public class ResponseHandler {
-
-    @Autowired
-    private ObjectMapper mapper;
 
     @ExceptionHandler(ProductException.class)
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
