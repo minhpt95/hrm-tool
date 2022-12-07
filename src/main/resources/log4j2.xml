@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+
+    <!-- Logging Properties -->
+    <Properties>
+        <Property name="LOG_PATTERN">%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ} %p %m%n</Property>
+        <Property name="APP_LOG_ROOT">logs</Property>
+    </Properties>
+
+    <Appenders>
+
+        <!-- Console Appender -->
+        <Console name="Console" target="SYSTEM_OUT" follow="true">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
+
+        <!-- File Appenders on need basis -->
+        <RollingFile name="frameworkLog" fileName="${APP_LOG_ROOT}/framework/app-framework.log"
+                     filePattern="${APP_LOG_ROOT}/framework/$${date:yyyy-MM}/app-framework-%d{yyyy-MM-dd}-%i.log">
+            <LevelRangeFilter minLevel="ERROR" maxLevel="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="25 MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="100">
+                <Delete basePath="${APP_LOG_ROOT}" maxDepth="3">
+                    <IfFileName glob="app-trace-*.log.gz" />
+                    <IfLastModified age="30d">
+                        <IfAny>
+                            <IfAccumulatedFileSize exceeds="10 GB" />
+                            <IfAccumulatedFileCount exceeds="10" />
+                        </IfAny>
+                    </IfLastModified>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+        <RollingFile name="debugLog" fileName="${APP_LOG_ROOT}/debug/app-debug.log"
+                     filePattern="${APP_LOG_ROOT}/debug/$${date:yyyy-MM}/app-debug-%d{yyyy-MM-dd}-%i.log">
+            <LevelRangeFilter minLevel="DEBUG" maxLevel="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="25 MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="100">
+                <Delete basePath="${APP_LOG_ROOT}" maxDepth="3">
+                    <IfFileName glob="app-trace-*.log.gz" />
+                    <IfLastModified age="30d">
+                        <IfAny>
+                            <IfAccumulatedFileSize exceeds="10 GB" />
+                            <IfAccumulatedFileCount exceeds="10" />
+                        </IfAny>
+                    </IfLastModified>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+        <RollingFile name="infoLog" fileName="${APP_LOG_ROOT}/info/app-info.log"
+                     filePattern="${APP_LOG_ROOT}/info/$${date:yyyy-MM}/app-info-%d{yyyy-MM-dd}-%i.log" >
+            <LevelRangeFilter minLevel="INFO" maxLevel="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="25 MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="100">
+                <Delete basePath="${APP_LOG_ROOT}" maxDepth="3">
+                    <IfFileName glob="app-trace-*.log.gz" />
+                    <IfLastModified age="30d">
+                        <IfAny>
+                            <IfAccumulatedFileSize exceeds="10 GB" />
+                            <IfAccumulatedFileCount exceeds="10" />
+                        </IfAny>
+                    </IfLastModified>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+        <RollingFile name="errorLog" fileName="${APP_LOG_ROOT}/error/app-error.log"
+                     filePattern="${APP_LOG_ROOT}/error/$${date:yyyy-MM}/app-error-%d{yyyy-MM-dd}-%i.log" >
+            <LevelRangeFilter minLevel="ERROR" maxLevel="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="19500KB" />
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+
+        <RollingFile name="perfLog" fileName="${APP_LOG_ROOT}/perf/app-perf.log"
+                     filePattern="${APP_LOG_ROOT}/perf/$${date:yyyy-MM}/app-perf-%d{yyyy-MM-dd}-%i.log" >
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="25 MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="100">
+                <Delete basePath="${APP_LOG_ROOT}" maxDepth="3">
+                    <IfFileName glob="app-trace-*.log.gz" />
+                    <IfLastModified age="30d">
+                        <IfAny>
+                            <IfAccumulatedFileSize exceeds="10 GB" />
+                            <IfAccumulatedFileCount exceeds="10" />
+                        </IfAny>
+                    </IfLastModified>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+        <RollingFile name="traceLog" fileName="${APP_LOG_ROOT}/trace/app-trace.log"
+                     filePattern="${APP_LOG_ROOT}/trace/$${date:yyyy-MM}/app-trace-%d{yyyy-MM-dd-HH}-%i.log.gz" >
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="25 MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="100">
+                <Delete basePath="${APP_LOG_ROOT}" maxDepth="3">
+                    <IfFileName glob="app-trace-*.log.gz" />
+                    <IfLastModified age="30d">
+                        <IfAny>
+                            <IfAccumulatedFileSize exceeds="10 GB" />
+                            <IfAccumulatedFileCount exceeds="10" />
+                        </IfAny>
+                    </IfLastModified>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+    </Appenders>
+
+    <Loggers>
+        <Logger name="com.vatek.highschool" additivity="false" level="info">
+            <AppenderRef ref="infoLog"  />
+            <AppenderRef ref="errorLog" />
+            <AppenderRef ref="Console"  />
+        </Logger>
+
+        <Logger name="org.framework.package" additivity="false" level="info">
+            <AppenderRef ref="perfLog" />
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <Root level="warn">
+            <AppenderRef ref="Console"/>
+        </Root>
+
+    </Loggers>
+
+</Configuration>
