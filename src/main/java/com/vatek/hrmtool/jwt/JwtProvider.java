@@ -16,10 +16,10 @@ import java.time.temporal.ChronoUnit;
 @Log4j2
 public class JwtProvider {
 
-    @Value("${catdev.app.jwtSecret}")
+    @Value("${hrm.app.jwtSecret}")
     private String jwtSecret;
 
-    @Value("${catdev.app.jwtExpiration}")
+    @Value("${hrm.app.jwtExpiration}")
     private int jwtExpiration;
 
     public JwtProvider() {

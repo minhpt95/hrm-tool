@@ -221,12 +221,12 @@ public class UserServiceImpl implements UserService {
 
         String pwd = RandomStringUtils.random(12, CommonConstant.CHARACTERS);
 
-        log.info("start forgotPassword()");
+        log.info("start sendEmail forgotPassword()");
 
         userEntity.setPassword(passwordEncoder.encode(pwd));
         userRepository.save(userEntity);
 
-        mailService.sendEmail(userEntity.getEmail(),"Forgot Password","New password for " + userEntity.getEmail() + " is : " + pwd);
+        mailService.sendForgotEmail(userEntity,pwd);
 
     }
 

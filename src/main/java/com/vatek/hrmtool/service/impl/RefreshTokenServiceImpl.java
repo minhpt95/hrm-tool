@@ -23,7 +23,7 @@ import java.util.UUID;
 @Service
 public class RefreshTokenServiceImpl implements RefreshTokenService {
 
-    @Value("${highschool.app.refreshTokenExpiration}")
+    @Value("${hrm.app.refreshTokenExpiration}")
     private Long refreshTokenDurationMs;
 
     private final RefreshTokenRepository refreshTokenRepository;

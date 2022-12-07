@@ -23,19 +23,35 @@ public class UserEntity extends CommonEntity {
     @Column
     private String phoneNumber1;
     @Column
-    private String phoneNumber2;
-    @Column
     private String currentAddress;
     @Column
     private String permanentAddress;
-    @Column
-    private String description;
     @Column
     private String accessToken;
     @Column
     private boolean tokenStatus;
     @Column
     private boolean isEnabled;
+
+    @Column
+    private String position;
+
+    @OneToMany(fetch = FetchType.LAZY,cascade = {
+            CascadeType.DETACH,
+            CascadeType.MERGE,
+            CascadeType.PERSIST,
+            CascadeType.REFRESH
+    },mappedBy = "managerUser")
+    private Collection<ProjectEntity> projectManagement;
+
+    @ManyToMany
+    @JoinTable(
+            name = "users_projects",
+            joinColumns = @JoinColumn(
+                    name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(
+                    name = "project_id", referencedColumnName = "id"))
+    private Collection<ProjectEntity> workingProject;
 
     @ManyToMany
     @JoinTable(

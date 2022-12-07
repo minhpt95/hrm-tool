@@ -14,7 +14,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class CommonEntity extends DateTimeEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false, nullable = false)
     private Long id;
 }

@@ -1,6 +1,7 @@
 package com.vatek.hrmtool.entity;
 
 
+import com.vatek.hrmtool.entity.common.CommonEntity;
 import com.vatek.hrmtool.entity.common.DateTimeEntity;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,13 +12,7 @@ import java.time.Instant;
 @Entity(name = "refresh_token")
 @Getter
 @Setter
-public class RefreshTokenEntity extends DateTimeEntity {
-    @Id
-    @GeneratedValue(generator = "spring_seq")
-    @SequenceGenerator(name = "spring_seq",sequenceName = "refresh_token_seq",allocationSize = 1)
-    @Column(updatable = false, nullable = false)
-    private Long id;
-
+public class RefreshTokenEntity extends CommonEntity {
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private UserEntity userEntity;
