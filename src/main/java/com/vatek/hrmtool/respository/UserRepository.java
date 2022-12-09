@@ -14,9 +14,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> , JpaSpe
 
     Optional<UserEntity> findByEmail(String email);
 
-    @Override
-    boolean existsById(Long id);
-
     Page<UserEntity> findAll(Pageable pageable);
 
     Optional<UserEntity> findAllByEmail(String email);

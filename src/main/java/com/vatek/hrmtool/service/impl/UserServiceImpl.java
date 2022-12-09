@@ -177,27 +177,7 @@ public class UserServiceImpl implements UserService {
         userEntity = userRepository.save(userEntity);
         mailService.sendActivationEmail(userEntity);
 
-        UserDto userDto = userMapping.toDto(userEntity);
-
-        var roles = userEntity
-                .getRoles()
-                .stream()
-                .map(RoleEntity::getRole)
-                .toList();
-
-        userDto.setRoles(roles);
-
-        var privileges = userEntity
-                .getRoles()
-                .stream()
-                .map(RoleEntity::getPrivileges)
-                .flatMap(Collection::stream)
-                .map(PrivilegeEntity::getPrivilege)
-                .toList();
-
-        userDto.setPrivileges(privileges);
-
-        return userDto;
+        return userMapping.toDto(userEntity);
     }
 
     @Override
