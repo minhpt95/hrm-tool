@@ -1,5 +1,7 @@
 package com.vatek.hrmtool.service.impl;
 
+import com.vatek.hrmtool.dto.ProjectDto;
+import com.vatek.hrmtool.readable.form.createForm.CreateProjectForm;
 import com.vatek.hrmtool.respository.ProjectRepository;
 import com.vatek.hrmtool.service.ProjectService;
 import lombok.AllArgsConstructor;
@@ -12,5 +14,7 @@ import org.springframework.stereotype.Service;
 public class ProjectServiceImpl {
     private ProjectRepository projectRepository;
 
-
+    public ProjectDto createProjectDto(CreateProjectForm createProjectForm){
+        return null;
+    }
 }
