@@ -33,6 +33,9 @@ public class UserEntity extends CommonEntity {
     @Column
     private boolean isEnabled;
 
+    @Column String level;
+
+    @Column String programLanguage;
     @Column
     private String position;
 

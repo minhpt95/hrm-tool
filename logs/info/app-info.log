@@ -1,32 +1,18 @@
-2022-12-08T15:24:28.226+0700 INFO Starting HrmToolApplication using Java 17.0.5 on DESKTOP-4I46LOQ with PID 15184 (F:\Project\hrm-tool\target\classes started by minhp in F:\Project\hrm-tool)
-2022-12-08T15:24:28.241+0700 INFO The following 1 profile is active: "local"
-2022-12-08T15:24:33.733+0700 INFO bucket with name : vatek has been created
-2022-12-08T15:24:36.120+0700 INFO Started HrmToolApplication in 8.288 seconds (JVM running for 10.328)
-2022-12-08T15:24:36.124+0700 INFO TimeZone : sun.util.calendar.ZoneInfo[id="UTC",offset=0,dstSavings=0,useDaylight=false,transitions=0,lastRule=null] , Instant : 2022-12-08T08:24:36.124901Z , Timestamp : 2022-12-08T08:24:36.124+0000
-2022-12-08T15:24:36.125+0700 INFO Clear Token After Start Application : clear Token
-2022-12-08T16:25:11.023+0700 INFO Starting HrmToolApplication using Java 17.0.5 on DESKTOP-4I46LOQ with PID 21172 (F:\Project\hrm-tool\target\classes started by minhp in F:\Project\hrm-tool)
-2022-12-08T16:25:11.032+0700 INFO The following 1 profile is active: "local"
-2022-12-08T16:25:42.644+0700 INFO Starting HrmToolApplication using Java 17.0.5 on DESKTOP-4I46LOQ with PID 20508 (F:\Project\hrm-tool\target\classes started by minhp in F:\Project\hrm-tool)
-2022-12-08T16:25:42.651+0700 INFO The following 1 profile is active: "local"
-2022-12-08T16:25:48.122+0700 INFO bucket with name : vatek has been created
-2022-12-08T16:25:50.457+0700 INFO Started HrmToolApplication in 8.143 seconds (JVM running for 9.268)
-2022-12-08T16:25:50.460+0700 INFO Clear Token After Start Application : clear Token
-2022-12-08T16:25:50.503+0700 INFO TimeZone : sun.util.calendar.ZoneInfo[id="UTC",offset=0,dstSavings=0,useDaylight=false,transitions=0,lastRule=null] , Instant : 2022-12-08T09:25:50.502580200Z , Timestamp : 2022-12-08T09:25:50.503+0000
-2022-12-08T16:39:31.482+0700 INFO Starting HrmToolApplication using Java 17.0.5 on DESKTOP-4I46LOQ with PID 10052 (F:\Project\hrm-tool\target\classes started by minhp in F:\Project\hrm-tool)
-2022-12-08T16:39:31.489+0700 INFO The following 1 profile is active: "local"
-2022-12-08T16:40:08.516+0700 INFO Starting HrmToolApplication using Java 17.0.5 on DESKTOP-4I46LOQ with PID 11824 (F:\Project\hrm-tool\target\classes started by minhp in F:\Project\hrm-tool)
-2022-12-08T16:40:08.523+0700 INFO The following 1 profile is active: "local"
-2022-12-08T16:40:52.802+0700 INFO Starting HrmToolApplication using Java 17.0.5 on DESKTOP-4I46LOQ with PID 9856 (F:\Project\hrm-tool\target\classes started by minhp in F:\Project\hrm-tool)
-2022-12-08T16:40:52.808+0700 INFO The following 1 profile is active: "local"
-2022-12-08T16:40:57.232+0700 INFO bucket with name : vatek has been created
-2022-12-08T16:40:59.102+0700 INFO Started HrmToolApplication in 6.594 seconds (JVM running for 7.502)
-2022-12-08T16:40:59.104+0700 INFO Clear Token After Start Application : clear Token
-2022-12-08T16:40:59.138+0700 INFO TimeZone : sun.util.calendar.ZoneInfo[id="UTC",offset=0,dstSavings=0,useDaylight=false,transitions=0,lastRule=null] , Instant : 2022-12-08T09:40:59.137678500Z , Timestamp : 2022-12-08T09:40:59.138+0000
-2022-12-08T16:41:19.734+0700 INFO Starting HrmToolApplication using Java 17.0.5 on DESKTOP-4I46LOQ with PID 3692 (F:\Project\hrm-tool\target\classes started by minhp in F:\Project\hrm-tool)
-2022-12-08T16:41:19.741+0700 INFO The following 1 profile is active: "local"
-2022-12-08T16:41:24.686+0700 INFO bucket with name : vatek has been created
-2022-12-08T16:41:27.155+0700 INFO Started HrmToolApplication in 7.764 seconds (JVM running for 8.865)
-2022-12-08T16:41:27.159+0700 INFO Clear Token After Start Application : clear Token
-2022-12-08T16:41:27.211+0700 INFO TimeZone : sun.util.calendar.ZoneInfo[id="UTC",offset=0,dstSavings=0,useDaylight=false,transitions=0,lastRule=null] , Instant : 2022-12-08T09:41:27.210227400Z , Timestamp : 2022-12-08T09:41:27.211+0000
-2022-12-08T16:43:25.284+0700 INFO start send email not attach file to: minhpt10595@gmail.com; subject: Confirm your email address on Spring Boot App;
-2022-12-08T16:43:29.348+0700 INFO end send email not attach file to: minhpt10595@gmail.com; subject: Confirm your email address on Spring Boot App;
+2022-12-09T11:17:06.749+0700 INFO Starting HrmToolApplication using Java 17.0.5 on DESKTOP-4I46LOQ with PID 30140 (F:\Project\hrm-tool\target\classes started by minhp in F:\Project\hrm-tool)
+2022-12-09T11:17:06.762+0700 INFO The following 1 profile is active: "local"
+2022-12-09T11:17:12.330+0700 INFO bucket with name : vatek has been created
+2022-12-09T11:42:48.143+0700 INFO Starting HrmToolApplication using Java 17.0.5 on DESKTOP-4I46LOQ with PID 6124 (F:\Project\hrm-tool\target\classes started by minhp in F:\Project\hrm-tool)
+2022-12-09T11:42:48.151+0700 INFO The following 1 profile is active: "local"
+2022-12-09T11:42:53.502+0700 INFO bucket with name : vatek has been created
+2022-12-09T11:48:27.669+0700 INFO Starting HrmToolApplication using Java 17.0.5 on DESKTOP-4I46LOQ with PID 14620 (F:\Project\hrm-tool\target\classes started by minhp in F:\Project\hrm-tool)
+2022-12-09T11:48:27.677+0700 INFO The following 1 profile is active: "local"
+2022-12-09T11:48:32.423+0700 INFO bucket with name : vatek has been created
+2022-12-09T11:48:34.846+0700 INFO Started HrmToolApplication in 7.502 seconds (JVM running for 8.727)
+2022-12-09T11:48:34.849+0700 INFO TimeZone : sun.util.calendar.ZoneInfo[id="UTC",offset=0,dstSavings=0,useDaylight=false,transitions=0,lastRule=null] , Instant : 2022-12-09T04:48:34.849994900Z , Timestamp : 2022-12-09T04:48:34.849+0000
+2022-12-09T11:48:34.850+0700 INFO Clear Token After Start Application : clear Token
+2022-12-09T13:41:41.124+0700 INFO Starting HrmToolApplication using Java 17.0.5 on DESKTOP-4I46LOQ with PID 30136 (F:\Project\hrm-tool\target\classes started by minhp in F:\Project\hrm-tool)
+2022-12-09T13:41:41.131+0700 INFO The following 1 profile is active: "local"
+2022-12-09T13:41:46.245+0700 INFO bucket with name : vatek has been created
+2022-12-09T13:41:48.919+0700 INFO Started HrmToolApplication in 8.124 seconds (JVM running for 9.27)
+2022-12-09T13:41:48.922+0700 INFO TimeZone : sun.util.calendar.ZoneInfo[id="UTC",offset=0,dstSavings=0,useDaylight=false,transitions=0,lastRule=null] , Instant : 2022-12-09T06:41:48.922741900Z , Timestamp : 2022-12-09T06:41:48.922+0000
+2022-12-09T13:41:48.923+0700 INFO Clear Token After Start Application : clear Token

@@ -20,6 +20,9 @@ public class ProjectEntity extends CommonEntity {
     private String name;
 
     @Column
+    private String description;
+
+    @Column
     private Boolean isDelete;
 
     @Column
