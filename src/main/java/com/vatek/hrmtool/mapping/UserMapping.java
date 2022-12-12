@@ -1,5 +1,6 @@
 package com.vatek.hrmtool.mapping;
 
+import antlr.actions.python.CodeLexer;
 import com.vatek.hrmtool.dto.user.UserDto;
 import com.vatek.hrmtool.entity.PrivilegeEntity;
 import com.vatek.hrmtool.entity.RoleEntity;
@@ -25,6 +26,10 @@ public interface UserMapping extends EntityMapper<UserDto,UserEntity> {
             @Mapping(target = "privileges", expression = "java(getPrivilegeFromEntity(userEntity))")
     })
     UserDto toDto(UserEntity userEntity);
+
+    default Collection<UserDto> toListDto(Collection<UserEntity> userEntities){
+        return userEntities.stream().map(this::toDto).collect(Collectors.toList());
+    }
 
     default Collection<Role> getRoleFromEntity(UserEntity entity) {
         return entity

@@ -12,7 +12,9 @@ import com.vatek.hrmtool.readable.request.ChangeStatusAccountReq;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.nio.file.AccessDeniedException;
 import java.time.Instant;
+import java.util.List;
 
 public interface UserService {
     void saveToken(String token, UserEntity userEntity);
@@ -46,4 +48,6 @@ public interface UserService {
     JwtResponse authenticateUser(LoginForm loginForm);
 
     void logout(HttpServletRequest request, HttpServletResponse response);
+
+    List<UserDto> getUsersByProjectId(Long projectId);
 }

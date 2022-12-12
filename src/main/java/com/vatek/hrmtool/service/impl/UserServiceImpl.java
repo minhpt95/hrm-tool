@@ -4,11 +4,9 @@ import com.vatek.hrmtool.constant.CommonConstant;
 import com.vatek.hrmtool.constant.ErrorConstant;
 import com.vatek.hrmtool.dto.ListResponseDto;
 import com.vatek.hrmtool.dto.user.UserDto;
-import com.vatek.hrmtool.entity.PrivilegeEntity;
-import com.vatek.hrmtool.entity.RefreshTokenEntity;
-import com.vatek.hrmtool.entity.RoleEntity;
-import com.vatek.hrmtool.entity.UserEntity;
+import com.vatek.hrmtool.entity.*;
 import com.vatek.hrmtool.entity.enumeration.Privilege;
+import com.vatek.hrmtool.entity.enumeration.Role;
 import com.vatek.hrmtool.exception.ErrorResponse;
 import com.vatek.hrmtool.exception.ProductException;
 import com.vatek.hrmtool.jwt.JwtProvider;
@@ -20,6 +18,7 @@ import com.vatek.hrmtool.readable.form.updateForm.UpdateUserForm;
 import com.vatek.hrmtool.readable.request.ChangePasswordReq;
 import com.vatek.hrmtool.readable.request.ChangeStatusAccountReq;
 import com.vatek.hrmtool.respository.PrivilegeRepository;
+import com.vatek.hrmtool.respository.ProjectRepository;
 import com.vatek.hrmtool.respository.RoleRepository;
 import com.vatek.hrmtool.respository.UserRepository;
 import com.vatek.hrmtool.security.service.UserPrinciple;
@@ -44,10 +43,12 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
+import org.springframework.security.access.AccessDeniedException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -64,6 +65,8 @@ public class UserServiceImpl implements UserService {
 
     final
     UserRepository userRepository;
+
+    final ProjectRepository projectRepository;
 
     final AuthenticationManager authenticationManager;
 
@@ -187,7 +190,7 @@ public class UserServiceImpl implements UserService {
         {
             throw new ProductException(
                     new ErrorResponse(ErrorConstant.Code.NOT_FOUND,
-                    String.format(ErrorConstant.Message.NOT_EXISTS, id),
+                    String.format(ErrorConstant.Message.NOT_FOUND, id),
                     ErrorConstant.Type.FAILURE)
             );
         }
@@ -224,9 +227,14 @@ public class UserServiceImpl implements UserService {
 
             log.error("User with email not found in database => {}",() -> email);
 
-            throw new ProductException(new ErrorResponse(ErrorConstant.Code.NOT_FOUND,
-                    String.format(ErrorConstant.Message.NOT_EXISTS, email),
-                    ErrorConstant.Type.FAILURE));
+            throw new ProductException(
+                    ErrorResponse
+                            .builder()
+                            .errorCode(ErrorConstant.Code.NOT_FOUND)
+                            .message(String.format(ErrorConstant.Message.NOT_FOUND, email))
+                            .errorType(ErrorConstant.Type.NOT_FOUND)
+                            .build()
+            );
         }
 
         String pwd = RandomStringUtils.random(12, CommonConstant.CHARACTERS);
@@ -246,8 +254,8 @@ public class UserServiceImpl implements UserService {
         if (userEntity == null) {
             throw new ProductException(
                     new ErrorResponse(ErrorConstant.Code.NOT_FOUND,
-                    String.format(ErrorConstant.Message.NOT_EXISTS, changePasswordReq.getId()),
-                    ErrorConstant.Type.FAILURE)
+                    String.format(ErrorConstant.Message.NOT_FOUND, changePasswordReq.getId()),
+                    ErrorConstant.Type.NOT_FOUND)
             );
         }
         String pwd = changePasswordReq.getPassword();
@@ -265,8 +273,8 @@ public class UserServiceImpl implements UserService {
         if (userEntity == null) {
 
             throw new ProductException(new ErrorResponse(ErrorConstant.Code.NOT_FOUND,
-                    String.format(ErrorConstant.Message.NOT_EXISTS, changeStatusAccountReq.getId()),
-                    ErrorConstant.Type.FAILURE));
+                    String.format(ErrorConstant.Message.NOT_FOUND, changeStatusAccountReq.getId()),
+                    ErrorConstant.Type.NOT_FOUND));
 
         }
 
@@ -311,12 +319,8 @@ public class UserServiceImpl implements UserService {
 
         saveToken(jwt,userEntity);
 
-        RefreshTokenEntity refreshToken = refreshTokenService.createRefreshToken(userEntity);
-
-//        List<String> roles = userPrinciple.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
-
-
-
+        RefreshTokenEntity refreshToken = refreshTokenService.createRefreshToken(userEntity)
+                ;
         return new JwtResponse(
                 jwt,
                 refreshToken.getToken(),
@@ -329,6 +333,32 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<UserDto> getUsersByProjectId(Long projectId) {
+        ProjectEntity projectEntity = projectRepository.findById(projectId).orElse(null);
+
+        UserPrinciple userPrinciple = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if(projectEntity == null){
+            throw new ProductException(
+                    ErrorResponse
+                            .builder()
+                            .errorType(ErrorConstant.Type.NOT_FOUND)
+                            .errorCode(ErrorConstant.Code.NOT_FOUND)
+                            .message(String.format(ErrorConstant.Message.NOT_FOUND,"ProjectId " + projectId))
+                            .build()
+            );
+        }
+
+        if(!Objects.equals(projectEntity.getId(), userPrinciple.getId()) && userPrinciple.getAuthorities().stream().anyMatch(x -> x.getAuthority().equals(Role.ADMIN.getAuthority()))){
+            throw new AccessDeniedException("Cannot access to another project");
+        }
+
+        Collection<UserEntity> userEntityList = projectEntity.getMemberUser();
+
+        return (List<UserDto>) userMapping.toListDto(userEntityList);
+    }
+
+    @Override
     public UserDto updateUser(UpdateUserForm form) {
         UserEntity userEntity = userRepository.findUserEntityById(form.getId());
 
@@ -337,17 +367,15 @@ public class UserServiceImpl implements UserService {
 
         if (userEntity == null) {
             throw new ProductException(new ErrorResponse(ErrorConstant.Code.NOT_FOUND,
-                    String.format(ErrorConstant.Message.NOT_EXISTS, form.getId()),
-                    ErrorConstant.Type.FAILURE));
+                    String.format(ErrorConstant.Message.NOT_FOUND, form.getId()),
+                    ErrorConstant.Type.NOT_FOUND));
         }
         userEntity.setEmail(form.getEmail());
         userEntity.setName(form.getName());
         userEntity.setIdentityCard(form.getIdentityCard());
         userEntity.setPhoneNumber1(form.getPhoneNumber1());
-//        userEntity.setPhoneNumber2(form.getPhoneNumber2());
         userEntity.setCurrentAddress(form.getCurrentAddress());
         userEntity.setPermanentAddress(form.getPermanentAddress());
-//        userEntity.setDescription(form.getDescription());
 
         userEntity = userRepository.save(userEntity);
         return userMapping.toDto(userEntity);
@@ -358,9 +386,7 @@ public class UserServiceImpl implements UserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null) {
-            throw new ProductException(
-                    new ErrorResponse()
-            );
+            throw new AccessDeniedException("Cannot logout");
         }
 
         UserPrinciple userPrinciple = (UserPrinciple) authentication.getPrincipal();
