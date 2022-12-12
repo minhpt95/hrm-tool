@@ -15,6 +15,8 @@ public class ErrorConstant {
         public static final String USER_INACTIVE = "USER_INACTIVE";
         public static final String SUCCESS = "SUCCESS";
         public static final String FAILURE = "FAILURE";
+        public static final String NOT_FOUND = "NOT FOUND";
+
     }
 
     public static class Message {
@@ -22,7 +24,9 @@ public class ErrorConstant {
         public static final String USER_INACTIVE = "User inactive.";
         public static final String SUCCESS = "SUCCESS.";
         public static final String ALREADY_EXISTS = "%s already exists.";
-        public static final String NOT_EXISTS = "%s not exists.";
+        public static final String NOT_EXISTS = "%s not exist.";
+
+        public static final String NOT_FOUND = "%s not found.";
         public static final String BLANK =" %s not blank.";
         public static final String END_OF_TIME ="Time activate expired";
     }

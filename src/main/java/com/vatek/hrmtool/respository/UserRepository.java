@@ -6,6 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -21,4 +23,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> , JpaSpe
     UserEntity findUserEntityById(Long id);
 
     UserEntity findUserEntityByEmail(String email);
+
+    Collection<UserEntity> findUserEntitiesByIdIn(List<Long> id);
 }
