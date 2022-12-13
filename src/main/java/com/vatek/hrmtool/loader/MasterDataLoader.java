@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Component
-public class MasterData implements ApplicationListener<ContextRefreshedEvent> {
+public class MasterDataLoader implements ApplicationListener<ContextRefreshedEvent> {
     boolean alreadySetup = false;
     private final UserRepository userRepository;
 
@@ -34,7 +34,7 @@ public class MasterData implements ApplicationListener<ContextRefreshedEvent> {
 
     private final PasswordEncoder passwordEncoder;
 
-    public MasterData(UserRepository userRepository, RoleRepository roleRepository, PrivilegeRepository privilegeRepository, MasterDataRepository masterDataRepository, PasswordEncoder passwordEncoder) {
+    public MasterDataLoader(UserRepository userRepository, RoleRepository roleRepository, PrivilegeRepository privilegeRepository, MasterDataRepository masterDataRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.privilegeRepository = privilegeRepository;

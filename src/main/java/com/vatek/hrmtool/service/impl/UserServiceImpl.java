@@ -17,19 +17,18 @@ import com.vatek.hrmtool.readable.form.createForm.CreateUserForm;
 import com.vatek.hrmtool.readable.form.updateForm.UpdateUserForm;
 import com.vatek.hrmtool.readable.request.ChangePasswordReq;
 import com.vatek.hrmtool.readable.request.ChangeStatusAccountReq;
-import com.vatek.hrmtool.respository.PrivilegeRepository;
-import com.vatek.hrmtool.respository.ProjectRepository;
-import com.vatek.hrmtool.respository.RoleRepository;
-import com.vatek.hrmtool.respository.UserRepository;
+import com.vatek.hrmtool.respository.*;
 import com.vatek.hrmtool.security.service.UserPrinciple;
 import com.vatek.hrmtool.service.MailService;
 import com.vatek.hrmtool.service.RefreshTokenService;
 import com.vatek.hrmtool.service.UserService;
 import com.vatek.hrmtool.util.CommonUtil;
+import com.vatek.hrmtool.util.DateUtil;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -46,10 +45,7 @@ import javax.transaction.Transactional;
 import org.springframework.security.access.AccessDeniedException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.vatek.hrmtool.util.EmailValidateUtil.isAddressValid;
@@ -59,6 +55,9 @@ import static com.vatek.hrmtool.util.EmailValidateUtil.isAddressValid;
 @AllArgsConstructor
 @Log4j2
 public class UserServiceImpl implements UserService {
+
+    @Value("${hrm.app.refreshTokenExpiration}")
+    private Long refreshTokenDurationMs;
 
     final
     PasswordEncoder passwordEncoder;
@@ -319,8 +318,8 @@ public class UserServiceImpl implements UserService {
 
         saveToken(jwt,userEntity);
 
-        RefreshTokenEntity refreshToken = refreshTokenService.createRefreshToken(userEntity)
-                ;
+        RefreshTokenEntity refreshToken = refreshTokenService.createRefreshToken(userEntity);
+
         return new JwtResponse(
                 jwt,
                 refreshToken.getToken(),
