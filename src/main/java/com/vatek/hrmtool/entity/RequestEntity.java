@@ -1,14 +1,13 @@
 package com.vatek.hrmtool.entity;
 
 import com.vatek.hrmtool.entity.common.CommonEntity;
-import com.vatek.hrmtool.entity.enumeration.RequestStatus;
-import com.vatek.hrmtool.entity.enumeration.TypeDayOff;
+import com.vatek.hrmtool.enumeration.RequestStatus;
+import com.vatek.hrmtool.enumeration.TypeDayOff;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.Instant;
-import java.util.Collection;
 
 @Entity(name = "Requests")
 @Getter

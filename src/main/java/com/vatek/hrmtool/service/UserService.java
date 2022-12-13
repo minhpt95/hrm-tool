@@ -9,9 +9,11 @@ import com.vatek.hrmtool.readable.form.createForm.CreateUserForm;
 import com.vatek.hrmtool.readable.form.updateForm.UpdateUserForm;
 import com.vatek.hrmtool.readable.request.ChangePasswordReq;
 import com.vatek.hrmtool.readable.request.ChangeStatusAccountReq;
+import org.springframework.data.domain.Pageable;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
 import java.nio.file.AccessDeniedException;
 import java.time.Instant;
 import java.util.List;
@@ -27,10 +29,12 @@ public interface UserService {
 
     UserEntity findUserEntityByEmail(String email);
 
+    @Transactional
+    UserDto findUserEntityById(Long id);
+
     ListResponseDto<UserDto> getUserList
     (
-            int pageIndex,
-            int pageSize
+            Pageable pageable
     );
     
     UserDto createUser(CreateUserForm form);

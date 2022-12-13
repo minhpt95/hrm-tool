@@ -1,6 +1,6 @@
 package com.vatek.hrmtool.readable.form.createForm;
 
-import com.vatek.hrmtool.entity.enumeration.ProjectStatus;
+import com.vatek.hrmtool.enumeration.ProjectStatus;
 import com.vatek.hrmtool.validator.anotation.DateFormatConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,5 +29,5 @@ public class CreateProjectForm {
     @NotNull
     private ProjectStatus projectStatus;
     @DateFormatConstraint()
-    private Date startDate;
+    private String startDate;
 }

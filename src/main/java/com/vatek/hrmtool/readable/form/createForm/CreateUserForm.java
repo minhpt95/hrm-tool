@@ -1,7 +1,6 @@
 package com.vatek.hrmtool.readable.form.createForm;
 
-import com.vatek.hrmtool.entity.enumeration.Privilege;
-import com.vatek.hrmtool.entity.enumeration.Role;
+import com.vatek.hrmtool.enumeration.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

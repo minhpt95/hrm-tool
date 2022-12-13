@@ -1,7 +1,7 @@
 package com.vatek.hrmtool.entity;
 
 import com.vatek.hrmtool.entity.common.CommonEntity;
-import com.vatek.hrmtool.entity.enumeration.Role;
+import com.vatek.hrmtool.enumeration.Role;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -27,6 +27,8 @@ public class ErrorConstant {
         public static final String MISSING_FIELD = "MISSING_FIELD";
         public static final String TOKEN_REFRESH_EXCEPTION = "TOKEN_REFRESH_EXCEPTION";
 
+        public static final String INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR";
+
     }
 
     public static class Message {

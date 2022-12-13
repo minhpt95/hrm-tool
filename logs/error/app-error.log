@@ -116,3 +116,9 @@ Caused by: io.jsonwebtoken.security.WeakKeyException: The signing key's size is 
 2022-12-07T16:35:11.731+0700 ERROR Unauthorized error. Message - Full authentication is required to access this resource
 2022-12-07T16:57:13.905+0700 ERROR Unauthorized error. Message - Full authentication is required to access this resource
 2022-12-07T17:01:07.882+0700 ERROR Unauthorized error. Message - Full authentication is required to access this resource
+2022-12-13T13:58:04.797+0700 ERROR Unauthorized error. Message - Full authentication is required to access this resource
+2022-12-13T15:17:16.840+0700 ERROR Unauthorized error. Message - Full authentication is required to access this resource
+2022-12-13T15:33:40.669+0700 ERROR Unauthorized error. Message - Full authentication is required to access this resource
+2022-12-13T15:43:16.817+0700 ERROR Unauthorized error. Message - Full authentication is required to access this resource
+2022-12-13T16:12:47.755+0700 ERROR Unauthorized error. Message - Full authentication is required to access this resource
+2022-12-13T16:35:29.278+0700 ERROR Unauthorized error. Message - Full authentication is required to access this resource

@@ -69,7 +69,7 @@ public class UserController {
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @PostMapping(value = "/getUserPageable")
     public ListResponseDto<UserDto> getUserPageable(Pageable pageable){
-        return null;
+        return userService.getUserList(pageable);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_PM')")

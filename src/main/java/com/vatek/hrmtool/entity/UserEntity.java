@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Collection;
 
 @Entity
@@ -45,18 +46,23 @@ public class UserEntity extends CommonEntity {
             CascadeType.PERSIST,
             CascadeType.REFRESH
     },mappedBy = "managerUser")
-    private Collection<ProjectEntity> projectManagement;
+    private Collection<ProjectEntity> projectManagement = new ArrayList<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY,cascade = {
+            CascadeType.DETACH,
+            CascadeType.MERGE,
+            CascadeType.PERSIST,
+            CascadeType.REFRESH,
+    })
     @JoinTable(
             name = "users_projects",
             joinColumns = @JoinColumn(
                     name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(
                     name = "project_id", referencedColumnName = "id"))
-    private Collection<ProjectEntity> workingProject;
+    private Collection<ProjectEntity> workingProject = new ArrayList<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(

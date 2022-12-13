@@ -1,7 +1,7 @@
 package com.vatek.hrmtool.respository;
 
 import com.vatek.hrmtool.entity.RoleEntity;
-import com.vatek.hrmtool.entity.enumeration.Role;
+import com.vatek.hrmtool.enumeration.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 

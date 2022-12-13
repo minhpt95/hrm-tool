@@ -1,4 +1,4 @@
-package com.vatek.hrmtool.entity.enumeration;
+package com.vatek.hrmtool.enumeration;
 
 import org.springframework.security.core.GrantedAuthority;
 

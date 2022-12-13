@@ -5,8 +5,7 @@ import com.vatek.hrmtool.constant.ErrorConstant;
 import com.vatek.hrmtool.dto.ListResponseDto;
 import com.vatek.hrmtool.dto.user.UserDto;
 import com.vatek.hrmtool.entity.*;
-import com.vatek.hrmtool.entity.enumeration.Privilege;
-import com.vatek.hrmtool.entity.enumeration.Role;
+import com.vatek.hrmtool.enumeration.Role;
 import com.vatek.hrmtool.exception.ErrorResponse;
 import com.vatek.hrmtool.exception.ProductException;
 import com.vatek.hrmtool.jwt.JwtProvider;
@@ -23,14 +22,13 @@ import com.vatek.hrmtool.service.MailService;
 import com.vatek.hrmtool.service.RefreshTokenService;
 import com.vatek.hrmtool.service.UserService;
 import com.vatek.hrmtool.util.CommonUtil;
-import com.vatek.hrmtool.util.DateUtil;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -55,32 +53,16 @@ import static com.vatek.hrmtool.util.EmailValidateUtil.isAddressValid;
 @AllArgsConstructor
 @Log4j2
 public class UserServiceImpl implements UserService {
-
-    @Value("${hrm.app.refreshTokenExpiration}")
-    private Long refreshTokenDurationMs;
-
-    final
-    PasswordEncoder passwordEncoder;
-
-    final
-    UserRepository userRepository;
-
+    final PasswordEncoder passwordEncoder;
+    final UserRepository userRepository;
     final ProjectRepository projectRepository;
-
     final AuthenticationManager authenticationManager;
-
     final MailService mailService;
-
     final JwtProvider jwtProvider;
-
     final Environment env;
-
     final RoleRepository roleRepository;
-
     final RefreshTokenService refreshTokenService;
-
     private final UserMapping userMapping;
-
     @Override
     public void saveToken(String token, UserEntity userEntity) {
         userEntity.setAccessToken(token);
@@ -130,19 +112,36 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmail(email).orElse(null);
     }
 
+    @Override
+    @Transactional
+    public UserDto findUserEntityById(Long id){
+
+        UserEntity userEntity = userRepository.findById(id).orElseThrow(() -> new ProductException(
+                ErrorResponse
+                        .builder()
+                        .errorCode(ErrorConstant.Code.NOT_FOUND)
+                        .errorType(ErrorConstant.Type.NOT_FOUND)
+                        .message(String.format(ErrorConstant.Message.NOT_FOUND,"User id " + id))
+                        .build()
+                ));
+
+
+        return userMapping.toDto(userEntity);
+    }
+
 
 
     @Override
-    public ListResponseDto<UserDto> getUserList(int pageIndex, int pageSize) {
-        Page<UserEntity> page = userRepository.findAll(CommonUtil.buildPageable(pageIndex, pageSize));
-        Page<UserDto> userDtoPage = page.map(userMapping::toDto);
+    @Transactional
+    public ListResponseDto<UserDto> getUserList(Pageable pageable) {
+        Page<UserEntity> userEntityPage = userRepository.findAll(CommonUtil.buildPageable(pageable.getPageNumber(), pageable.getPageSize()));
+        Page<UserDto> userDtoPage = userEntityPage.map(userMapping::toDto);
         ListResponseDto<UserDto> result = new ListResponseDto<>();
-        return result.buildResponseList(userDtoPage, pageSize, pageIndex);
+        return result.buildResponseList(userDtoPage, pageable.getPageSize(), pageable.getPageNumber());
     }
 
     @Override
     @Transactional
-    @SneakyThrows
     public UserDto createUser(CreateUserForm form) {
         UserPrinciple userPrinciple = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 

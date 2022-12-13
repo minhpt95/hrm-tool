@@ -46,7 +46,7 @@ public class ResponseHandler {
 
     @ExceptionHandler(value = DisabledException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ErrorResponse handleDisableException(DisabledException ex, WebRequest request) {
+    public ErrorResponse handleDisableException() {
         return ErrorResponse
                 .builder()
                 .errorCode(ErrorConstant.Code.USER_INACTIVE)
@@ -57,7 +57,7 @@ public class ResponseHandler {
 
     @ExceptionHandler(value = TokenRefreshException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ErrorResponse handleTokenRefreshException(TokenRefreshException ex, WebRequest request) {
+    public ErrorResponse handleTokenRefreshException(TokenRefreshException ex) {
         return ErrorResponse
                 .builder()
                 .errorCode(ErrorConstant.Code.TOKEN_REFRESH_EXCEPTION)
@@ -97,10 +97,11 @@ public class ResponseHandler {
     }
 
     @ExceptionHandler(value = Exception.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleBindingErrors(Exception ex) {
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleAnotherException(Exception ex) {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setErrorCode(ErrorConstant.Code.INTERNAL_SERVER_ERROR);
+        errorResponse.setErrorType(ErrorConstant.Type.INTERNAL_SERVER_ERROR);
         errorResponse.setMessage(ex.getMessage());
         return errorResponse;
     }
