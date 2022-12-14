@@ -15,9 +15,11 @@ import java.util.Collection;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateUserForm {
+
     @NotEmpty
     private String name;
 
+    @NotEmpty
     private String email;
 
     @NotEmpty
@@ -28,14 +30,12 @@ public class CreateUserForm {
 
     @NotEmpty
     private String phoneNumber1;
-//    private String phoneNumber2;
 
     @NotEmpty
     private String currentAddress;
 
     @NotEmpty
     private String permanentAddress;
-//    private String description;
 
     private MultipartFile avatarImage;
 

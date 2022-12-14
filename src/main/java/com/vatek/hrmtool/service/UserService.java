@@ -6,7 +6,9 @@ import com.vatek.hrmtool.entity.UserEntity;
 import com.vatek.hrmtool.jwt.JwtResponse;
 import com.vatek.hrmtool.readable.form.LoginForm;
 import com.vatek.hrmtool.readable.form.createForm.CreateUserForm;
+import com.vatek.hrmtool.readable.form.updateForm.UpdateMemberProjectForm;
 import com.vatek.hrmtool.readable.form.updateForm.UpdateUserForm;
+import com.vatek.hrmtool.readable.form.updateForm.UpdateUserRoleForm;
 import com.vatek.hrmtool.readable.request.ChangePasswordReq;
 import com.vatek.hrmtool.readable.request.ChangeStatusAccountReq;
 import org.springframework.data.domain.Pageable;
@@ -24,8 +26,6 @@ public interface UserService {
     void clearToken(UserEntity userEntity);
 
     void clearAllToken();
-
-    UserEntity findUserEntityByEmailForLogin(String email);
 
     UserEntity findUserEntityByEmail(String email);
 
@@ -48,6 +48,8 @@ public interface UserService {
     Boolean deactivateAccount(ChangeStatusAccountReq changeStatusAccountReq);
 
     UserDto updateUser(UpdateUserForm form);
+
+    UserDto changeRole(UpdateUserRoleForm updateUserRoleForm);
 
     JwtResponse authenticateUser(LoginForm loginForm);
 

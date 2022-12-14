@@ -14,6 +14,7 @@ import com.vatek.hrmtool.mapping.UserMapping;
 import com.vatek.hrmtool.readable.form.LoginForm;
 import com.vatek.hrmtool.readable.form.createForm.CreateUserForm;
 import com.vatek.hrmtool.readable.form.updateForm.UpdateUserForm;
+import com.vatek.hrmtool.readable.form.updateForm.UpdateUserRoleForm;
 import com.vatek.hrmtool.readable.request.ChangePasswordReq;
 import com.vatek.hrmtool.readable.request.ChangeStatusAccountReq;
 import com.vatek.hrmtool.respository.*;
@@ -26,6 +27,7 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -91,22 +93,6 @@ public class UserServiceImpl implements UserService {
 
         userRepository.saveAll(userEntities);
     }
-
-    @Override
-    public UserEntity findUserEntityByEmailForLogin(String email) {
-        Optional<UserEntity> optionalUserEntity = userRepository.findByEmail(email);
-
-        if (optionalUserEntity.isEmpty())
-        {
-            throw new ProductException(new ErrorResponse(
-                    ErrorConstant.Code.LOGIN_INVALID,
-                    ErrorConstant.Type.LOGIN_INVALID,
-                    ErrorConstant.Message.LOGIN_INVALID
-            ));
-        }
-        return optionalUserEntity.get();
-    }
-
 
     @Override
     public UserEntity findUserEntityByEmail(String email) {
@@ -347,7 +333,10 @@ public class UserServiceImpl implements UserService {
             );
         }
 
-        if(!Objects.equals(projectEntity.getId(), userPrinciple.getId()) && userPrinciple.getAuthorities().stream().anyMatch(x -> x.getAuthority().equals(Role.ADMIN.getAuthority()))){
+        if(
+                !Objects.equals(projectEntity.getId(), userPrinciple.getId()) &&
+                        userPrinciple.getAuthorities().stream().anyMatch(x -> x.getAuthority().equals(Role.ADMIN.getAuthority()))
+        ){
             throw new AccessDeniedException("Cannot access to another project");
         }
 
@@ -357,10 +346,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDto changeRole(UpdateUserRoleForm updateUserRoleForm) {
+        UserEntity userEntity = userRepository.findUserEntityById(updateUserRoleForm.getId());
+
+        if (userEntity == null) {
+            throw new ProductException(new ErrorResponse(ErrorConstant.Code.NOT_FOUND,
+                    String.format(ErrorConstant.Message.NOT_FOUND, updateUserRoleForm.getId()),
+                    ErrorConstant.Type.NOT_FOUND));
+        }
+
+        RoleEntity role = roleRepository.findByRole(updateUserRoleForm.getRole());
+
+        userEntity.getRoles().clear();
+
+        userEntity.getRoles().add(role);
+
+        userEntity = userRepository.save(userEntity);
+
+        return userMapping.toDto(userEntity);
+    }
+
+    @Override
     public UserDto updateUser(UpdateUserForm form) {
         UserEntity userEntity = userRepository.findUserEntityById(form.getId());
 
-        log.info("update information user by {}",form.getId());
+        log.info("Update information user by {}",form.getId());
 
 
         if (userEntity == null) {
@@ -368,12 +378,30 @@ public class UserServiceImpl implements UserService {
                     String.format(ErrorConstant.Message.NOT_FOUND, form.getId()),
                     ErrorConstant.Type.NOT_FOUND));
         }
-        userEntity.setEmail(form.getEmail());
-        userEntity.setName(form.getName());
-        userEntity.setIdentityCard(form.getIdentityCard());
-        userEntity.setPhoneNumber1(form.getPhoneNumber1());
-        userEntity.setCurrentAddress(form.getCurrentAddress());
-        userEntity.setPermanentAddress(form.getPermanentAddress());
+
+        if(StringUtils.isNotBlank(form.getEmail())){
+            userEntity.setEmail(form.getEmail());
+        }
+
+        if(StringUtils.isNotBlank(form.getName())){
+            userEntity.setName(form.getName());
+        }
+
+        if(StringUtils.isNotBlank(form.getIdentityCard())){
+            userEntity.setIdentityCard(form.getIdentityCard());
+        }
+
+        if(StringUtils.isNotBlank(form.getPhoneNumber1())){
+            userEntity.setPhoneNumber1(form.getPhoneNumber1());
+        }
+
+        if(StringUtils.isNotBlank(form.getCurrentAddress())){
+            userEntity.setCurrentAddress(form.getCurrentAddress());
+        }
+
+        if(StringUtils.isNotBlank(form.getPermanentAddress())){
+            userEntity.setPermanentAddress(form.getPermanentAddress());
+        }
 
         userEntity = userRepository.save(userEntity);
         return userMapping.toDto(userEntity);
