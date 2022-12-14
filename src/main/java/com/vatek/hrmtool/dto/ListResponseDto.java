@@ -3,6 +3,7 @@ package com.vatek.hrmtool.dto;
 import lombok.*;
 import org.springframework.data.domain.Page;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import java.util.List;
 @Builder
 public class ListResponseDto<T> implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -3931471505590865499L;
 
     private int pageSize;
@@ -23,18 +25,16 @@ public class ListResponseDto<T> implements Serializable {
     private int pageCount;
     private long totalItemCount;
 
-    public ListResponseDto<T> buildResponseList(Page<T> page, int pageIndex, int pageSize) {
-        return ListResponseDto.<T>builder()
-                .items(page.getContent())
-                .pageSize(pageSize)
-                .pageIndex(pageIndex)
-                .hasNextPage(page.hasNext())
-                .hasPreviousPage(page.hasPrevious())
-                .pageCount(page.getTotalPages())
-                .totalItemCount(page.getTotalElements())
-                .build();
-    }
 
+    public ListResponseDto(Page<T> page,int pageIndex,int pageSize){
+        this.items = page.getContent();
+        this.pageSize = pageSize;
+        this.pageIndex = pageIndex;
+        this.hasNextPage = page.hasNext();
+        this.hasPreviousPage = page.hasPrevious();
+        this.pageCount = page.getTotalPages();
+        this.totalItemCount = page.getTotalElements();
+    }
 
 
 }

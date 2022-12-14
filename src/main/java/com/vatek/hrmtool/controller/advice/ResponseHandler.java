@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
@@ -37,8 +38,19 @@ public class ResponseHandler {
     public ErrorResponse handleAccessDeniedException(AccessDeniedException ex, WebRequest request) {
         return ErrorResponse
                 .builder()
-                .errorCode(ErrorConstant.Code.PERMISSION_DENIED)
-                .errorType(ErrorConstant.Type.PERMISSION_DENIED)
+                .code(ErrorConstant.Code.PERMISSION_DENIED)
+                .type(ErrorConstant.Type.PERMISSION_DENIED)
+                .message(ex.getMessage())
+                .build();
+    }
+
+    @ExceptionHandler(AuthenticationCredentialsNotFoundException.class)
+    @ResponseStatus(value = HttpStatus.FORBIDDEN)
+    public ErrorResponse handleAuthenticationCredentialsNotFoundException(AuthenticationCredentialsNotFoundException ex, WebRequest request) {
+        return ErrorResponse
+                .builder()
+                .code(ErrorConstant.Code.AUTHENTICATION_ERROR)
+                .type(ErrorConstant.Type.AUTHENTICATION_ERROR)
                 .message(ex.getMessage())
                 .build();
     }
@@ -49,8 +61,8 @@ public class ResponseHandler {
     public ErrorResponse handleDisableException() {
         return ErrorResponse
                 .builder()
-                .errorCode(ErrorConstant.Code.USER_INACTIVE)
-                .errorType(ErrorConstant.Type.USER_INACTIVE)
+                .code(ErrorConstant.Code.USER_INACTIVE)
+                .type(ErrorConstant.Type.USER_INACTIVE)
                 .message(ErrorConstant.Message.USER_INACTIVE)
                 .build();
     }
@@ -60,8 +72,8 @@ public class ResponseHandler {
     public ErrorResponse handleTokenRefreshException(TokenRefreshException ex) {
         return ErrorResponse
                 .builder()
-                .errorCode(ErrorConstant.Code.TOKEN_REFRESH_EXCEPTION)
-                .errorType(ErrorConstant.Type.TOKEN_REFRESH_EXCEPTION)
+                .code(ErrorConstant.Code.TOKEN_REFRESH_EXCEPTION)
+                .type(ErrorConstant.Type.TOKEN_REFRESH_EXCEPTION)
                 .message(ex.getMessage())
                 .build();
     }
@@ -70,7 +82,8 @@ public class ResponseHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseDto<List<?>> handleBindingErrors(BindException ex) {
         ResponseDto<List<?>> errorResponse = new ResponseDto<>();
-        errorResponse.setErrorCode(ErrorConstant.Code.INTERNAL_SERVER_ERROR);
+        errorResponse.setCode(ErrorConstant.Code.MISSING_FIELD);
+        errorResponse.setType(ErrorConstant.Type.MISSING_FIELD);
 
         List<FieldError> errors = ex.getBindingResult().getFieldErrors();
 
@@ -91,7 +104,7 @@ public class ResponseHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBindingErrors(HttpMessageNotReadableException ex) {
         ErrorResponse errorResponse = new ErrorResponse();
-        errorResponse.setErrorCode(ErrorConstant.Code.INTERNAL_SERVER_ERROR);
+        errorResponse.setCode(ErrorConstant.Code.INTERNAL_SERVER_ERROR);
         errorResponse.setMessage(ex.getMessage());
         return errorResponse;
     }
@@ -100,8 +113,8 @@ public class ResponseHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleAnotherException(Exception ex) {
         ErrorResponse errorResponse = new ErrorResponse();
-        errorResponse.setErrorCode(ErrorConstant.Code.INTERNAL_SERVER_ERROR);
-        errorResponse.setErrorType(ErrorConstant.Type.INTERNAL_SERVER_ERROR);
+        errorResponse.setCode(ErrorConstant.Code.INTERNAL_SERVER_ERROR);
+        errorResponse.setType(ErrorConstant.Type.INTERNAL_SERVER_ERROR);
         errorResponse.setMessage(ex.getMessage());
         return errorResponse;
     }

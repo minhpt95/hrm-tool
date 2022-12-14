@@ -30,8 +30,8 @@ public class AuthController {
 
         var responseDto = new ResponseDto<UserDto>();
         responseDto.setContent(createUserDto);
-        responseDto.setErrorCode(ErrorConstant.Code.SUCCESS);
-        responseDto.setErrorType(ErrorConstant.Type.SUCCESS);
+        responseDto.setCode(ErrorConstant.Code.SUCCESS);
+        responseDto.setType(ErrorConstant.Type.SUCCESS);
         responseDto.setMessage(ErrorConstant.Message.SUCCESS);
 
         return responseDto;
@@ -42,8 +42,8 @@ public class AuthController {
         JwtResponse jwtResponse = userService.authenticateUser(loginForm);
 
         var responseDto = new ResponseDto<JwtResponse>();
-        responseDto.setErrorCode(ErrorConstant.Code.SUCCESS);
-        responseDto.setErrorType(ErrorConstant.Type.SUCCESS);
+        responseDto.setCode(ErrorConstant.Code.SUCCESS);
+        responseDto.setType(ErrorConstant.Type.SUCCESS);
         responseDto.setMessage(ErrorConstant.Message.SUCCESS);
         responseDto.setContent(jwtResponse);
 
@@ -56,9 +56,9 @@ public class AuthController {
 
         userService.activateEmail(id, DateUtil.getInstantNow());
 
-        responseDto.setErrorCode(ErrorConstant.Code.SUCCESS);
+        responseDto.setCode(ErrorConstant.Code.SUCCESS);
         responseDto.setMessage(ErrorConstant.Message.SUCCESS);
-        responseDto.setErrorType(ErrorConstant.Type.SUCCESS);
+        responseDto.setType(ErrorConstant.Type.SUCCESS);
 
         return responseDto;
     }
@@ -68,8 +68,8 @@ public class AuthController {
         userService.forgotPassword(email);
 
         var responseDto = new ResponseDto<>();
-        responseDto.setErrorCode(ErrorConstant.Code.SUCCESS);
-        responseDto.setErrorType(ErrorConstant.Type.SUCCESS);
+        responseDto.setCode(ErrorConstant.Code.SUCCESS);
+        responseDto.setType(ErrorConstant.Type.SUCCESS);
         responseDto.setMessage(ErrorConstant.Message.SUCCESS);
 
         return responseDto;

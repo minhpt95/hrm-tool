@@ -34,9 +34,9 @@ public class UserController {
         ResponseDto<Boolean> responseDto = new ResponseDto<>();
         
         responseDto.setContent(userService.changePassword(changePasswordReq));
-        responseDto.setErrorCode(ErrorConstant.Code.SUCCESS);
+        responseDto.setCode(ErrorConstant.Code.SUCCESS);
         responseDto.setMessage(ErrorConstant.Message.SUCCESS);
-        responseDto.setErrorType(ErrorConstant.Type.SUCCESS);
+        responseDto.setType(ErrorConstant.Type.SUCCESS);
         
         return responseDto;
     }
@@ -46,9 +46,9 @@ public class UserController {
         ResponseDto<UserDto> responseDto = new ResponseDto<>();
 
         responseDto.setContent(userService.updateUser(form));
-        responseDto.setErrorCode(ErrorConstant.Code.SUCCESS);
+        responseDto.setCode(ErrorConstant.Code.SUCCESS);
         responseDto.setMessage(ErrorConstant.Message.SUCCESS);
-        responseDto.setErrorType(ErrorConstant.Type.SUCCESS);
+        responseDto.setType(ErrorConstant.Type.SUCCESS);
 
         return responseDto;
     }
@@ -59,27 +59,33 @@ public class UserController {
         ResponseDto<UserDto> responseDto = new ResponseDto<>();
 
         responseDto.setContent(userService.createUser(createUserForm));
-        responseDto.setErrorCode(ErrorConstant.Code.SUCCESS);
+        responseDto.setCode(ErrorConstant.Code.SUCCESS);
         responseDto.setMessage(ErrorConstant.Message.SUCCESS);
-        responseDto.setErrorType(ErrorConstant.Type.SUCCESS);
+        responseDto.setType(ErrorConstant.Type.SUCCESS);
 
         return responseDto;
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    @PostMapping(value = "/getUserPageable")
+    @GetMapping(value = "/getUserPageable")
     public ListResponseDto<UserDto> getUserPageable(Pageable pageable){
         return userService.getUserList(pageable);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PostMapping(value = "/role/change")
+    public ListResponseDto<UserDto> changeRole(Pageable pageable){
+        return userService.getUserList(pageable);
+    }
+
     @PreAuthorize("hasAnyRole('ROLE_PM')")
-    @GetMapping(value = "/getUsersByProjectId/{projectId}")
+    @GetMapping(value = "/get-users-by-projectId/{projectId}")
     public ResponseDto<List<UserDto>> getUserByProjectId(@PathVariable("projectId") Long projectId){
         ResponseDto<List<UserDto>> responseDto = new ResponseDto<>();
         responseDto.setContent(userService.getUsersByProjectId(projectId));
-        responseDto.setErrorCode(ErrorConstant.Code.SUCCESS);
+        responseDto.setCode(ErrorConstant.Code.SUCCESS);
         responseDto.setMessage(ErrorConstant.Message.SUCCESS);
-        responseDto.setErrorType(ErrorConstant.Type.SUCCESS);
+        responseDto.setType(ErrorConstant.Type.SUCCESS);
 
         return responseDto;
     }
@@ -91,7 +97,7 @@ public class UserController {
 
         ResponseDto<?> responseDto = new ResponseDto<>();
         responseDto.setMessage(ErrorConstant.Message.SUCCESS);
-        responseDto.setErrorCode(ErrorConstant.Code.SUCCESS);
+        responseDto.setCode(ErrorConstant.Code.SUCCESS);
         return responseDto;
     }
 }

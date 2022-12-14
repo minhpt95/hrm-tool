@@ -1,9 +1,7 @@
 package com.vatek.hrmtool.entity;
 
-import com.vatek.hrmtool.dto.ModifyListDto;
 import com.vatek.hrmtool.entity.common.CommonEntity;
 import com.vatek.hrmtool.enumeration.ProjectStatus;
-import com.vatek.hrmtool.readable.form.updateForm.UpdateMemberProjectForm;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,7 +9,6 @@ import javax.persistence.*;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 @Entity
 @Table(name = "projects")
@@ -43,6 +40,8 @@ public class ProjectEntity extends CommonEntity {
     })
     private Collection<UserEntity> memberUser;
 
+    @Column
+    private Instant startTime;
     @Column
     private Instant endTime;
 

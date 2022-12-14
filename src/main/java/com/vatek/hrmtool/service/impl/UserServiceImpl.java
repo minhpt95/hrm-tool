@@ -29,6 +29,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -119,8 +120,8 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = userRepository.findById(id).orElseThrow(() -> new ProductException(
                 ErrorResponse
                         .builder()
-                        .errorCode(ErrorConstant.Code.NOT_FOUND)
-                        .errorType(ErrorConstant.Type.NOT_FOUND)
+                        .code(ErrorConstant.Code.NOT_FOUND)
+                        .type(ErrorConstant.Type.NOT_FOUND)
                         .message(String.format(ErrorConstant.Message.NOT_FOUND,"User id " + id))
                         .build()
                 ));
@@ -136,8 +137,7 @@ public class UserServiceImpl implements UserService {
     public ListResponseDto<UserDto> getUserList(Pageable pageable) {
         Page<UserEntity> userEntityPage = userRepository.findAll(CommonUtil.buildPageable(pageable.getPageNumber(), pageable.getPageSize()));
         Page<UserDto> userDtoPage = userEntityPage.map(userMapping::toDto);
-        ListResponseDto<UserDto> result = new ListResponseDto<>();
-        return result.buildResponseList(userDtoPage, pageable.getPageSize(), pageable.getPageNumber());
+        return new ListResponseDto<>(userDtoPage, pageable.getPageSize(), pageable.getPageNumber());
     }
 
     @Override
@@ -228,9 +228,9 @@ public class UserServiceImpl implements UserService {
             throw new ProductException(
                     ErrorResponse
                             .builder()
-                            .errorCode(ErrorConstant.Code.NOT_FOUND)
+                            .code(ErrorConstant.Code.NOT_FOUND)
                             .message(String.format(ErrorConstant.Message.NOT_FOUND, email))
-                            .errorType(ErrorConstant.Type.NOT_FOUND)
+                            .type(ErrorConstant.Type.NOT_FOUND)
                             .build()
             );
         }
@@ -334,14 +334,14 @@ public class UserServiceImpl implements UserService {
     public List<UserDto> getUsersByProjectId(Long projectId) {
         ProjectEntity projectEntity = projectRepository.findById(projectId).orElse(null);
 
-        UserPrinciple userPrinciple = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var userPrinciple = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if(projectEntity == null){
             throw new ProductException(
                     ErrorResponse
                             .builder()
-                            .errorType(ErrorConstant.Type.NOT_FOUND)
-                            .errorCode(ErrorConstant.Code.NOT_FOUND)
+                            .type(ErrorConstant.Type.NOT_FOUND)
+                            .code(ErrorConstant.Code.NOT_FOUND)
                             .message(String.format(ErrorConstant.Message.NOT_FOUND,"ProjectId " + projectId))
                             .build()
             );
@@ -384,7 +384,7 @@ public class UserServiceImpl implements UserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null) {
-            throw new AccessDeniedException("Cannot logout");
+            throw new AuthenticationCredentialsNotFoundException("Cannot logout");
         }
 
         UserPrinciple userPrinciple = (UserPrinciple) authentication.getPrincipal();

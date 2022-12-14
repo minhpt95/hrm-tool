@@ -9,12 +9,13 @@ public class ErrorConstant {
         public static final String ALREADY_EXISTS = "04";
         public static final String PERMISSION_DENIED = "05";
 
-
         public static final String INTERNAL_SERVER_ERROR = "06";
 
         public static final String TOKEN_REFRESH_EXCEPTION = "07";
 
         public static final String MISSING_FIELD = "08";
+
+        public static final String AUTHENTICATION_ERROR = "09";
     }
 
     public static class Type {
@@ -26,14 +27,15 @@ public class ErrorConstant {
         public static final String PERMISSION_DENIED = "PERMISSION_DENIED";
         public static final String MISSING_FIELD = "MISSING_FIELD";
         public static final String TOKEN_REFRESH_EXCEPTION = "TOKEN_REFRESH_EXCEPTION";
-
         public static final String INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR";
+        public static final String AUTHENTICATION_ERROR = "AUTHENTICATION_ERROR";
 
     }
 
     public static class Message {
         public static final String LOGIN_INVALID = "Username or password invalid.";
         public static final String USER_INACTIVE = "User inactive.";
+        public static final String CANNOT_UPDATE_ANOTHER_PROJECT = "Cannot update another project";
         public static final String SUCCESS = "SUCCESS.";
         public static final String ALREADY_EXISTS = "%s already exists.";
         public static final String NOT_FOUND = "%s not found.";

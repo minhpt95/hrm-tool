@@ -4,10 +4,10 @@ import com.vatek.hrmtool.constant.ErrorConstant;
 import com.vatek.hrmtool.dto.ListResponseDto;
 import com.vatek.hrmtool.dto.ModifyListDto;
 import com.vatek.hrmtool.dto.project.ProjectDto;
-import com.vatek.hrmtool.dto.user.UserDto;
 import com.vatek.hrmtool.entity.ProjectEntity;
 import com.vatek.hrmtool.entity.common.CommonEntity;
 import com.vatek.hrmtool.enumeration.Action;
+import com.vatek.hrmtool.enumeration.Role;
 import com.vatek.hrmtool.exception.ErrorResponse;
 import com.vatek.hrmtool.exception.ProductException;
 import com.vatek.hrmtool.mapping.ProjectMapping;
@@ -22,12 +22,15 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -55,8 +58,8 @@ public class ProjectServiceImpl implements ProjectService {
             throw new ProductException(
                     ErrorResponse.builder()
                     .message(String.format(ErrorConstant.Message.NOT_FOUND,"Project Manager with id : " + createProjectForm.getProjectManager()))
-                    .errorCode(ErrorConstant.Code.NOT_FOUND)
-                    .errorType(ErrorConstant.Type.NOT_FOUND)
+                    .code(ErrorConstant.Code.NOT_FOUND)
+                    .type(ErrorConstant.Type.NOT_FOUND)
                     .build()
             );
         }
@@ -89,10 +92,17 @@ public class ProjectServiceImpl implements ProjectService {
                 () ->
                 new ProductException(ErrorResponse.builder()
                 .message(String.format(ErrorConstant.Message.NOT_FOUND,"Project id : " + updateMemberProjectForm.getId()))
-                .errorCode(ErrorConstant.Code.NOT_FOUND)
-                .errorType(ErrorConstant.Type.NOT_FOUND)
+                .code(ErrorConstant.Code.NOT_FOUND)
+                .type(ErrorConstant.Type.NOT_FOUND)
                 .build())
         );
+
+        if(
+                currentUser.getAuthorities().stream().noneMatch(x -> Objects.equals(x.getAuthority(), Role.Code.ADMIN)) &&
+                !Objects.equals(currentUser.getId(),projectEntity.getManagerUser().getId())
+        ){
+            throw new AccessDeniedException(ErrorConstant.Message.CANNOT_UPDATE_ANOTHER_PROJECT);
+        }
 
         List<Long> removeMember = updateMemberProjectForm
                 .getMember()
@@ -131,9 +141,42 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     @Transactional
     public ListResponseDto<ProjectDto> getProjectPageable(Pageable pageable) {
-        Page<ProjectEntity> userEntityPage = projectRepository.findAll(CommonUtil.buildPageable(pageable.getPageNumber(), pageable.getPageSize()));
-        Page<ProjectDto> userDtoPage = userEntityPage.map(projectMapping::toDto);
-        ListResponseDto<ProjectDto> result = new ListResponseDto<>();
-        return result.buildResponseList(userDtoPage, pageable.getPageSize(), pageable.getPageNumber());
+
+        var projectEntities = projectRepository.findAll(CommonUtil.buildPageable(pageable.getPageNumber(), pageable.getPageSize()));
+
+        Page<ProjectDto> projectDtos = projectEntities.map(projectMapping::toDto);
+
+        return new ListResponseDto<>(projectDtos, pageable.getPageSize(), pageable.getPageNumber());
+    }
+
+    @Override
+    @Transactional
+    public ListResponseDto<ProjectDto> getProjectByManager(Pageable pageable) {
+        var currentUser = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        Specification<ProjectEntity> specification = (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("managerUser").get("id"),currentUser.getId());
+
+        return getProjectDtoListResponseDto(pageable, specification);
+    }
+
+    @Override
+    @Transactional
+    public ListResponseDto<ProjectDto> getWorkingProjectByUser(Pageable pageable) {
+        var currentUser = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        Specification<ProjectEntity> specification = (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.join("memberUser").get("id"),currentUser.getId());
+
+        return getProjectDtoListResponseDto(pageable, specification);
+    }
+
+    private ListResponseDto<ProjectDto> getProjectDtoListResponseDto(Pageable pageable, Specification<ProjectEntity> specification) {
+        var projectEntities = projectRepository.findAll(
+                specification,
+                CommonUtil.buildPageable(pageable.getPageNumber(), pageable.getPageSize())
+        );
+
+        Page<ProjectDto> projectDtos = projectEntities.map(projectMapping::toDto);
+
+        return new ListResponseDto<>(projectDtos,pageable.getPageSize(), pageable.getPageNumber());
     }
 }
