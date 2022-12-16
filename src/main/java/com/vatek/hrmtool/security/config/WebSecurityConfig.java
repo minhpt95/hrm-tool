@@ -1,7 +1,7 @@
 package com.vatek.hrmtool.security.config;
 
-import com.vatek.hrmtool.jwt.JwtAuthEntryPoint;
 import com.vatek.hrmtool.jwt.JwtAuthTokenFilter;
+import com.vatek.hrmtool.jwt.UnauthorizedHandler;
 import com.vatek.hrmtool.security.service.UserDetailsServiceImpl;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -33,12 +33,8 @@ import java.util.List;
 @EnableWebSecurity
 @AllArgsConstructor
 public class WebSecurityConfig {
-
     private final UserDetailsServiceImpl userDetailsService;
-
-    private final JwtAuthEntryPoint unauthorizedHandler;
-
-
+    private final UnauthorizedHandler unauthorizedHandler;
     @Bean
     public JwtAuthTokenFilter authenticationJwtTokenFilter() {
         return new JwtAuthTokenFilter();

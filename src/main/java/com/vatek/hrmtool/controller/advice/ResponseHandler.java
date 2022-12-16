@@ -102,20 +102,21 @@ public class ResponseHandler {
 
     @ExceptionHandler(value = HttpMessageNotReadableException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleBindingErrors(HttpMessageNotReadableException ex) {
-        ErrorResponse errorResponse = new ErrorResponse();
-        errorResponse.setCode(ErrorConstant.Code.INTERNAL_SERVER_ERROR);
-        errorResponse.setMessage(ex.getMessage());
-        return errorResponse;
-    }
-
-    @ExceptionHandler(value = Exception.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleAnotherException(Exception ex) {
+    public ErrorResponse handleMessageNotReadableException(HttpMessageNotReadableException ex) {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setCode(ErrorConstant.Code.INTERNAL_SERVER_ERROR);
         errorResponse.setType(ErrorConstant.Type.INTERNAL_SERVER_ERROR);
         errorResponse.setMessage(ex.getMessage());
         return errorResponse;
     }
+
+//    @ExceptionHandler(value = Exception.class)
+//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+//    public ErrorResponse handleAnotherException(Exception ex) {
+//        ErrorResponse errorResponse = new ErrorResponse();
+//        errorResponse.setCode(ErrorConstant.Code.INTERNAL_SERVER_ERROR);
+//        errorResponse.setType(ErrorConstant.Type.INTERNAL_SERVER_ERROR);
+//        errorResponse.setMessage(ex.getMessage());
+//        return errorResponse;
+//    }
 }

@@ -11,7 +11,7 @@ import java.io.IOException;
 
 @Component
 @Log4j2
-public class JwtAuthEntryPoint implements AuthenticationEntryPoint {
+public class UnauthorizedHandler implements AuthenticationEntryPoint {
 
     @Override
     public void commence(HttpServletRequest request,
@@ -20,6 +20,7 @@ public class JwtAuthEntryPoint implements AuthenticationEntryPoint {
             throws IOException {
 
         log.error("Unauthorized error. Message - {}", e.getMessage());
+
 
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Error -> Unauthorized");
     }
