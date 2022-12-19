@@ -15,7 +15,7 @@ public @interface DateFormatConstraint {
 
     String message() default "Invalid date";
 
-    String datePattern() default DateConstant.DATE_PATTERN_DD_MM_YYYY;
+    String datePattern() default DateConstant.DD_MM_YYYY;
 
     boolean required() default true;
 

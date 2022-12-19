@@ -2,7 +2,7 @@ package com.vatek.hrmtool.entity;
 
 import com.vatek.hrmtool.entity.common.CommonEntity;
 import com.vatek.hrmtool.enumeration.RequestStatus;
-import com.vatek.hrmtool.enumeration.TypeDayOff;
+import com.vatek.hrmtool.enumeration.TypeRequest;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -33,8 +33,5 @@ public class RequestEntity extends CommonEntity {
 
     @Column
     @Enumerated(EnumType.STRING)
-    private TypeDayOff typeDayOff;
-
-    @ManyToOne
-    private UserEntity requester;
+    private TypeRequest typeRequest;
 }

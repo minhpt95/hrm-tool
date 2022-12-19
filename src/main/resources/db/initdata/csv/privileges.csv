@@ -1,0 +1,4 @@
+'id','created_by','created_time','modified_by','modified_time','privilege'
+'1','0',now,,,'READ'
+'2','0',now,,,'WRITE'
+'3','0',now,,,'DELETE'

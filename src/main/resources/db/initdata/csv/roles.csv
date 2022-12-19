@@ -1,0 +1,4 @@
+'id','created_by','created_time','modified_by','modified_time','role'
+'1','0',now,,,'ADMIN'
+'2','0',now,,,'PROJECT_MANAGER'
+'3','0',now,,,'USER'

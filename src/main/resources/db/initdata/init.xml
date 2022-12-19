@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <property name="autoIncrement" value="true"/>
+
+    <changeSet id="init-master-data" author="minhp">
+
+        <loadData
+                file="db/initdata/csv/privileges.csv"
+                quotchar="'"
+                tableName="privileges" />
+
+
+        <loadData
+                file="db/initdata/csv/roles.csv"
+                quotchar="'"
+                tableName="roles" />
+
+
+        <loadData
+                file="db/initdata/csv/roles_privileges.csv"
+                quotchar="'"
+                tableName="roles_privileges" />
+
+        <loadData
+                file="db/initdata/csv/users.csv"
+                quotchar="'"
+                tableName="users" />
+
+        <loadData
+                file="db/initdata/csv/users_roles.csv"
+                quotchar="'"
+                tableName="users_roles" />
+
+        <loadData tableName="master_data" file="db/initdata/csv/master_data.csv" quotchar="'"/>
+
+    </changeSet>
+</databaseChangeLog>
