@@ -33,7 +33,7 @@ public class ProjectController {
 
 
     @PreAuthorize("hasAnyRole('ROLE_PM')")
-    @PostMapping("/modifyMemberProject")
+    @PostMapping("/modify-member-project")
     public ResponseDto<ProjectDto> addMemberToProject(@RequestBody UpdateMemberProjectForm updateMemberProjectForm){
         var projectDto = projectService.updateMemberProject(updateMemberProjectForm);
 
@@ -41,19 +41,19 @@ public class ProjectController {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    @PostMapping("/getAllProjectPageable")
+    @PostMapping("/get-all-projects-pageable")
     public ListResponseDto<ProjectDto> getAllProjectPageable(Pageable pageable){
         return projectService.getProjectPageable(pageable);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_PM')")
-    @PostMapping("/getAllProjectByManager")
+    @PostMapping("/get-all-projects-by-manager")
     public ListResponseDto<ProjectDto> getAllProjectByManager(Pageable pageable){
         return projectService.getProjectByManager(pageable);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_USER')")
-    @PostMapping("/getAllProjectByUser")
+    @PostMapping("/get-all-projects-by-user")
     public ListResponseDto<ProjectDto> getAllProjectByUser(Pageable pageable){
         return projectService.getWorkingProjectByUser(pageable);
     }

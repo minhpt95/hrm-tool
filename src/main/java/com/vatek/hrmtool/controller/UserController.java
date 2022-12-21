@@ -29,7 +29,7 @@ public class UserController {
     final UserService userService;
 
     @PreAuthorize("hasAnyRole('ROLE_USER')")
-    @PutMapping(value = "/changePassword")
+    @PutMapping(value = "/change-password")
     public  ResponseDto<Boolean> changePassword(@Valid @RequestBody ChangePasswordReq changePasswordReq){
         ResponseDto<Boolean> responseDto = new ResponseDto<>();
         
@@ -67,7 +67,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    @GetMapping(value = "/getUserPageable")
+    @GetMapping(value = "/get-user-pageable")
     public ListResponseDto<UserDto> getUserPageable(Pageable pageable){
         return userService.getUserList(pageable);
     }

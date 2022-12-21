@@ -33,25 +33,25 @@ public class RequestController {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_PM')")
-    @PutMapping("/updateStatus")
-    public ResponseDto<RequestDto> updateRequestType(TypeRequest typeRequest){
+    @PutMapping("/decision-request")
+    public ResponseDto<RequestDto> decisionRequest (TypeRequest typeRequest){
         return null;
     }
 
     @PreAuthorize("hasAnyRole('ROLE_PM')")
-    @GetMapping("/getRequestsByManager")
+    @GetMapping("/get-requests-by-manager")
     public ListResponseDto<RequestDto> getRequestsByManager(Pageable pageable){
         return requestService.getRequestsByManagerByStatus(pageable, RequestStatus.PENDING);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    @GetMapping("/getAllRequest")
+    @GetMapping("/get-all-requests")
     public ResponseDto<RequestDto> getAllRequests(Pageable pageable){
         return null;
     }
 
     @PreAuthorize("hasAnyRole('ROLE_IT_ADMIN')")
-    @GetMapping("/getAllDeviceRequests")
+    @GetMapping("/get-all-device-requests")
     public ResponseDto<RequestDto> getAllDeviceRequests(Pageable pageable){
         return null;
     }

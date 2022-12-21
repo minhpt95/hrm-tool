@@ -50,7 +50,7 @@ public class AuthController {
         return responseDto;
     }
 
-    @PutMapping(value = "/activateEmail/{id}")
+    @PutMapping(value = "/activate-email/{id}")
     public  ResponseDto<?> activateEmail(@PathVariable Long id){
         ResponseDto<?> responseDto = new ResponseDto<>();
 

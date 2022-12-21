@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @AllArgsConstructor
 @Log4j2
-@RequestMapping("/api/refreshToken/")
+@RequestMapping("/api/refresh-token/")
 public class RefreshTokenController {
     final
     RefreshTokenService refreshTokenService;
 
-    @PostMapping()
+    @PostMapping("/recreate")
     public ResponseDto<?> refreshToken(
             @RequestBody TokenRefreshRequest tokenRefreshRequest
     ) {
