@@ -7,7 +7,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",uses = {UserMapping.class})
 public interface RequestMapping extends EntityMapper<RequestDto, RequestEntity> {
     @Override
     @Mappings({

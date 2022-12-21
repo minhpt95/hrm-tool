@@ -1,7 +1,6 @@
 package com.vatek.hrmtool.service.impl;
 
 import com.vatek.hrmtool.dto.ListResponseDto;
-import com.vatek.hrmtool.dto.project.ProjectDto;
 import com.vatek.hrmtool.dto.request.RequestDto;
 import com.vatek.hrmtool.entity.ProjectEntity;
 import com.vatek.hrmtool.entity.RequestEntity;
@@ -62,17 +61,34 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public ListResponseDto<RequestDto> getAllRequests(Pageable pageable){
+    public ListResponseDto<RequestDto> getAllRequestsByStatus(Pageable pageable,RequestStatus requestStatus){
         return null;
     }
 
-    @Override
-    public ListResponseDto<RequestDto> getAllDeviceRequests(Pageable pageable){
-        return null;
+    public ListResponseDto<RequestDto> getAllDeviceRequestsByStatus(Pageable pageable,RequestStatus requestStatus){
+        Specification<RequestEntity> specification = (root, query, criteriaBuilder) -> {
+            var predicates = new ArrayList<Predicate>();
+
+            predicates.add(criteriaBuilder.equal(root.get("status"),requestStatus));
+            predicates.add(criteriaBuilder.equal(root.get("typeRequest"),TypeRequest.REQUEST_DEVICE));
+
+            Predicate[] p = new Predicate[predicates.size()];
+
+            return criteriaBuilder.and(predicates.toArray(p));
+        };
+
+        var requestEntities = requestRepository.findAll(
+                specification,
+                CommonUtil.buildPageable(pageable.getPageNumber(),pageable.getPageSize())
+        );
+
+        Page<RequestDto> requestDtos = requestEntities.map(requestMapping::toDto);
+
+        return new ListResponseDto<>(requestDtos, pageable.getPageSize(), pageable.getPageNumber());
     }
 
     @Override
-    public ListResponseDto<RequestDto> getRequestsByManager(Pageable pageable){
+    public ListResponseDto<RequestDto> getRequestsByManagerByStatus(Pageable pageable,RequestStatus requestStatus){
         var currentUser = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         Specification<RequestEntity> specification = (root, query, criteriaBuilder) -> {
@@ -84,6 +100,7 @@ public class RequestServiceImpl implements RequestService {
             Join<ProjectEntity,UserEntity> projectManagerEntityJoin = workingProjectEntityJoin.join("managerUser");
 
             predicates.add(criteriaBuilder.equal(projectManagerEntityJoin.get("id"),currentUser.getId()));
+            predicates.add(criteriaBuilder.equal(root.get("status"),requestStatus));
             predicates.add(criteriaBuilder.notEqual(root.get("typeRequest"), TypeRequest.REQUEST_DEVICE));
 
             query.distinct(true);

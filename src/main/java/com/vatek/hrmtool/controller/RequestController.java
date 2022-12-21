@@ -4,6 +4,7 @@ import com.vatek.hrmtool.constant.ErrorConstant;
 import com.vatek.hrmtool.dto.ListResponseDto;
 import com.vatek.hrmtool.dto.ResponseDto;
 import com.vatek.hrmtool.dto.request.RequestDto;
+import com.vatek.hrmtool.enumeration.RequestStatus;
 import com.vatek.hrmtool.enumeration.TypeRequest;
 import com.vatek.hrmtool.readable.form.createForm.CreateRequestForm;
 import com.vatek.hrmtool.respository.RequestRepository;
@@ -40,7 +41,7 @@ public class RequestController {
     @PreAuthorize("hasAnyRole('ROLE_PM')")
     @GetMapping("/getRequestsByManager")
     public ListResponseDto<RequestDto> getRequestsByManager(Pageable pageable){
-        return requestService.getRequestsByManager(pageable);
+        return requestService.getRequestsByManagerByStatus(pageable, RequestStatus.PENDING);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")

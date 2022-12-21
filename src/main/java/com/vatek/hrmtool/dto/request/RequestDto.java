@@ -1,5 +1,6 @@
 package com.vatek.hrmtool.dto.request;
 
+import com.vatek.hrmtool.dto.user.UserDto;
 import com.vatek.hrmtool.enumeration.RequestStatus;
 import com.vatek.hrmtool.enumeration.TypeRequest;
 import lombok.AllArgsConstructor;
@@ -33,4 +34,6 @@ public class RequestDto {
     private Boolean isMultipleDay;
 
     private TypeRequest typeRequest;
+
+    private UserDto requester;
 }
