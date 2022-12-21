@@ -10,8 +10,8 @@ import org.mapstruct.Mappings;
 @Mapper(componentModel = "spring")
 public interface RequestMapping extends EntityMapper<RequestDto, RequestEntity> {
     @Override
-//    @Mappings({
-//            @Mapping(target = "id",source = "id"),
-//    })
+    @Mappings({
+            @Mapping(target = "id",source = "id"),
+    })
     RequestDto toDto(RequestEntity entity);
 }

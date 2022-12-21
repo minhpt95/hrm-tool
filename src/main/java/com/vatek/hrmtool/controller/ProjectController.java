@@ -26,7 +26,7 @@ public class ProjectController {
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @PostMapping("/create")
-    public ResponseDto<ProjectDto> createProject(CreateProjectForm createProjectForm){
+    public ResponseDto<ProjectDto> createProject(@RequestBody CreateProjectForm createProjectForm){
         var projectDto = projectService.createProject(createProjectForm);
         return getProjectDtoResponseDto(projectDto);
     }

@@ -48,6 +48,14 @@ public class UserEntity extends CommonEntity {
     },mappedBy = "managerUser")
     private Collection<ProjectEntity> projectManagement = new ArrayList<>();
 
+    @OneToMany(fetch = FetchType.LAZY,cascade = {
+            CascadeType.DETACH,
+            CascadeType.MERGE,
+            CascadeType.PERSIST,
+            CascadeType.REFRESH
+    },mappedBy = "requester")
+    private Collection<RequestEntity> userRequest = new ArrayList<>();
+
     @ManyToMany(fetch = FetchType.LAZY,cascade = {
             CascadeType.DETACH,
             CascadeType.MERGE,

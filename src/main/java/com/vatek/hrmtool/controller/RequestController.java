@@ -1,5 +1,7 @@
 package com.vatek.hrmtool.controller;
 
+import com.vatek.hrmtool.constant.ErrorConstant;
+import com.vatek.hrmtool.dto.ListResponseDto;
 import com.vatek.hrmtool.dto.ResponseDto;
 import com.vatek.hrmtool.dto.request.RequestDto;
 import com.vatek.hrmtool.enumeration.TypeRequest;
@@ -17,12 +19,16 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 @Log4j2
 public class RequestController {
-    private final RequestRepository requestRepository;
     private RequestService requestService;
 
     @PostMapping("/create")
     public ResponseDto<RequestDto> createRequest(@RequestBody CreateRequestForm requestForm){
-        return null;
+        var responseDto = new ResponseDto<RequestDto>();
+        responseDto.setContent(requestService.createRequest(requestForm));
+        responseDto.setType(ErrorConstant.Type.SUCCESS);
+        responseDto.setCode(ErrorConstant.Code.SUCCESS);
+        responseDto.setMessage(ErrorConstant.Message.SUCCESS);
+        return responseDto;
     }
 
     @PreAuthorize("hasAnyRole('ROLE_PM')")
@@ -32,14 +38,20 @@ public class RequestController {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_PM')")
-    @GetMapping("/getAllRequestByManager")
-    public ResponseDto<RequestDto> getProjectByManager(Pageable pageable){
-        return null;
+    @GetMapping("/getRequestsByManager")
+    public ListResponseDto<RequestDto> getRequestsByManager(Pageable pageable){
+        return requestService.getRequestsByManager(pageable);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping("/getAllRequest")
-    public ResponseDto<RequestDto> getAllProject(Pageable pageable){
+    public ResponseDto<RequestDto> getAllRequests(Pageable pageable){
+        return null;
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_IT_ADMIN')")
+    @GetMapping("/getAllDeviceRequests")
+    public ResponseDto<RequestDto> getAllDeviceRequests(Pageable pageable){
         return null;
     }
 }

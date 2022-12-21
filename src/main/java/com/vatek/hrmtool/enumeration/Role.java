@@ -23,7 +23,7 @@ public enum Role implements GrantedAuthority {
 
     public static class Code {
         public static final String ADMIN = "ROLE_ADMIN";
-        public static final String IT_ADMIN = "IT_ADMIN";
+        public static final String IT_ADMIN = "ROLE_IT_ADMIN";
         public static final String PROJECT_MANAGER = "ROLE_PM";
         public static final String USER = "ROLE_USER";
 

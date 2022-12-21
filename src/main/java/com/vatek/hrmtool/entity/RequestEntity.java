@@ -34,4 +34,7 @@ public class RequestEntity extends CommonEntity {
     @Column
     @Enumerated(EnumType.STRING)
     private TypeRequest typeRequest;
+
+    @ManyToOne
+    private UserEntity requester;
 }
