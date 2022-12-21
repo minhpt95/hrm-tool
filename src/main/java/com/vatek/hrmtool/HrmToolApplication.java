@@ -7,9 +7,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.boot.autoconfigure.liquibase.LiquibaseProperties;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -49,4 +47,11 @@ public class HrmToolApplication {
     userService.clearAllToken();
   }
 
+  @EventListener(ApplicationReadyEvent.class)
+  public void version(){
+    log.info("Application Name : {}", () -> env.getProperty("application.name"));
+    log.info("Build Version : {}", () -> env.getProperty("build.version"));
+    log.info("Build Timestamp : {}", () -> env.getProperty("build.timestamp"));
+    userService.clearAllToken();
+  }
 }

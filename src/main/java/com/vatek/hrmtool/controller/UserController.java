@@ -67,7 +67,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    @GetMapping(value = "/get-user-pageable")
+    @GetMapping(value = "/get-users-pageable")
     public ListResponseDto<UserDto> getUserPageable(Pageable pageable){
         return userService.getUserList(pageable);
     }
@@ -79,7 +79,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_PM')")
-    @GetMapping(value = "/get-users-by-projectId/{projectId}")
+    @GetMapping(value = "/get-users-by-project-id/{projectId}")
     public ResponseDto<List<UserDto>> getUserByProjectId(@PathVariable("projectId") Long projectId){
         ResponseDto<List<UserDto>> responseDto = new ResponseDto<>();
         responseDto.setContent(userService.getUsersByProjectId(projectId));
