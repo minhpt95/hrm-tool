@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.vatek</groupId>
     <artifactId>hrm-tool</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <packaging>war</packaging>
     <name>hrm-tool</name>
     <description>hrm-tool</description>
@@ -220,7 +220,27 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>local</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <spring.profiles.active>local</spring.profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>uat</id>
+            <properties>
+                <spring.profiles.active>uat</spring.profiles.active>
+            </properties>
+        </profile>
+    </profiles>
+
     <build>
+        <defaultGoal>install</defaultGoal>
+        <finalName>hrm-tool-${spring.profiles.active}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
