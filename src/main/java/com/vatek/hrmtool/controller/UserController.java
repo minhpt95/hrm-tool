@@ -1,5 +1,6 @@
 package com.vatek.hrmtool.controller;
 
+import com.amazonaws.auth.policy.Resource;
 import com.vatek.hrmtool.constant.ErrorConstant;
 import com.vatek.hrmtool.dto.ListResponseDto;
 import com.vatek.hrmtool.dto.ResponseDto;
@@ -10,14 +11,22 @@ import com.vatek.hrmtool.readable.request.ChangePasswordReq;
 import com.vatek.hrmtool.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
 @RestController
@@ -88,6 +97,26 @@ public class UserController {
         responseDto.setType(ErrorConstant.Type.SUCCESS);
 
         return responseDto;
+    }
+
+    @GetMapping(value = "/export-user-excel")
+    public ResponseEntity<InputStreamResource> exportUsersExcel(){
+
+        byte[] bytes = userService.exportAllUsersToExcels();
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=users.xlsx");
+        httpHeaders.add(HttpHeaders.CONTENT_TYPE,"application/vnd.ms-excel");
+        httpHeaders.add("Cache-Control", "no-cache, no-store, must-revalidate");
+        httpHeaders.add("Pragma", "no-cache");
+        httpHeaders.add("Expires", "0");
+
+        InputStreamResource resource = new InputStreamResource(new ByteArrayInputStream(bytes));
+
+        return ResponseEntity.ok()
+                .headers(httpHeaders)
+                .contentLength(bytes.length)
+                .body(resource);
     }
 
     @PostMapping("/logout")

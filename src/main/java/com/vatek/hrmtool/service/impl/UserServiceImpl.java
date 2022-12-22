@@ -44,6 +44,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import org.springframework.security.access.AccessDeniedException;
+
+import java.io.*;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -66,6 +68,7 @@ public class UserServiceImpl implements UserService {
     final RoleRepository roleRepository;
     final RefreshTokenService refreshTokenService;
     private final UserMapping userMapping;
+    private final ExcelTemplateServiceImpl excelTemplateService;
     @Override
     public void saveToken(String token, UserEntity userEntity) {
         userEntity.setAccessToken(token);
@@ -405,6 +408,21 @@ public class UserServiceImpl implements UserService {
 
         userEntity = userRepository.save(userEntity);
         return userMapping.toDto(userEntity);
+    }
+
+    @Override
+    @Transactional
+    public byte[] exportAllUsersToExcels() {
+
+        List<UserDto> userDtoList = userRepository.findAll().stream().map(userMapping::toDto).toList();
+
+        Map<String,Object> contextMap = Map.of("users",userDtoList);
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        excelTemplateService.createDocument(outputStream,"users-template",contextMap);
+
+        return outputStream.toByteArray();
     }
 
     @Override

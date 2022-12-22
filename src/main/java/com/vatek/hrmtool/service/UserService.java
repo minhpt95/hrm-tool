@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
+import java.io.OutputStream;
 import java.nio.file.AccessDeniedException;
 import java.time.Instant;
 import java.util.List;
@@ -56,4 +57,6 @@ public interface UserService {
     void logout(HttpServletRequest request, HttpServletResponse response);
 
     List<UserDto> getUsersByProjectId(Long projectId);
+
+    byte[] exportAllUsersToExcels();
 }

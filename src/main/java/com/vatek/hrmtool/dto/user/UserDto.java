@@ -18,10 +18,8 @@ public class UserDto {
     private String email;
     private String identityCard;
     private String phoneNumber1;
-    private String phoneNumber2;
     private String currentAddress;
     private String permanentAddress;
-    private String description;
     private boolean isEnabled;
     private Collection<Role> roles;
     private Collection<Privilege> privileges;
