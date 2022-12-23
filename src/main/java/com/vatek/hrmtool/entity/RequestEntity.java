@@ -8,6 +8,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity(name = "Requests")
 @Getter
@@ -23,18 +25,18 @@ public class RequestEntity extends CommonEntity {
     private RequestStatus status;
 
     @Column
-    private Instant fromDate;
-
-    @Column
-    private Instant toDate;
-
-    @Column
-    private Boolean isMultipleDay;
-
-    @Column
     @Enumerated(EnumType.STRING)
     private TypeRequest typeRequest;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_request_id")
     private UserEntity requester;
+
+    @OneToMany(fetch = FetchType.LAZY,cascade = {
+            CascadeType.DETACH,
+            CascadeType.MERGE,
+            CascadeType.PERSIST,
+            CascadeType.REFRESH
+    },mappedBy = "request")
+    private List<DayOffEntity> dayOffEntities = new ArrayList<>();
 }

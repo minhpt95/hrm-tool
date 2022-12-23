@@ -31,8 +31,6 @@ public class RequestDto {
 
     private Instant toDate;
 
-    private Boolean isMultipleDay;
-
     private TypeRequest typeRequest;
 
     private UserDto requester;

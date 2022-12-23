@@ -1,13 +1,12 @@
 package com.vatek.hrmtool.readable.form.createForm;
 
+import com.vatek.hrmtool.enumeration.TypeDayOff;
 import com.vatek.hrmtool.enumeration.TypeRequest;
 import com.vatek.hrmtool.validator.anotation.DateFormatConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import javax.persistence.SqlResultSetMapping;
 
 @Getter
 @Setter
@@ -25,4 +24,6 @@ public class CreateRequestForm {
     private String toDate;
 
     private TypeRequest typeRequest;
+
+    private TypeDayOff typeDayoff;
 }

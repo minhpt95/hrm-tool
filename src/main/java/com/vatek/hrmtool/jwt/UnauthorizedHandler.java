@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.Normalizer;
 
 @Component
 @Log4j2
@@ -32,7 +33,7 @@ public class UnauthorizedHandler implements AuthenticationEntryPoint {
                 .builder()
                 .code(ErrorConstant.Code.UNAUTHORIZED)
                 .type(ErrorConstant.Type.UNAUTHORIZED)
-                .message(ErrorConstant.Message.UNAUTHORIZED)
+                .message(e.getMessage())
                 .build();
 
         String errorResponseString = objectMapper.writeValueAsString(errorResponse);

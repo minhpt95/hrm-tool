@@ -33,8 +33,14 @@ public class RequestController {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_PM')")
-    @PutMapping("/decision-request")
-    public ResponseDto<RequestDto> decisionRequest (TypeRequest typeRequest){
+    @PutMapping("/approval-request")
+    public ResponseDto<RequestDto> confirmRequest (TypeRequest typeRequest){
+        return null;
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_PM')")
+    @PutMapping("/revert-approval")
+    public ResponseDto<RequestDto> revertApproval (){
         return null;
     }
 
@@ -46,13 +52,13 @@ public class RequestController {
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping("/get-all-requests")
-    public ResponseDto<RequestDto> getAllRequests(Pageable pageable){
-        return null;
+    public ListResponseDto<RequestDto> getAllRequests(Pageable pageable){
+        return requestService.getAllRequestsByStatus(pageable, RequestStatus.PENDING);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_IT_ADMIN')")
     @GetMapping("/get-all-device-requests")
-    public ResponseDto<RequestDto> getAllDeviceRequests(Pageable pageable){
-        return null;
+    public ListResponseDto<RequestDto> getAllDeviceRequests(Pageable pageable){
+        return requestService.getAllDeviceRequestsByStatus(pageable,RequestStatus.PENDING);
     }
 }

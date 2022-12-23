@@ -95,7 +95,6 @@ public class UserController {
         responseDto.setCode(ErrorConstant.Code.SUCCESS);
         responseDto.setMessage(ErrorConstant.Message.SUCCESS);
         responseDto.setType(ErrorConstant.Type.SUCCESS);
-
         return responseDto;
     }
 
