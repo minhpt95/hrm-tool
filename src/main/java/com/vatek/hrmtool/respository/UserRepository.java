@@ -12,6 +12,7 @@ import java.util.Optional;
 
 
 public interface UserRepository extends JpaRepository<UserEntity, Long> , JpaSpecificationExecutor<UserEntity> {
+
     Optional<UserEntity> findByEmailOrIdentityCard(String email,String identityCard);
 
     Optional<UserEntity> findByEmail(String email);
@@ -25,4 +26,5 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> , JpaSpe
     UserEntity findUserEntityByEmail(String email);
 
     Collection<UserEntity> findUserEntitiesByIdIn(List<Long> id);
+
 }

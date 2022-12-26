@@ -31,6 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -85,14 +86,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void clearAllToken() {
-        List<UserEntity> userEntities = userRepository.findAll().stream().peek(x -> {
-            x.setTokenStatus(false);
-            x.setAccessToken(null);
-        }).collect(Collectors.toList());
+
+        Specification<UserEntity> specification = (root, query, criteriaBuilder) ->
+                criteriaBuilder.or(
+                        criteriaBuilder.isNotNull(root.get("accessToken")),
+                        criteriaBuilder.isTrue(root.get("tokenStatus"))
+                );
+
+        List<UserEntity> userEntities = userRepository.findAll(specification);
 
         if(userEntities.isEmpty()){
             return;
         }
+
+        userEntities.forEach(x -> {
+            x.setTokenStatus(false);
+            x.setAccessToken(null);
+        });
 
         userRepository.saveAll(userEntities);
     }

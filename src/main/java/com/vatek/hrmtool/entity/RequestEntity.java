@@ -2,6 +2,7 @@ package com.vatek.hrmtool.entity;
 
 import com.vatek.hrmtool.entity.common.CommonEntity;
 import com.vatek.hrmtool.enumeration.RequestStatus;
+import com.vatek.hrmtool.enumeration.TypeDayOff;
 import com.vatek.hrmtool.enumeration.TypeRequest;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,19 +25,21 @@ public class RequestEntity extends CommonEntity {
     @Enumerated(EnumType.STRING)
     private RequestStatus status;
 
+    @Column(columnDefinition = "DATE")
+    private Instant fromDate;
+
+    @Column(columnDefinition = "DATE")
+    private Instant toDate;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private TypeDayOff typeDayOff;
+
+    @ManyToOne
+    @JoinColumn(name = "requester_id")
+    private UserEntity requester;
+
     @Column
     @Enumerated(EnumType.STRING)
     private TypeRequest typeRequest;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_request_id")
-    private UserEntity requester;
-
-    @OneToMany(fetch = FetchType.LAZY,cascade = {
-            CascadeType.DETACH,
-            CascadeType.MERGE,
-            CascadeType.PERSIST,
-            CascadeType.REFRESH
-    },mappedBy = "request")
-    private List<DayOffEntity> dayOffEntities = new ArrayList<>();
 }

@@ -13,6 +13,8 @@ public class ErrorConstant {
         public static final String MISSING_FIELD = "08";
         public static final String AUTHENTICATION_ERROR = "09";
         public static final String UNAUTHORIZED = "10";
+        public static final String OVERLAPPING_DATE = "11";
+        public static final String FROM_DATE_TO_DATE_VALIDATE = "12";
     }
 
     public static class Type {
@@ -27,7 +29,8 @@ public class ErrorConstant {
         public static final String INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR";
         public static final String AUTHENTICATION_ERROR = "AUTHENTICATION_ERROR";
         public static final String UNAUTHORIZED = "UNAUTHORIZED";
-
+        public static final String OVERLAPPING_DATE = "OVERLAPPING_DATE";
+        public static final String FROM_DATE_TO_DATE_VALIDATE = "FROM_DATE_TO_DATE_VALIDATE";
     }
 
     public static class Message {
@@ -40,5 +43,8 @@ public class ErrorConstant {
         public static final String BLANK =" %s not blank.";
         public static final String END_OF_TIME ="Time activate expired";
         public static final String UNAUTHORIZED = "Unauthorized";
+        public static final String OVERLAPPING_DATE = "Range date is overlapping";
+
+        public static final String FROM_DATE_TO_DATE_VALIDATE = "From date must be less than to date";
     }
 }
