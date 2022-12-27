@@ -43,9 +43,9 @@ public class MailServiceImpl implements MailService {
             log.error(RECIPIENT_EMPTY);
         } else {
             try {
-                String userName = env.getProperty("spring.mail.username");
-                MimeMessage message = sender.createMimeMessage();
-                MimeMessageHelper helper = new MimeMessageHelper(message, true, CHARSET_UTF8);
+                var userName = env.getProperty("spring.mail.username");
+                var message = sender.createMimeMessage();
+                var helper = new MimeMessageHelper(message, true, CHARSET_UTF8);
                 helper.setFrom(userName, userName);
                 helper.setTo(to);
                 helper.setText(body, true);
@@ -69,9 +69,9 @@ public class MailServiceImpl implements MailService {
             log.error(RECIPIENT_EMPTY);
         } else {
             try {
-                String userName = env.getProperty("spring.mail.username");
-                MimeMessage message = sender.createMimeMessage();
-                MimeMessageHelper helper = new MimeMessageHelper(message, true, CHARSET_UTF8);
+                var userName = env.getProperty("spring.mail.username");
+                var message = sender.createMimeMessage();
+                var helper = new MimeMessageHelper(message, true, CHARSET_UTF8);
                 helper.setText(body, true);
                 helper.setFrom(userName, userName);
                 helper.setTo(to);
@@ -95,10 +95,10 @@ public class MailServiceImpl implements MailService {
         } else {
             try {
                 log.info("start send email not attach file to: {}; subject: {};", to, subject);
-                String hostingName = env.getProperty("spring.mail.username");
-                String hostingEmail = env.getProperty("system.name.mail");
-                MimeMessage message = sender.createMimeMessage();
-                MimeMessageHelper helper = new MimeMessageHelper(message, true);
+                var hostingName = env.getProperty("spring.mail.username");
+                var hostingEmail = env.getProperty("system.name.mail");
+                var message = sender.createMimeMessage();
+                var helper = new MimeMessageHelper(message, true);
                 helper.setTo(to);
                 helper.setFrom(hostingName, hostingEmail);
                 message.setText(body, CHARSET_UTF8, HTML_SUBTYPE);
@@ -119,9 +119,9 @@ public class MailServiceImpl implements MailService {
         } else {
             try {
                 log.info("start send email not attach multiple people file to: {}; subject: {};", () -> Arrays.toString(to), () -> subject);
-                String userName = env.getProperty("spring.mail.username");
-                MimeMessage message = sender.createMimeMessage();
-                MimeMessageHelper helper = new MimeMessageHelper(message, true);
+                var userName = env.getProperty("spring.mail.username");
+                var message = sender.createMimeMessage();
+                var helper = new MimeMessageHelper(message, true);
                 message.setText(body, CHARSET_UTF8, HTML_SUBTYPE);
                 helper.setFrom(userName, userName);
                 helper.setTo(to);
@@ -142,8 +142,8 @@ public class MailServiceImpl implements MailService {
         } else {
             try {
                 log.info("start send email not attach multiple people file to: {}; subject: {};", () -> Arrays.toString(to), () -> subject);
-                MimeMessage message = sender.createMimeMessage();
-                MimeMessageHelper helper = new MimeMessageHelper(message, true);
+                var message = sender.createMimeMessage();
+                var helper = new MimeMessageHelper(message, true);
                 message.setText(body, CHARSET_UTF8, HTML_SUBTYPE);
                 helper.setFrom(from, personal);
                 helper.setTo(to);
@@ -164,7 +164,7 @@ public class MailServiceImpl implements MailService {
             "activationLink",env.getProperty("url.activate.account") + to.getId()
         );
 
-        String htmlContentEmail = thymeleafService.getContent("active-user",map);
+        var htmlContentEmail = thymeleafService.getContent("active-user",map);
 
         sendEmail(to.getEmail(),"Confirm your email address on Spring Boot App",htmlContentEmail);
     }
@@ -177,8 +177,8 @@ public class MailServiceImpl implements MailService {
                 "new_password",newPassword
         );
 
-        String htmlContentEmail = thymeleafService.getContent("active-user",map);
+        var htmlContentEmail = thymeleafService.getContent("forgot-password",map);
 
-        sendEmail(to.getEmail(),"Confirm your email address on Spring Boot App",htmlContentEmail);
+        sendEmail(to.getEmail(),"Forgot Password on Spring Boot App",htmlContentEmail);
     }
 }

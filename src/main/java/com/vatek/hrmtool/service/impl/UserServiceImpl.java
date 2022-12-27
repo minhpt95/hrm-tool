@@ -21,6 +21,7 @@ import com.vatek.hrmtool.respository.*;
 import com.vatek.hrmtool.security.service.UserPrinciple;
 import com.vatek.hrmtool.service.MailService;
 import com.vatek.hrmtool.service.RefreshTokenService;
+import com.vatek.hrmtool.service.S3Service;
 import com.vatek.hrmtool.service.UserService;
 import com.vatek.hrmtool.util.CommonUtil;
 import lombok.AllArgsConstructor;
@@ -70,6 +71,7 @@ public class UserServiceImpl implements UserService {
     final RefreshTokenService refreshTokenService;
     private final UserMapping userMapping;
     private final ExcelTemplateServiceImpl excelTemplateService;
+    private final S3Service s3Service;
     @Override
     public void saveToken(String token, UserEntity userEntity) {
         userEntity.setAccessToken(token);
@@ -156,8 +158,10 @@ public class UserServiceImpl implements UserService {
         }
         UserEntity userEntity = new UserEntity();
 
-        userEntity.setCurrentAddress(form.getCurrentAddress());
+        var objectUrl = s3Service.putData("avatarImage/" + form.getEmail() + "/" + form.getAvatarImage().getOriginalFilename(),form.getAvatarImage());
 
+        userEntity.setCurrentAddress(form.getCurrentAddress());
+        userEntity.setAvatarUrl(objectUrl);
         userEntity.setEmail(form.getEmail());
         userEntity.setIdentityCard(form.getIdentityCard());
         userEntity.setEnabled(false);
@@ -168,7 +172,6 @@ public class UserServiceImpl implements UserService {
 
         Collection<RoleEntity> roleEntity = roleRepository.findByRoleIn(form.getRoles());
         userEntity.setRoles(roleEntity);
-
         userEntity.setCreatedTime(Instant.now());
         userEntity.setCreatedBy(userPrinciple.getId());
         userEntity.setModifiedTime(Instant.now());
@@ -182,7 +185,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void activateEmail(Long id, Instant currentTime) {
-        UserEntity userEntity = userRepository.findUserEntityById(id);
+        var userEntity = userRepository.findUserEntityById(id);
         if (userEntity == null)
         {
             throw new ProductException(
@@ -191,9 +194,9 @@ public class UserServiceImpl implements UserService {
                     ErrorConstant.Type.FAILURE)
             );
         }
-        Instant timeCreate = userEntity.getCreatedTime();
+        var timeCreate = userEntity.getCreatedTime();
 
-        Instant timeExpired = timeCreate.plus(7, ChronoUnit.DAYS);
+        var timeExpired = timeCreate.plus(7, ChronoUnit.DAYS);
 
         if (timeExpired.isBefore(currentTime)) {
             throw new ProductException(
@@ -219,7 +222,7 @@ public class UserServiceImpl implements UserService {
             );
         }
 
-        UserEntity userEntity = userRepository.findUserEntityByEmail(email);
+        var userEntity = userRepository.findUserEntityByEmail(email);
         if (userEntity == null) {
 
             log.error("User with email not found in database => {}",() -> email);
@@ -234,7 +237,7 @@ public class UserServiceImpl implements UserService {
             );
         }
 
-        String pwd = RandomStringUtils.random(12, CommonConstant.CHARACTERS);
+        var pwd = RandomStringUtils.random(12, CommonConstant.CHARACTERS);
 
         log.info("start sendEmail forgotPassword()");
 

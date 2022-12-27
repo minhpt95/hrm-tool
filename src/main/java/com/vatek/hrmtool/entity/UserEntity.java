@@ -24,6 +24,8 @@ public class UserEntity extends CommonEntity {
     @Column
     private String phoneNumber1;
     @Column
+    private String avatarUrl;
+    @Column
     private String currentAddress;
     @Column
     private String permanentAddress;

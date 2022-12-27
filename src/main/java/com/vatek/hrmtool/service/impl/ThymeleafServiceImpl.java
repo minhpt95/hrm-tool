@@ -15,7 +15,7 @@ import java.util.Map;
 @Service
 public class ThymeleafServiceImpl {
     private static final String MAIL_TEMPLATE_BASE_NAME = "mail/MailMessages";
-    private static final String MAIL_TEMPLATE_PREFIX = "/templates/emails";
+    private static final String MAIL_TEMPLATE_PREFIX = "/templates/emails/";
     private static final String MAIL_TEMPLATE_SUFFIX = ".html";
     private static final String UTF_8 = "UTF-8";
     private static final TemplateEngine templateEngine;

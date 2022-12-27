@@ -48,7 +48,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         var currentUser = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        ProjectEntity projectEntity = new ProjectEntity();
+        var projectEntity = new ProjectEntity();
         projectEntity.setName(createProjectForm.getProjectName());
         projectEntity.setDescription(createProjectForm.getProjectDescription());
 
@@ -104,14 +104,14 @@ public class ProjectServiceImpl implements ProjectService {
             throw new AccessDeniedException(ErrorConstant.Message.CANNOT_UPDATE_ANOTHER_PROJECT);
         }
 
-        List<Long> removeMember = updateMemberProjectForm
+        var removeMember = updateMemberProjectForm
                 .getMember()
                 .stream()
                 .filter(x -> x.getAction() == Action.DELETE)
                 .map(ModifyListDto::getId)
                 .toList();
 
-        List<Long> addMemberId = updateMemberProjectForm
+        var addMemberId = updateMemberProjectForm
                 .getMember()
                 .stream()
                 .filter(x -> x.getAction() == Action.ADD)
@@ -144,7 +144,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         var projectEntities = projectRepository.findAll(CommonUtil.buildPageable(pageable.getPageNumber(), pageable.getPageSize()));
 
-        Page<ProjectDto> projectDtos = projectEntities.map(projectMapping::toDto);
+        var projectDtos = projectEntities.map(projectMapping::toDto);
 
         return new ListResponseDto<>(projectDtos, pageable.getPageSize(), pageable.getPageNumber());
     }
@@ -175,7 +175,7 @@ public class ProjectServiceImpl implements ProjectService {
                 CommonUtil.buildPageable(pageable.getPageNumber(), pageable.getPageSize())
         );
 
-        Page<ProjectDto> projectDtos = projectEntities.map(projectMapping::toDto);
+        var projectDtos = projectEntities.map(projectMapping::toDto);
 
         return new ListResponseDto<>(projectDtos,pageable.getPageSize(), pageable.getPageNumber());
     }

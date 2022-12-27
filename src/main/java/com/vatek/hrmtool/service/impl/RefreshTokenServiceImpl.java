@@ -48,13 +48,13 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
     @Override
     public TokenRefreshResponse refreshToken(TokenRefreshRequest tokenRefreshRequest){
-        String requestRefreshToken = tokenRefreshRequest.getRefreshToken();
+        var requestRefreshToken = tokenRefreshRequest.getRefreshToken();
 
         return findByToken(requestRefreshToken)
             .map(this::verifyExpiration)
             .map(RefreshTokenEntity::getUserEntity)
             .map(user -> {
-                String token = jwtProvider.generateTokenFromEmail(user.getEmail());
+                var token = jwtProvider.generateTokenFromEmail(user.getEmail());
                 user.setAccessToken(token);
                 user.setTokenStatus(true);
                 userRepository.saveAndFlush(user);
@@ -77,13 +77,19 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
             throw new ProductException(new ErrorResponse());
         }
 
-        RefreshTokenEntity refreshToken = new RefreshTokenEntity();
+        var refreshToken = refreshTokenRepository.findByUserEntityId(userEntity.getId()).orElse(null);
 
-        refreshToken.setUserEntity(userEntity);
+        if(refreshToken == null){
+            refreshToken = new RefreshTokenEntity();
+            refreshToken.setUserEntity(userEntity);
+            refreshToken.setCreatedBy(userEntity.getId());
+            refreshToken.setCreatedTime(DateUtil.getInstantNow());
+        }else{
+            refreshToken.setModifiedBy(userEntity.getId());
+            refreshToken.setModifiedTime(DateUtil.getInstantNow());
+        }
         refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenDurationMs));
         refreshToken.setToken(UUID.randomUUID().toString());
-        refreshToken.setCreatedBy(userEntity.getId());
-        refreshToken.setCreatedTime(DateUtil.getInstantNow());
         refreshTokenRepository.save(refreshToken);
 
         return refreshToken;
@@ -91,7 +97,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     @Override
     public RefreshTokenEntity verifyExpiration(RefreshTokenEntity token) {
-        if (token.getExpiryDate().compareTo(Instant.now()) <= 0) {
+        if (token.getExpiryDate().isBefore(Instant.now())) {
             refreshTokenRepository.delete(token);
             throw new TokenRefreshException(token.getToken(), "Refresh token was expired. Please make a new signin request");
         }

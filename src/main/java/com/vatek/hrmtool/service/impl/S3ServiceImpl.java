@@ -27,7 +27,8 @@ public class S3ServiceImpl implements S3Service {
 
     @PostConstruct
     private void createBucket(){
-        String nameBucket = env.getProperty(CommonConstant.AWS_S3_BUCKET);
+        log.info("start createBucket()");
+        var nameBucket = env.getProperty(CommonConstant.AWS_S3_BUCKET);
 
         if(s3.doesBucketExistV2(nameBucket)){
             log.info("bucket with name : {} has been created",() -> nameBucket);
@@ -35,25 +36,36 @@ public class S3ServiceImpl implements S3Service {
         }
 
         CreateBucketRequest createBucketRequest = new CreateBucketRequest(nameBucket, Region.fromValue(env.getProperty(CommonConstant.AWS_S3_REGION)));
-        s3.createBucket(createBucketRequest);
+        var createdBucket = s3.createBucket(createBucketRequest);
+        log.info("create bucket with name : {}",() -> createdBucket);
     }
 
 
     @Override
-    public String putData(String bucketName, String pathFile, MultipartFile file) {
+    public String putData(String pathFile, MultipartFile file) {
         try{
+            log.info("start putData()");
             ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setContentType(file.getContentType());
             objectMetadata.setContentLength(file.getResource().contentLength());
 
-            s3.putObject(bucketName,pathFile,file.getInputStream(),objectMetadata);
+            var nameBucket = env.getProperty(CommonConstant.AWS_S3_BUCKET);
 
-            StringBuilder stringBuilder = new StringBuilder(env.getProperty("aws.s3.object.url")).append(pathFile);
+            var putS3Object = s3.putObject(nameBucket,pathFile,file.getInputStream(),objectMetadata);
 
-            return stringBuilder.toString();
+            log.info("put data to S3 result : {}",() -> putS3Object);
+
+            return env.getProperty("aws.s3.object.url") + pathFile;
         }catch (Exception e){
             log.error("Error when put object to S3",e);
-            throw new ProductException(new ErrorResponse());
+            throw new ProductException(
+                    ErrorResponse
+                    .builder()
+                    .code("")
+                    .message("")
+                    .type("")
+                    .build()
+            );
         }
     }
 

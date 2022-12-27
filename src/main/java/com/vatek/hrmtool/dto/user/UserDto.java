@@ -21,6 +21,7 @@ public class UserDto {
     private String currentAddress;
     private String permanentAddress;
     private boolean isEnabled;
+    private String avatarUrl;
     private Collection<Role> roles;
     private Collection<Privilege> privileges;
 }

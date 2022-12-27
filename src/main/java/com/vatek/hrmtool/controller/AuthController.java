@@ -52,10 +52,9 @@ public class AuthController {
 
     @PutMapping(value = "/activate-email/{id}")
     public  ResponseDto<?> activateEmail(@PathVariable Long id){
-        ResponseDto<?> responseDto = new ResponseDto<>();
-
         userService.activateEmail(id, DateUtil.getInstantNow());
 
+        var responseDto = new ResponseDto<>();
         responseDto.setCode(ErrorConstant.Code.SUCCESS);
         responseDto.setMessage(ErrorConstant.Message.SUCCESS);
         responseDto.setType(ErrorConstant.Type.SUCCESS);

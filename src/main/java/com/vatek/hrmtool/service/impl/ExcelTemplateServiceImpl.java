@@ -17,11 +17,11 @@ public class ExcelTemplateServiceImpl {
     public void createDocument(OutputStream outputStream,String templateName, Map<String, Object> data) {
         log.debug("Start creation of document");
 
-        String pathTemplateName = ("templates/excels/").concat(templateName).concat(".xlsx");
-        Resource resource = new ClassPathResource(pathTemplateName);
+        var pathTemplateName = ("templates/excels/").concat(templateName).concat(".xlsx");
+        var resource = new ClassPathResource(pathTemplateName);
 
         try(InputStream input = new FileInputStream(resource.getFile())) {//1
-            Context context = new Context();
+            var context = new Context();
             for (Map.Entry<String, Object> element : data.entrySet()) { // 2
                 context.putVar(element.getKey(), element.getValue());
             }
