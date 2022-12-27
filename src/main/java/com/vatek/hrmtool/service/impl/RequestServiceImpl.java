@@ -123,7 +123,13 @@ public class RequestServiceImpl implements RequestService {
                 requestEntity = requestRepository.save(requestEntity);
                 return requestMapping.toDto(requestEntity);
             }
-            default -> throw new ProductException(ErrorResponse.builder().build());
+            default -> throw new ProductException(
+                    ErrorResponse.builder()
+                            .code("")
+                            .message("")
+                            .type("")
+                    .build()
+            );
         }
     }
 
@@ -168,7 +174,7 @@ public class RequestServiceImpl implements RequestService {
 
             predicates.add(criteriaBuilder.equal(projectManagerEntityJoin.get("id"),currentUser.getId()));
             predicates.add(criteriaBuilder.equal(root.get("status"),requestStatus));
-            predicates.add(criteriaBuilder.notEqual(root.get("typeRequest"), TypeRequest.REQUEST_DEVICE));
+            predicates.add(criteriaBuilder.equal(root.get("typeRequest"), TypeRequest.DAY_OFF));
 
             query.distinct(true);
 

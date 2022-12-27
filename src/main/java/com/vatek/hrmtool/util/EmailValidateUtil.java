@@ -23,7 +23,7 @@ public class EmailValidateUtil {
 
         // Isolate the domain/machine name and get a list of mail exchangers
         String domain = address.substring(++pos);
-        var mxList = new ArrayList<>();
+        ArrayList<?> mxList;
         try {
             mxList = getMX(domain);
         } catch (NamingException ex) {
@@ -109,7 +109,7 @@ public class EmailValidateUtil {
         wr.flush();
     }
 
-    private static ArrayList getMX(String hostName)
+    private static ArrayList<?> getMX(String hostName)
             throws NamingException {
         // Perform a DNS lookup for MX records in the domain
         var env = new Hashtable<>();

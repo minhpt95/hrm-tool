@@ -12,6 +12,7 @@ public interface ProjectMapping extends EntityMapper<ProjectDto, ProjectEntity> 
 
     ProjectEntity toEntity(ProjectDto projectDto);
 
+    @Override
     @Mappings({
             @Mapping(target = "id",source = "id"),
     })
