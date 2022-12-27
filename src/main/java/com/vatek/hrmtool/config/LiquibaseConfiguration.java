@@ -21,7 +21,7 @@ public class LiquibaseConfiguration {
 
     @Bean
     public SpringLiquibase liquibase(DataSource dataSource, LiquibaseProperties liquibaseProperties) {
-        SpringLiquibase liquibase = new SpringLiquibase();
+        var liquibase = new SpringLiquibase();
         liquibase.setDataSource(dataSource);
         liquibase.setChangeLog("classpath:db/master.xml");
         liquibase.setContexts(liquibaseProperties.getContexts());

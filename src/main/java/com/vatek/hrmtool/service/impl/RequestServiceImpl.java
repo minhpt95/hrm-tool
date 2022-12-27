@@ -50,10 +50,10 @@ public class RequestServiceImpl implements RequestService {
     public RequestDto createRequest(CreateRequestForm createRequestForm) {
 
         var currentUser = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        UserEntity userEntity = userRepository.findUserEntityById(currentUser.getId());
+        var userEntity = userRepository.findUserEntityById(currentUser.getId());
 
 
-        RequestEntity requestEntity = new RequestEntity();
+        var requestEntity = new RequestEntity();
         requestEntity.setRequestTitle(createRequestForm.getRequestTitle());
         requestEntity.setRequestReason(createRequestForm.getRequestReason());
         requestEntity.setStatus(RequestStatus.PENDING);
@@ -67,8 +67,8 @@ public class RequestServiceImpl implements RequestService {
                 return requestMapping.toDto(requestEntity);
             }
             case DAY_OFF -> {
-                Instant from = DateUtil.convertStringDateToInstant(createRequestForm.getFromDate());
-                Instant to = DateUtil.convertStringDateToInstant(createRequestForm.getToDate());
+                var from = DateUtil.convertStringDateToInstant(createRequestForm.getFromDate());
+                var to = DateUtil.convertStringDateToInstant(createRequestForm.getToDate());
 
                 if(!from.isBefore(to)){
                     throw new ProductException(

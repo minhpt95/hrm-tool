@@ -14,7 +14,7 @@ public class BeanConfig {
     @Bean
     public ModelMapper modelMapper()
     {
-        ModelMapper modelMapper = new ModelMapper();
+        var modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setDeepCopyEnabled(true);
         modelMapper.getConfiguration().setAmbiguityIgnored(true);
         modelMapper.getConfiguration().setSkipNullEnabled(true);
@@ -24,7 +24,7 @@ public class BeanConfig {
     @Bean
     public ObjectMapper objectMapper()
     {
-        ObjectMapper om = new ObjectMapper();
+        var om = new ObjectMapper();
         om.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES,true);
         om.configure(JsonGenerator.Feature.IGNORE_UNKNOWN,true);
         om.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES,false);
