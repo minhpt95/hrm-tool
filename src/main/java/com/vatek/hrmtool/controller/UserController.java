@@ -41,8 +41,7 @@ public class UserController {
     @PutMapping(value = "/change-password")
     public  ResponseDto<Boolean> changePassword(@Valid @RequestBody ChangePasswordReq changePasswordReq){
         ResponseDto<Boolean> responseDto = new ResponseDto<>();
-        
-        responseDto.setContent(userService.changePassword(changePasswordReq));
+        userService.changePassword(changePasswordReq);
         responseDto.setCode(ErrorConstant.Code.SUCCESS);
         responseDto.setMessage(ErrorConstant.Message.SUCCESS);
         responseDto.setType(ErrorConstant.Type.SUCCESS);

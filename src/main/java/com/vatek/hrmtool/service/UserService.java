@@ -6,7 +6,6 @@ import com.vatek.hrmtool.entity.UserEntity;
 import com.vatek.hrmtool.jwt.JwtResponse;
 import com.vatek.hrmtool.readable.form.LoginForm;
 import com.vatek.hrmtool.readable.form.createForm.CreateUserForm;
-import com.vatek.hrmtool.readable.form.updateForm.UpdateMemberProjectForm;
 import com.vatek.hrmtool.readable.form.updateForm.UpdateUserForm;
 import com.vatek.hrmtool.readable.form.updateForm.UpdateUserRoleForm;
 import com.vatek.hrmtool.readable.request.ChangePasswordReq;
@@ -16,8 +15,6 @@ import org.springframework.data.domain.Pageable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
-import java.io.OutputStream;
-import java.nio.file.AccessDeniedException;
 import java.time.Instant;
 import java.util.List;
 
@@ -44,7 +41,7 @@ public interface UserService {
 
     void forgotPassword(String email);
 
-    Boolean changePassword(ChangePasswordReq changePasswordReq);
+    void changePassword(ChangePasswordReq changePasswordReq);
 
     Boolean deactivateAccount(ChangeStatusAccountReq changeStatusAccountReq);
 

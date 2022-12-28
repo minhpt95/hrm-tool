@@ -19,10 +19,7 @@ import com.vatek.hrmtool.readable.request.ChangePasswordReq;
 import com.vatek.hrmtool.readable.request.ChangeStatusAccountReq;
 import com.vatek.hrmtool.respository.*;
 import com.vatek.hrmtool.security.service.UserPrinciple;
-import com.vatek.hrmtool.service.MailService;
-import com.vatek.hrmtool.service.RefreshTokenService;
-import com.vatek.hrmtool.service.S3Service;
-import com.vatek.hrmtool.service.UserService;
+import com.vatek.hrmtool.service.*;
 import com.vatek.hrmtool.util.CommonUtil;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -42,6 +39,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
@@ -51,7 +49,6 @@ import java.io.*;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.vatek.hrmtool.util.EmailValidateUtil.isAddressValid;
 
@@ -71,7 +68,10 @@ public class UserServiceImpl implements UserService {
     final RefreshTokenService refreshTokenService;
     private final UserMapping userMapping;
     private final ExcelTemplateServiceImpl excelTemplateService;
-    private final S3Service s3Service;
+
+    private UploadImageService uploadImageService;
+
+    private final EntityManager entityManager;
     @Override
     public void saveToken(String token, UserEntity userEntity) {
         userEntity.setAccessToken(token);
@@ -152,16 +152,18 @@ public class UserServiceImpl implements UserService {
                     new ErrorResponse(
                             ErrorConstant.Code.ALREADY_EXISTS,
                             ErrorConstant.Type.FAILURE,
-                            String.format(ErrorConstant.Message.ALREADY_EXISTS,form.getEmail())
+                            String.format(ErrorConstant.Message.ALREADY_EXISTS, form.getEmail())
                     )
             );
         }
         UserEntity userEntity = new UserEntity();
 
-        var objectUrl = s3Service.putData("avatarImage/" + form.getEmail() + "/" + form.getAvatarImage().getOriginalFilename(),form.getAvatarImage());
+
+
+
 
         userEntity.setCurrentAddress(form.getCurrentAddress());
-        userEntity.setAvatarUrl(objectUrl);
+
         userEntity.setEmail(form.getEmail());
         userEntity.setIdentityCard(form.getIdentityCard());
         userEntity.setEnabled(false);
@@ -169,14 +171,16 @@ public class UserServiceImpl implements UserService {
         userEntity.setPassword(passwordEncoder.encode(form.getPassword()));
         userEntity.setPermanentAddress(form.getPermanentAddress());
         userEntity.setPhoneNumber1(form.getPhoneNumber1());
-
-        Collection<RoleEntity> roleEntity = roleRepository.findByRoleIn(form.getRoles());
-        userEntity.setRoles(roleEntity);
         userEntity.setCreatedTime(Instant.now());
         userEntity.setCreatedBy(userPrinciple.getId());
         userEntity.setModifiedTime(Instant.now());
         userEntity.setModifiedBy(userPrinciple.getId());
 
+        entityManager.persist(userEntity);
+        String imageUrl = uploadImageService.uploadAvatarImage(form.getAvatarImage(),userEntity);
+        userEntity.setAvatarUrl(imageUrl);
+        Collection<RoleEntity> roleEntity = roleRepository.findByRoleIn(form.getRoles());
+        userEntity.setRoles(roleEntity);
         userEntity = userRepository.save(userEntity);
         mailService.sendActivationEmail(userEntity);
 
@@ -249,7 +253,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Boolean changePassword(ChangePasswordReq changePasswordReq) {
+    public void changePassword(ChangePasswordReq changePasswordReq) {
         UserEntity userEntity = userRepository.findUserEntityById(changePasswordReq.getId());
         if (userEntity == null) {
             throw new ProductException(
@@ -261,7 +265,6 @@ public class UserServiceImpl implements UserService {
         String pwd = changePasswordReq.getPassword();
         userEntity.setPassword(passwordEncoder.encode(pwd));
         userRepository.save(userEntity);
-        return true;
     }
 
     @Override
