@@ -4,6 +4,7 @@ import com.vatek.hrmtool.entity.common.CommonEntity;
 import com.vatek.hrmtool.enumeration.Role;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -16,10 +17,11 @@ public class RoleEntity extends CommonEntity {
 
     @Enumerated(EnumType.STRING)
     private Role role;
-    @ManyToMany(mappedBy = "roles")
+
+    @ManyToMany(mappedBy = "roles",fetch = FetchType.LAZY)
     private Collection<UserEntity> users;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "roles_privileges",
             joinColumns = @JoinColumn(

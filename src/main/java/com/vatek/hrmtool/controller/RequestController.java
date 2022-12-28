@@ -34,7 +34,7 @@ public class RequestController {
 
     @PreAuthorize("hasAnyRole('ROLE_PM')")
     @PutMapping("/approval-request")
-    public ResponseDto<RequestDto> confirmRequest (TypeRequest typeRequest){
+    public ResponseDto<RequestDto> approvalRequest (){
         return null;
     }
 

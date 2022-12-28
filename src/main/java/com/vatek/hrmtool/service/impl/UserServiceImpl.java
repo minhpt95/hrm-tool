@@ -359,7 +359,7 @@ public class UserServiceImpl implements UserService {
             throw new AccessDeniedException("Cannot access to another project");
         }
 
-        Collection<UserEntity> userEntityList = projectEntity.getMemberUser();
+        Collection<UserEntity> userEntityList = projectEntity.getMembers();
 
         return (List<UserDto>) userMapping.toListDto(userEntityList);
     }

@@ -38,7 +38,10 @@ public class ProjectEntity extends CommonEntity {
             CascadeType.PERSIST,
             CascadeType.REFRESH,
     })
-    private Collection<UserEntity> memberUser;
+    private Collection<UserEntity> members;
+
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "projectEntity")
+    private Collection<TimesheetEntity> timesheetEntities = new ArrayList<>();
 
     @Column
     private Instant startTime;
@@ -46,15 +49,15 @@ public class ProjectEntity extends CommonEntity {
     private Instant endTime;
 
     public void addMemberToProject(UserEntity userEntity) {
-        if(memberUser == null){
-            memberUser = new ArrayList<>();
+        if(members == null){
+            members = new ArrayList<>();
         }
-        memberUser.add(userEntity);
+        members.add(userEntity);
         userEntity.getWorkingProject().add(this);
     }
 
     public void removeMemberFromProject(UserEntity userEntity) {
-        memberUser.remove(userEntity);
+        members.remove(userEntity);
         userEntity.getWorkingProject().remove(this);
     }
 }

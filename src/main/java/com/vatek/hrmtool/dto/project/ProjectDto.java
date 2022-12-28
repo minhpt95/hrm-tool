@@ -22,7 +22,7 @@ public class ProjectDto {
     private Boolean isDelete;
     private ProjectStatus projectStatus;
     private UserDto managerUser;
-    private Collection<UserDto> memberUser;
+    private Collection<UserDto> members;
     @Column
     private Instant endTime;
 }

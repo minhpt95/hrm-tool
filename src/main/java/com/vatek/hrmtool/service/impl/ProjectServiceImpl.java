@@ -20,7 +20,6 @@ import com.vatek.hrmtool.service.ProjectService;
 import com.vatek.hrmtool.util.CommonUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.AccessDeniedException;
@@ -29,7 +28,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.Instant;
-import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -116,7 +114,7 @@ public class ProjectServiceImpl implements ProjectService {
                 .stream()
                 .filter(x -> x.getAction() == Action.ADD)
                 .map(ModifyListDto::getId)
-                .filter(id -> !projectEntity.getMemberUser().stream().map(CommonEntity::getId).toList().contains(id))
+                .filter(id -> !projectEntity.getMembers().stream().map(CommonEntity::getId).toList().contains(id))
                 .toList();
 
         var removeMemberEntity = userRepository.findUserEntitiesByIdIn(removeMember);

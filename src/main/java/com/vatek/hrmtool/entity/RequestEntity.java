@@ -35,7 +35,7 @@ public class RequestEntity extends CommonEntity {
     @Enumerated(EnumType.STRING)
     private TypeDayOff typeDayOff;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "requester_id")
     private UserEntity requester;
 

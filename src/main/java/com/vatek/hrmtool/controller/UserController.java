@@ -82,8 +82,8 @@ public class UserController {
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @PostMapping(value = "/role/change")
-    public ListResponseDto<UserDto> changeRole(Pageable pageable){
-        return userService.getUserList(pageable);
+    public ResponseDto<UserDto> changeRole(){
+        return null;
     }
 
     @PreAuthorize("hasAnyRole('ROLE_PM')")

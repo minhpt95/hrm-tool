@@ -55,6 +55,14 @@ public class UserEntity extends CommonEntity {
             CascadeType.MERGE,
             CascadeType.PERSIST,
             CascadeType.REFRESH
+    },mappedBy = "userEntity")
+    private Collection<TimesheetEntity> timesheetEntities = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY,cascade = {
+            CascadeType.DETACH,
+            CascadeType.MERGE,
+            CascadeType.PERSIST,
+            CascadeType.REFRESH
     },mappedBy = "requester")
     private Collection<RequestEntity> userRequest = new ArrayList<>();
 
