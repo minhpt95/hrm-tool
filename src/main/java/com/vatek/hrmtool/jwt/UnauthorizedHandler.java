@@ -38,6 +38,8 @@ public class UnauthorizedHandler implements AuthenticationEntryPoint {
 
         String errorResponseString = objectMapper.writeValueAsString(errorResponse);
 
+        response.addHeader("Access-Control-Allow-Origin","*");
+        response.addHeader("Access-Control-Allow-Headers","Origin, X-Requested-With, Content-Type, Accept");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
