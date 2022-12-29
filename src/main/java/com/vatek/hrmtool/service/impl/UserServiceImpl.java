@@ -158,10 +158,6 @@ public class UserServiceImpl implements UserService {
         }
         UserEntity userEntity = new UserEntity();
 
-
-
-
-
         userEntity.setCurrentAddress(form.getCurrentAddress());
 
         userEntity.setEmail(form.getEmail());
@@ -171,14 +167,17 @@ public class UserServiceImpl implements UserService {
         userEntity.setPassword(passwordEncoder.encode(form.getPassword()));
         userEntity.setPermanentAddress(form.getPermanentAddress());
         userEntity.setPhoneNumber1(form.getPhoneNumber1());
-        userEntity.setCreatedTime(Instant.now());
+        userEntity.setCreatedTime(DateUtil.getInstantNow());
         userEntity.setCreatedBy(userPrinciple.getId());
-        userEntity.setModifiedTime(Instant.now());
+        userEntity.setModifiedTime(DateUtil.getInstantNow());
         userEntity.setModifiedBy(userPrinciple.getId());
 
-        entityManager.persist(userEntity);
-        String imageUrl = uploadImageService.uploadAvatarImage(form.getAvatarImage(),userEntity);
-        userEntity.setAvatarUrl(imageUrl);
+        if(form.getAvatarImage() != null){
+            entityManager.persist(userEntity);
+            String imageUrl = uploadImageService.uploadAvatarImage(form.getAvatarImage(),userEntity);
+            userEntity.setAvatarUrl(imageUrl);
+        }
+
         Collection<RoleEntity> roleEntity = roleRepository.findByRoleIn(form.getRoles());
         userEntity.setRoles(roleEntity);
         userEntity = userRepository.save(userEntity);

@@ -8,4 +8,5 @@ import java.util.Optional;
 
 public interface ProjectRepository extends JpaRepository<ProjectEntity, Long>, JpaSpecificationExecutor<ProjectEntity> {
     Optional<ProjectEntity> findById(Long id);
+
 }

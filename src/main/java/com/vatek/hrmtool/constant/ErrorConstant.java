@@ -15,6 +15,9 @@ public class ErrorConstant {
         public static final String UNAUTHORIZED = "10";
         public static final String OVERLAPPING_DATE = "11";
         public static final String FROM_DATE_TO_DATE_VALIDATE = "12";
+        public static final String CANNOT_LOG_MORE_TIMESHEET = "13";
+        public static final String CANNOT_LOG_THIS_TIMESHEET = "14";
+        public static final String CANNOT_LOG_ON_WEEKEND = "15";
     }
 
     public static class Type {
@@ -31,6 +34,10 @@ public class ErrorConstant {
         public static final String UNAUTHORIZED = "UNAUTHORIZED";
         public static final String OVERLAPPING_DATE = "OVERLAPPING_DATE";
         public static final String FROM_DATE_TO_DATE_VALIDATE = "FROM_DATE_TO_DATE_VALIDATE";
+        public static final String CANNOT_LOG_MORE_TIMESHEET = "CANNOT_LOG_MORE_TIMESHEET";
+        public static final String CANNOT_LOG_THIS_TIMESHEET = "CANNOT_LOG_THIS_TIMESHEET";
+
+        public static final String CANNOT_LOG_ON_WEEKEND = "CANNOT_LOG_ON_WEEKEND";
     }
 
     public static class Message {
@@ -44,7 +51,9 @@ public class ErrorConstant {
         public static final String END_OF_TIME ="Time activate expired";
         public static final String UNAUTHORIZED = "Unauthorized";
         public static final String OVERLAPPING_DATE = "Range date is overlapping";
-
         public static final String FROM_DATE_TO_DATE_VALIDATE = "From date must be less than to date";
+        public static final String CANNOT_LOG_MORE_TIMESHEET = "Cannot log more timesheet,total normal working hours must not be greater than 8";
+        public static final String CANNOT_LOG_THIS_TIMESHEET = "Cannot log this timesheet,working hours is invalid";
+        public static final String CANNOT_LOG_ON_WEEKEND = "Cannot Log On Weekend";
     }
 }

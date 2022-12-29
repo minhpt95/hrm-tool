@@ -1,7 +1,7 @@
 package com.vatek.hrmtool.entity;
 
 import com.vatek.hrmtool.entity.common.CommonEntity;
-import com.vatek.hrmtool.enumeration.AdditionalHourType;
+import com.vatek.hrmtool.enumeration.TimesheetType;
 import com.vatek.hrmtool.enumeration.RequestStatus;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,9 +21,7 @@ public class TimesheetEntity extends CommonEntity {
     @Column
     private Integer workingHours;
     @Column
-    private Integer additionalHours;
-    @Column
-    private AdditionalHourType additionalHourType;
+    private TimesheetType timesheetType;
     @Column(columnDefinition = "DATE")
     private Instant workingDay;
     @Column

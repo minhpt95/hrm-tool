@@ -4,5 +4,5 @@ public enum ProjectStatus {
     RUNNING,
     COMPLETED,
     STOPPED,
-    PENDING,
+    INCOMING,
 }

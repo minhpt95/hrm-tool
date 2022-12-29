@@ -18,6 +18,7 @@ import com.vatek.hrmtool.respository.UserRepository;
 import com.vatek.hrmtool.security.service.UserPrinciple;
 import com.vatek.hrmtool.service.ProjectService;
 import com.vatek.hrmtool.util.CommonUtil;
+import com.vatek.hrmtool.util.DateUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
@@ -72,7 +73,7 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
         projectEntity.setCreatedBy(currentUser.getId());
-        projectEntity.setCreatedTime(Instant.now());
+        projectEntity.setCreatedTime(DateUtil.getInstantNow());
 
         projectEntity.setProjectStatus(createProjectForm.getProjectStatus());
 
@@ -131,7 +132,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         projectEntity.setModifiedBy(currentUser.getId());
 
-        projectEntity.setModifiedTime(Instant.now());
+        projectEntity.setModifiedTime(DateUtil.getInstantNow());
 
         return projectMapping.toDto(projectRepository.save(projectEntity));
     }

@@ -45,7 +45,7 @@ public class JwtProvider {
 
         return Jwts.builder()
                 .setSubject(email)
-                .setIssuedAt(DateUtil.convertInstantToDate(Instant.now()))
+                .setIssuedAt(DateUtil.convertInstantToDate(DateUtil.getInstantNow()))
                 .setExpiration(DateUtil.convertInstantToDate(Instant.now().plus(jwtExpiration,ChronoUnit.SECONDS)))
                 .signWith(key,SignatureAlgorithm.HS256)
                 .compact();

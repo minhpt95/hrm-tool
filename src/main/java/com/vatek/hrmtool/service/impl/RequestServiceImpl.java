@@ -59,7 +59,7 @@ public class RequestServiceImpl implements RequestService {
         requestEntity.setStatus(RequestStatus.PENDING);
         requestEntity.setTypeRequest(createRequestForm.getTypeRequest());
         requestEntity.setCreatedBy(currentUser.getId());
-        requestEntity.setCreatedTime(Instant.now());
+        requestEntity.setCreatedTime(DateUtil.getInstantNow());
 
         switch (createRequestForm.getTypeRequest()){
             case REQUEST_DEVICE -> {
@@ -118,7 +118,7 @@ public class RequestServiceImpl implements RequestService {
                 requestEntity.setToDate(to);
                 requestEntity.setRequester(userEntity);
                 requestEntity.setCreatedBy(currentUser.getId());
-                requestEntity.setCreatedTime(Instant.now());
+                requestEntity.setCreatedTime(DateUtil.getInstantNow());
                 requestEntity.setTypeDayOff(createRequestForm.getTypeDayoff());
                 requestEntity = requestRepository.save(requestEntity);
                 return requestMapping.toDto(requestEntity);
