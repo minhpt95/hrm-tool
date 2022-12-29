@@ -3,10 +3,13 @@ package com.vatek.hrmtool.service.impl;
 import com.vatek.hrmtool.constant.ErrorConstant;
 import com.vatek.hrmtool.dto.timesheet.TimesheetDto;
 import com.vatek.hrmtool.entity.ProjectEntity;
+import com.vatek.hrmtool.entity.RequestEntity;
 import com.vatek.hrmtool.entity.TimesheetEntity;
 import com.vatek.hrmtool.entity.UserEntity;
 import com.vatek.hrmtool.entity.common.CommonEntity;
 import com.vatek.hrmtool.enumeration.RequestStatus;
+import com.vatek.hrmtool.enumeration.TypeDayOff;
+import com.vatek.hrmtool.enumeration.TypeRequest;
 import com.vatek.hrmtool.exception.ErrorResponse;
 import com.vatek.hrmtool.exception.ProductException;
 import com.vatek.hrmtool.readable.form.createForm.CreateTimesheetForm;
@@ -92,14 +95,14 @@ public class TimesheetServiceImpl implements TimesheetService {
         }
 
         Specification<TimesheetEntity> timesheetEntitySpecification = (root, query, criteriaBuilder) -> {
-            var predicateArrayList = new ArrayList<Predicate>();
+            var predicates = new ArrayList<Predicate>();
 
-            predicateArrayList.add(criteriaBuilder.notEqual(root.get("requestStatus"), RequestStatus.REJECTED));
-            predicateArrayList.add(criteriaBuilder.equal(root.get("timesheetType"), form.getTimesheetType()));
-            predicateArrayList.add(criteriaBuilder.equal(root.get("userEntity").get("id"),currentUser.getId()));
-            predicateArrayList.add(criteriaBuilder.equal(root.get("workingDay"),workingDayInstant));
+            predicates.add(criteriaBuilder.notEqual(root.get("requestStatus"), RequestStatus.REJECTED));
+            predicates.add(criteriaBuilder.equal(root.get("timesheetType"), form.getTimesheetType()));
+            predicates.add(criteriaBuilder.equal(root.get("userEntity").get("id"),currentUser.getId()));
+            predicates.add(criteriaBuilder.equal(root.get("workingDay"),workingDayInstant));
 
-            Predicate[] p = new Predicate[predicateArrayList.size()];
+            Predicate[] p = new Predicate[predicates.size()];
 
             return criteriaBuilder.and(p);
         };
@@ -107,6 +110,28 @@ public class TimesheetServiceImpl implements TimesheetService {
         List<TimesheetEntity> timesheetEntities = timesheetEntityRepository.findAll(timesheetEntitySpecification);
 
         Integer totalWorkingHoursInDay = timesheetEntities.stream().map(TimesheetEntity::getWorkingHours).reduce(0,Integer::sum);
+
+        Specification<RequestEntity> specification = (root, query, criteriaBuilder) -> {
+            var predicates = new ArrayList<Predicate>();
+
+            predicates.add(criteriaBuilder.equal(root.get("typeRequest"), TypeRequest.DAY_OFF));
+            predicates.add(criteriaBuilder.greaterThan(root.get("toDate"),workingDayInstant));
+            predicates.add(criteriaBuilder.lessThan(root.get("fromDate"),workingDayInstant));
+            predicates.add(criteriaBuilder.notEqual(root.get("status"),RequestStatus.REJECTED));
+            predicates.add(criteriaBuilder.equal(root.get("requester").get("id"),currentUser.getId()));
+
+            criteriaBuilder.or(
+                    criteriaBuilder.equal(root.get("typeDayOff"), TypeDayOff.MORNING),
+                    criteriaBuilder.equal(root.get("typeDayOff"), TypeDayOff.AFTERNOON),
+                    criteriaBuilder.equal(root.get("typeDayOff"), TypeDayOff.FULL)
+            );
+
+            Predicate[] p = new Predicate[predicates.size()];
+
+            return criteriaBuilder.and(predicates.toArray(p));
+        };
+
+        var conditionRequest = requestRepository.findAll(specification);
 
         switch (form.getTimesheetType()){
             case NORMAL_WORKING -> {
