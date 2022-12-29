@@ -3,12 +3,10 @@ package com.vatek.hrmtool.service.impl;
 import com.vatek.hrmtool.constant.ErrorConstant;
 import com.vatek.hrmtool.dto.timesheet.TimesheetDto;
 import com.vatek.hrmtool.entity.ProjectEntity;
-import com.vatek.hrmtool.entity.RequestEntity;
 import com.vatek.hrmtool.entity.TimesheetEntity;
 import com.vatek.hrmtool.entity.UserEntity;
 import com.vatek.hrmtool.entity.common.CommonEntity;
 import com.vatek.hrmtool.enumeration.RequestStatus;
-import com.vatek.hrmtool.enumeration.TimesheetType;
 import com.vatek.hrmtool.exception.ErrorResponse;
 import com.vatek.hrmtool.exception.ProductException;
 import com.vatek.hrmtool.readable.form.createForm.CreateTimesheetForm;
@@ -24,17 +22,14 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.spring5.context.SpringContextUtils;
 
 import javax.persistence.criteria.Predicate;
 import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
