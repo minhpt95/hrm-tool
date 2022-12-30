@@ -7,12 +7,14 @@ import com.vatek.hrmtool.entity.RequestEntity;
 import com.vatek.hrmtool.entity.TimesheetEntity;
 import com.vatek.hrmtool.entity.UserEntity;
 import com.vatek.hrmtool.entity.common.CommonEntity;
-import com.vatek.hrmtool.enumeration.RequestStatus;
+import com.vatek.hrmtool.enumeration.ApprovalStatus;
+import com.vatek.hrmtool.enumeration.TimesheetType;
 import com.vatek.hrmtool.enumeration.TypeDayOff;
 import com.vatek.hrmtool.enumeration.TypeRequest;
 import com.vatek.hrmtool.exception.ErrorResponse;
 import com.vatek.hrmtool.exception.ProductException;
-import com.vatek.hrmtool.readable.form.createForm.CreateTimesheetForm;
+import com.vatek.hrmtool.mapping.TimesheetMapping;
+import com.vatek.hrmtool.readable.form.create.CreateTimesheetForm;
 import com.vatek.hrmtool.respository.ProjectRepository;
 import com.vatek.hrmtool.respository.RequestRepository;
 import com.vatek.hrmtool.respository.TimesheetRepository;
@@ -38,7 +40,7 @@ import java.util.List;
 @AllArgsConstructor
 @Log4j2
 public class TimesheetServiceImpl implements TimesheetService {
-    private TimesheetRepository timesheetEntityRepository;
+    private TimesheetRepository timesheetRepository;
 
     private UserRepository userRepository;
 
@@ -46,6 +48,9 @@ public class TimesheetServiceImpl implements TimesheetService {
 
     private RequestRepository requestRepository;
 
+    private TimesheetMapping timesheetMapping;
+
+    @Override
     public TimesheetDto createTimesheet(CreateTimesheetForm form){
         var currentUser = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -82,7 +87,8 @@ public class TimesheetServiceImpl implements TimesheetService {
         var workingDayInstantDayOfWeek = workingDayInstant.atZone(ZoneId.systemDefault()).getDayOfWeek();
 
         if(
-                workingDayInstantDayOfWeek == DayOfWeek.SATURDAY || workingDayInstantDayOfWeek == DayOfWeek.SUNDAY
+                form.getTimesheetType() == TimesheetType.NORMAL_WORKING &&
+                        (workingDayInstantDayOfWeek == DayOfWeek.SATURDAY || workingDayInstantDayOfWeek == DayOfWeek.SUNDAY)
         ){
             throw new ProductException(
                     ErrorResponse
@@ -97,7 +103,7 @@ public class TimesheetServiceImpl implements TimesheetService {
         Specification<TimesheetEntity> timesheetEntitySpecification = (root, query, criteriaBuilder) -> {
             var predicates = new ArrayList<Predicate>();
 
-            predicates.add(criteriaBuilder.notEqual(root.get("requestStatus"), RequestStatus.REJECTED));
+            predicates.add(criteriaBuilder.notEqual(root.get("requestStatus"), ApprovalStatus.REJECTED));
             predicates.add(criteriaBuilder.equal(root.get("timesheetType"), form.getTimesheetType()));
             predicates.add(criteriaBuilder.equal(root.get("userEntity").get("id"),currentUser.getId()));
             predicates.add(criteriaBuilder.equal(root.get("workingDay"),workingDayInstant));
@@ -107,7 +113,7 @@ public class TimesheetServiceImpl implements TimesheetService {
             return criteriaBuilder.and(p);
         };
 
-        List<TimesheetEntity> timesheetEntities = timesheetEntityRepository.findAll(timesheetEntitySpecification);
+        List<TimesheetEntity> timesheetEntities = timesheetRepository.findAll(timesheetEntitySpecification);
 
         Integer totalWorkingHoursInDay = timesheetEntities.stream().map(TimesheetEntity::getWorkingHours).reduce(0,Integer::sum);
 
@@ -117,7 +123,7 @@ public class TimesheetServiceImpl implements TimesheetService {
             predicates.add(criteriaBuilder.equal(root.get("typeRequest"), TypeRequest.DAY_OFF));
             predicates.add(criteriaBuilder.greaterThan(root.get("toDate"),workingDayInstant));
             predicates.add(criteriaBuilder.lessThan(root.get("fromDate"),workingDayInstant));
-            predicates.add(criteriaBuilder.notEqual(root.get("status"),RequestStatus.REJECTED));
+            predicates.add(criteriaBuilder.notEqual(root.get("status"), ApprovalStatus.REJECTED));
             predicates.add(criteriaBuilder.equal(root.get("requester").get("id"),currentUser.getId()));
 
             criteriaBuilder.or(
@@ -135,23 +141,66 @@ public class TimesheetServiceImpl implements TimesheetService {
 
         switch (form.getTimesheetType()){
             case NORMAL_WORKING -> {
-                if(totalWorkingHoursInDay == 8){
-                    ErrorResponse
-                            .builder()
-                            .message(ErrorConstant.Message.CANNOT_LOG_MORE_TIMESHEET)
-                            .code(ErrorConstant.Code.CANNOT_LOG_MORE_TIMESHEET)
-                            .type(ErrorConstant.Type.CANNOT_LOG_MORE_TIMESHEET)
-                            .build();
+                if(conditionRequest.size() > 2) {
+                    throw new ProductException(
+                            ErrorResponse
+                                    .builder()
+                                    .type(ErrorConstant.Type.CANNOT_LOG_ON_FULL_DAY_OFF)
+                                    .code(ErrorConstant.Code.CANNOT_LOG_ON_FULL_DAY_OFF)
+                                    .message(ErrorConstant.Message.CANNOT_LOG_ON_FULL_DAY_OFF)
+                                    .build()
+                    );
+                }
+                if(conditionRequest.size() == 1){
+                    RequestEntity entity = conditionRequest.get(0);
+
+                    switch (entity.getTypeDayOff()){
+                        case FULL -> throw new ProductException(
+                                ErrorResponse
+                                .builder()
+                                .type(ErrorConstant.Type.CANNOT_LOG_ON_FULL_DAY_OFF)
+                                .code(ErrorConstant.Code.CANNOT_LOG_ON_FULL_DAY_OFF)
+                                .message(ErrorConstant.Message.CANNOT_LOG_ON_FULL_DAY_OFF)
+                                .build()
+                        );
+                        case MORNING -> {
+                            if(totalWorkingHoursInDay + form.getWorkingHours() > 5){
+                                throw new ProductException(
+                                        ErrorResponse
+                                                .builder()
+                                                .type(ErrorConstant.Type.CANNOT_LOG_TIMESHEET)
+                                                .code(ErrorConstant.Code.CANNOT_LOG_TIMESHEET)
+                                                .message(String.format(ErrorConstant.Message.CANNOT_LOG_TIMESHEET,5))
+                                                .build()
+                                );
+                            }
+                        }
+                        case AFTERNOON -> {
+                            if(totalWorkingHoursInDay + form.getWorkingHours() > 3){
+                                throw new ProductException(
+                                        ErrorResponse
+                                                .builder()
+                                                .type(ErrorConstant.Type.CANNOT_LOG_TIMESHEET)
+                                                .code(ErrorConstant.Code.CANNOT_LOG_TIMESHEET)
+                                                .message(String.format(ErrorConstant.Message.CANNOT_LOG_TIMESHEET,3))
+                                                .build()
+                                );
+                            }
+                        }
+                    }
                 }
 
                 if(totalWorkingHoursInDay + form.getWorkingHours() > 8){
-                    ErrorResponse
-                            .builder()
-                            .message(ErrorConstant.Message.CANNOT_LOG_THIS_TIMESHEET)
-                            .code(ErrorConstant.Code.CANNOT_LOG_THIS_TIMESHEET)
-                            .type(ErrorConstant.Type.CANNOT_LOG_THIS_TIMESHEET)
-                            .build();
+                    throw new ProductException(
+                            ErrorResponse
+                                    .builder()
+                                    .type(ErrorConstant.Type.CANNOT_LOG_TIMESHEET)
+                                    .code(ErrorConstant.Code.CANNOT_LOG_TIMESHEET)
+                                    .message(String.format(ErrorConstant.Message.CANNOT_LOG_TIMESHEET,8))
+                                    .build()
+                    );
                 }
+
             }
             case OVERTIME , PROJECT_BONUS -> {
 
@@ -167,8 +216,20 @@ public class TimesheetServiceImpl implements TimesheetService {
         timesheetEntity.setWorkingDay(workingDayInstant);
         timesheetEntity.setProjectEntity(projectEntity);
         timesheetEntity.setUserEntity(userEntity);
+        timesheetEntity.setTimesheetType(form.getTimesheetType());
         timesheetEntity.setCreatedBy(currentUser.getId());
         timesheetEntity.setCreatedTime(DateUtil.getInstantNow());
+        timesheetEntity = timesheetRepository.save(timesheetEntity);
+
+        return timesheetMapping.toDto(timesheetEntity);
+    }
+
+    public TimesheetDto updateInformationTimesheet(){
+        return null;
+    }
+
+    public TimesheetDto approvalTimesheet(){
+        var currentUser = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
 
         return null;

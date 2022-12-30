@@ -2,7 +2,7 @@ package com.vatek.hrmtool.entity;
 
 import com.vatek.hrmtool.entity.common.CommonEntity;
 import com.vatek.hrmtool.enumeration.TimesheetType;
-import com.vatek.hrmtool.enumeration.RequestStatus;
+import com.vatek.hrmtool.enumeration.ApprovalStatus;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,7 +26,7 @@ public class TimesheetEntity extends CommonEntity {
     private Instant workingDay;
     @Column
     @Enumerated(EnumType.STRING)
-    private RequestStatus requestStatus;
+    private ApprovalStatus requestStatus;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
     private ProjectEntity projectEntity;

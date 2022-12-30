@@ -4,10 +4,8 @@ import com.vatek.hrmtool.constant.ErrorConstant;
 import com.vatek.hrmtool.dto.ListResponseDto;
 import com.vatek.hrmtool.dto.ResponseDto;
 import com.vatek.hrmtool.dto.request.RequestDto;
-import com.vatek.hrmtool.enumeration.RequestStatus;
-import com.vatek.hrmtool.enumeration.TypeRequest;
-import com.vatek.hrmtool.readable.form.createForm.CreateRequestForm;
-import com.vatek.hrmtool.respository.RequestRepository;
+import com.vatek.hrmtool.enumeration.ApprovalStatus;
+import com.vatek.hrmtool.readable.form.create.CreateRequestForm;
 import com.vatek.hrmtool.service.RequestService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -47,18 +45,18 @@ public class RequestController {
     @PreAuthorize("hasAnyRole('ROLE_PM')")
     @GetMapping("/get-requests-by-manager")
     public ListResponseDto<RequestDto> getRequestsByManager(Pageable pageable){
-        return requestService.getRequestsByManagerByStatus(pageable, RequestStatus.PENDING);
+        return requestService.getRequestsByManagerByStatus(pageable, ApprovalStatus.PENDING);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping("/get-all-requests")
     public ListResponseDto<RequestDto> getAllRequests(Pageable pageable){
-        return requestService.getAllRequestsByStatus(pageable, RequestStatus.PENDING);
+        return requestService.getAllRequestsByStatus(pageable, ApprovalStatus.PENDING);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_IT_ADMIN')")
     @GetMapping("/get-all-device-requests")
     public ListResponseDto<RequestDto> getAllDeviceRequests(Pageable pageable){
-        return requestService.getAllDeviceRequestsByStatus(pageable,RequestStatus.PENDING);
+        return requestService.getAllDeviceRequestsByStatus(pageable, ApprovalStatus.PENDING);
     }
 }

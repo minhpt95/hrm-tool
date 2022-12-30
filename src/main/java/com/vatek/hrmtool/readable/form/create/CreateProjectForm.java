@@ -1,4 +1,4 @@
-package com.vatek.hrmtool.readable.form.createForm;
+package com.vatek.hrmtool.readable.form.create;
 
 import com.vatek.hrmtool.enumeration.ProjectStatus;
 import com.vatek.hrmtool.validator.anotation.DateFormatConstraint;
@@ -9,7 +9,6 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
 import java.util.List;
 
 

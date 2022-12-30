@@ -2,8 +2,8 @@ package com.vatek.hrmtool.service;
 
 import com.vatek.hrmtool.dto.ListResponseDto;
 import com.vatek.hrmtool.dto.project.ProjectDto;
-import com.vatek.hrmtool.readable.form.createForm.CreateProjectForm;
-import com.vatek.hrmtool.readable.form.updateForm.UpdateMemberProjectForm;
+import com.vatek.hrmtool.readable.form.create.CreateProjectForm;
+import com.vatek.hrmtool.readable.form.update.UpdateMemberProjectForm;
 import org.springframework.data.domain.Pageable;
 
 import javax.transaction.Transactional;

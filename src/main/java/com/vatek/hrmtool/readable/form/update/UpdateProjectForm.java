@@ -1,6 +1,6 @@
-package com.vatek.hrmtool.readable.form.updateForm;
+package com.vatek.hrmtool.readable.form.update;
 
-import com.vatek.hrmtool.readable.form.createForm.CreateProjectForm;
+import com.vatek.hrmtool.readable.form.create.CreateProjectForm;
 import lombok.Getter;
 import lombok.Setter;
 

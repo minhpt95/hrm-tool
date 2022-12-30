@@ -6,13 +6,13 @@ import com.vatek.hrmtool.dto.request.RequestDto;
 import com.vatek.hrmtool.entity.ProjectEntity;
 import com.vatek.hrmtool.entity.RequestEntity;
 import com.vatek.hrmtool.entity.UserEntity;
-import com.vatek.hrmtool.enumeration.RequestStatus;
+import com.vatek.hrmtool.enumeration.ApprovalStatus;
 import com.vatek.hrmtool.enumeration.TypeDayOff;
 import com.vatek.hrmtool.enumeration.TypeRequest;
 import com.vatek.hrmtool.exception.ErrorResponse;
 import com.vatek.hrmtool.exception.ProductException;
 import com.vatek.hrmtool.mapping.RequestMapping;
-import com.vatek.hrmtool.readable.form.createForm.CreateRequestForm;
+import com.vatek.hrmtool.readable.form.create.CreateRequestForm;
 import com.vatek.hrmtool.respository.RequestRepository;
 import com.vatek.hrmtool.respository.UserRepository;
 import com.vatek.hrmtool.security.service.UserPrinciple;
@@ -30,10 +30,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.transaction.Transactional;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -56,7 +53,7 @@ public class RequestServiceImpl implements RequestService {
         var requestEntity = new RequestEntity();
         requestEntity.setRequestTitle(createRequestForm.getRequestTitle());
         requestEntity.setRequestReason(createRequestForm.getRequestReason());
-        requestEntity.setStatus(RequestStatus.PENDING);
+        requestEntity.setStatus(ApprovalStatus.PENDING);
         requestEntity.setTypeRequest(createRequestForm.getTypeRequest());
         requestEntity.setCreatedBy(currentUser.getId());
         requestEntity.setCreatedTime(DateUtil.getInstantNow());
@@ -87,7 +84,7 @@ public class RequestServiceImpl implements RequestService {
                     predicates.add(criteriaBuilder.equal(root.get("typeRequest"),TypeRequest.DAY_OFF));
                     predicates.add(criteriaBuilder.greaterThan(root.get("toDate"),from));
                     predicates.add(criteriaBuilder.lessThan(root.get("fromDate"),to));
-                    predicates.add(criteriaBuilder.notEqual(root.get("status"),RequestStatus.REJECTED));
+                    predicates.add(criteriaBuilder.notEqual(root.get("status"), ApprovalStatus.REJECTED));
                     predicates.add(criteriaBuilder.equal(root.get("requester").get("id"),currentUser.getId()));
 
                     switch (createRequestForm.getTypeDayoff()) {
@@ -134,11 +131,11 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public ListResponseDto<RequestDto> getAllRequestsByStatus(Pageable pageable,RequestStatus requestStatus){
+    public ListResponseDto<RequestDto> getAllRequestsByStatus(Pageable pageable, ApprovalStatus requestStatus){
         return null;
     }
     @Override
-    public ListResponseDto<RequestDto> getAllDeviceRequestsByStatus(Pageable pageable,RequestStatus requestStatus){
+    public ListResponseDto<RequestDto> getAllDeviceRequestsByStatus(Pageable pageable, ApprovalStatus requestStatus){
         Specification<RequestEntity> specification = (root, query, criteriaBuilder) -> {
             var predicates = new ArrayList<Predicate>();
 
@@ -161,7 +158,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public ListResponseDto<RequestDto> getRequestsByManagerByStatus(Pageable pageable,RequestStatus requestStatus){
+    public ListResponseDto<RequestDto> getRequestsByManagerByStatus(Pageable pageable, ApprovalStatus requestStatus){
         var currentUser = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         Specification<RequestEntity> specification = (root, query, criteriaBuilder) -> {

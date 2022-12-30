@@ -1,4 +1,4 @@
-package com.vatek.hrmtool.readable.form.createForm;
+package com.vatek.hrmtool.readable.form.create;
 
 import com.vatek.hrmtool.enumeration.TypeDayOff;
 import com.vatek.hrmtool.enumeration.TypeRequest;

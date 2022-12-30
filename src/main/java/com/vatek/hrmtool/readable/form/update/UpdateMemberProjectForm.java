@@ -1,4 +1,4 @@
-package com.vatek.hrmtool.readable.form.updateForm;
+package com.vatek.hrmtool.readable.form.update;
 
 import com.vatek.hrmtool.dto.ModifyListDto;
 import lombok.AllArgsConstructor;

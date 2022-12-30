@@ -5,7 +5,7 @@ import com.vatek.hrmtool.dto.ResponseDto;
 import com.vatek.hrmtool.dto.user.UserDto;
 import com.vatek.hrmtool.jwt.JwtResponse;
 import com.vatek.hrmtool.readable.form.LoginForm;
-import com.vatek.hrmtool.readable.form.createForm.CreateUserForm;
+import com.vatek.hrmtool.readable.form.create.CreateUserForm;
 import com.vatek.hrmtool.service.UserService;
 import com.vatek.hrmtool.util.DateUtil;
 import lombok.AllArgsConstructor;

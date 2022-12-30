@@ -1,16 +1,13 @@
 package com.vatek.hrmtool.dto.request;
 
 import com.vatek.hrmtool.dto.user.UserDto;
-import com.vatek.hrmtool.enumeration.RequestStatus;
+import com.vatek.hrmtool.enumeration.ApprovalStatus;
 import com.vatek.hrmtool.enumeration.TypeRequest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import java.time.Instant;
 
 @Getter
@@ -25,7 +22,7 @@ public class RequestDto {
 
     private String requestReason;
 
-    private RequestStatus status;
+    private ApprovalStatus status;
 
     private Instant fromDate;
 

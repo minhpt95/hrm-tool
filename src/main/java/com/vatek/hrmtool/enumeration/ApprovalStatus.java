@@ -1,6 +1,6 @@
 package com.vatek.hrmtool.enumeration;
 
-public enum RequestStatus {
+public enum ApprovalStatus {
     PENDING,
     APPROVED,
     REJECTED

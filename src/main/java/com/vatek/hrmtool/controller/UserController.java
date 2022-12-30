@@ -1,17 +1,15 @@
 package com.vatek.hrmtool.controller;
 
-import com.amazonaws.auth.policy.Resource;
 import com.vatek.hrmtool.constant.ErrorConstant;
 import com.vatek.hrmtool.dto.ListResponseDto;
 import com.vatek.hrmtool.dto.ResponseDto;
 import com.vatek.hrmtool.dto.user.UserDto;
-import com.vatek.hrmtool.readable.form.createForm.CreateUserForm;
-import com.vatek.hrmtool.readable.form.updateForm.UpdateUserForm;
+import com.vatek.hrmtool.readable.form.create.CreateUserForm;
+import com.vatek.hrmtool.readable.form.update.UpdateUserForm;
 import com.vatek.hrmtool.readable.request.ChangePasswordReq;
 import com.vatek.hrmtool.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -24,9 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.List;
 
 @RestController

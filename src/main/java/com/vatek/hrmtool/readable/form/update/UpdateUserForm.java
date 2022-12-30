@@ -1,10 +1,8 @@
-package com.vatek.hrmtool.readable.form.updateForm;
+package com.vatek.hrmtool.readable.form.update;
 
-import com.vatek.hrmtool.readable.form.createForm.CreateUserForm;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Getter
