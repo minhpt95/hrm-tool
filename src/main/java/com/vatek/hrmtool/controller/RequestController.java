@@ -33,7 +33,7 @@ public class RequestController {
 
     @PreAuthorize("hasAnyRole('ROLE_PM')")
     @PutMapping("/approval-request")
-    public ResponseDto<RequestDto> approvalRequest (UpdateApprovalStatusForm form){
+    public ResponseDto<RequestDto> approvalRequest (@RequestBody UpdateApprovalStatusForm form){
         var responseDto = new ResponseDto<RequestDto>();
         responseDto.setContent(requestService.approvalRequest(form));
         responseDto.setType(ErrorConstant.Type.SUCCESS);
