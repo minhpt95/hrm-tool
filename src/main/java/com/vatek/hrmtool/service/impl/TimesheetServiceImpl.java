@@ -207,8 +207,6 @@ public class TimesheetServiceImpl implements TimesheetService {
             }
         }
 
-
-
         TimesheetEntity timesheetEntity = new TimesheetEntity();
         timesheetEntity.setTitle(form.getTitle());
         timesheetEntity.setDescription(form.getDescription());
@@ -230,7 +228,6 @@ public class TimesheetServiceImpl implements TimesheetService {
 
     public TimesheetDto approvalTimesheet(){
         var currentUser = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
 
         return null;
     }
