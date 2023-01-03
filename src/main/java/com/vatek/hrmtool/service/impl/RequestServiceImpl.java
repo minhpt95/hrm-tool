@@ -13,6 +13,7 @@ import com.vatek.hrmtool.exception.ErrorResponse;
 import com.vatek.hrmtool.exception.ProductException;
 import com.vatek.hrmtool.mapping.RequestMapping;
 import com.vatek.hrmtool.readable.form.create.CreateRequestForm;
+import com.vatek.hrmtool.readable.form.update.UpdateApprovalStatusForm;
 import com.vatek.hrmtool.respository.RequestRepository;
 import com.vatek.hrmtool.respository.UserRepository;
 import com.vatek.hrmtool.security.service.UserPrinciple;
@@ -30,6 +31,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.transaction.Transactional;
+import java.time.Instant;
 import java.util.ArrayList;
 
 @Service
@@ -122,9 +124,9 @@ public class RequestServiceImpl implements RequestService {
             }
             default -> throw new ProductException(
                     ErrorResponse.builder()
-                            .code("")
-                            .message("")
-                            .type("")
+                            .code(ErrorConstant.Code.NOT_FOUND)
+                            .message(ErrorConstant.Message.NOT_FOUND)
+                            .type(ErrorConstant.Type.NOT_FOUND)
                     .build()
             );
         }
@@ -132,8 +134,52 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public ListResponseDto<RequestDto> getAllRequestsByStatus(Pageable pageable, ApprovalStatus requestStatus){
-        return null;
+
+        Specification<RequestEntity> specification = (root, query, criteriaBuilder) -> {
+            var predicates = new ArrayList<Predicate>();
+
+            predicates.add(criteriaBuilder.equal(root.get("typeRequest"),TypeRequest.REQUEST_DEVICE));
+
+            Predicate[] p = new Predicate[predicates.size()];
+
+            return criteriaBuilder.and(predicates.toArray(p));
+        };
+
+        var requestEntities = requestRepository.findAll(
+                specification,
+                CommonUtil.buildPageable(pageable.getPageNumber(),pageable.getPageSize())
+        );
+
+        Page<RequestDto> requestDtos = requestEntities.map(requestMapping::toDto);
+
+        return new ListResponseDto<>(requestDtos, pageable.getPageSize(), pageable.getPageNumber());
     }
+
+    @Override
+    public RequestDto approvalRequest(UpdateApprovalStatusForm form) {
+        var currentUser = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        RequestEntity requestEntity = requestRepository.findById(form.getId()).orElse(null);
+
+        if(requestEntity == null){
+            throw new ProductException(
+                    ErrorResponse.builder()
+                            .message(String.format(ErrorConstant.Message.NOT_FOUND,"Request with id : " + form.getId()))
+                            .code(ErrorConstant.Code.NOT_FOUND)
+                            .type(ErrorConstant.Type.NOT_FOUND)
+                            .build()
+            );
+        }
+
+        requestEntity.setStatus(form.getApprovalStatus());
+        requestEntity.setModifiedBy(currentUser.getId());
+        requestEntity.setModifiedTime(Instant.now());
+
+        requestEntity = requestRepository.save(requestEntity);
+
+        return requestMapping.toDto(requestEntity);
+    }
+
     @Override
     public ListResponseDto<RequestDto> getAllDeviceRequestsByStatus(Pageable pageable, ApprovalStatus requestStatus){
         Specification<RequestEntity> specification = (root, query, criteriaBuilder) -> {

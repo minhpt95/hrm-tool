@@ -12,8 +12,7 @@ import java.lang.annotation.*;
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DateFormatConstraint {
-
-    String message() default "Invalid date";
+    String message() default "Invalid format date";
 
     String datePattern() default DateConstant.DD_MM_YYYY;
 
@@ -22,5 +21,4 @@ public @interface DateFormatConstraint {
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
-
 }

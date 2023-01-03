@@ -222,12 +222,10 @@ public class TimesheetServiceImpl implements TimesheetService {
         return timesheetMapping.toDto(timesheetEntity);
     }
 
-    public TimesheetDto updateInformationTimesheet(){
-        return null;
-    }
-
     public TimesheetDto approvalTimesheet(){
         var currentUser = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+
 
         return null;
     }

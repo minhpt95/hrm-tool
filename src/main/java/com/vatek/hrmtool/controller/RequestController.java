@@ -6,6 +6,7 @@ import com.vatek.hrmtool.dto.ResponseDto;
 import com.vatek.hrmtool.dto.request.RequestDto;
 import com.vatek.hrmtool.enumeration.ApprovalStatus;
 import com.vatek.hrmtool.readable.form.create.CreateRequestForm;
+import com.vatek.hrmtool.readable.form.update.UpdateApprovalStatusForm;
 import com.vatek.hrmtool.service.RequestService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -32,14 +33,13 @@ public class RequestController {
 
     @PreAuthorize("hasAnyRole('ROLE_PM')")
     @PutMapping("/approval-request")
-    public ResponseDto<RequestDto> approvalRequest (){
-        return null;
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_PM')")
-    @PutMapping("/revert-approval")
-    public ResponseDto<RequestDto> revertApproval (){
-        return null;
+    public ResponseDto<RequestDto> approvalRequest (UpdateApprovalStatusForm form){
+        var responseDto = new ResponseDto<RequestDto>();
+        responseDto.setContent(requestService.approvalRequest(form));
+        responseDto.setType(ErrorConstant.Type.SUCCESS);
+        responseDto.setCode(ErrorConstant.Code.SUCCESS);
+        responseDto.setMessage(ErrorConstant.Message.SUCCESS);
+        return responseDto;
     }
 
     @PreAuthorize("hasAnyRole('ROLE_PM')")

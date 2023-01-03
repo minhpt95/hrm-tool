@@ -6,9 +6,6 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.*;
 
-/**
- * @author itsol.hungtt on 2/1/2021
- */
 @Documented
 @Constraint(validatedBy = EnumPatternValidator.class)
 @Retention(RetentionPolicy.RUNTIME)
