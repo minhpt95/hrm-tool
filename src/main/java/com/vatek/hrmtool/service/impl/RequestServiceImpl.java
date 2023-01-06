@@ -62,7 +62,6 @@ public class RequestServiceImpl implements RequestService {
                 var requestEntity = new RequestEntity();
                 requestEntity.setRequestTitle(createRequestForm.getRequestTitle());
                 requestEntity.setRequestReason(createRequestForm.getRequestReason());
-                requestEntity.setStatus(ApprovalStatus.PENDING);
                 requestEntity.setTypeRequest(createRequestForm.getTypeRequest());
                 requestEntity.setCreatedBy(currentUser.getId());
                 requestEntity.setCreatedTime(DateUtil.getInstantNow());

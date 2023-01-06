@@ -1,4 +1,5 @@
 package com.vatek.hrmtool.dto.user;
+import com.vatek.hrmtool.dto.request.RequestDto;
 import com.vatek.hrmtool.enumeration.Privilege;
 import com.vatek.hrmtool.enumeration.Role;
 import lombok.AllArgsConstructor;
@@ -24,4 +25,5 @@ public class UserDto {
     private String avatarUrl;
     private Collection<Role> roles;
     private Collection<Privilege> privileges;
+    private Collection<RequestDto> requests;
 }

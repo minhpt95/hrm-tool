@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.Instant;
+import java.util.List;
 
 @Entity(name = "Requests")
 @Getter
@@ -19,16 +20,8 @@ public class RequestEntity extends CommonEntity {
     @Column
     private String requestReason;
 
-    @Column
-    @Enumerated(EnumType.STRING)
-    private ApprovalStatus status;
-
-    @Column(columnDefinition = "DATE")
-    private Instant dateOff;
-
-    @Column
-    @Enumerated(EnumType.STRING)
-    private TypeDayOff typeDayOff;
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "requestEntity")
+    private List<DayOffEntity> dayOffEntityList;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "requester_id")
