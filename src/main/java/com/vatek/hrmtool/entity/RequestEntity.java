@@ -24,10 +24,7 @@ public class RequestEntity extends CommonEntity {
     private ApprovalStatus status;
 
     @Column(columnDefinition = "DATE")
-    private Instant fromDate;
-
-    @Column(columnDefinition = "DATE")
-    private Instant toDate;
+    private Instant dateOff;
 
     @Column
     @Enumerated(EnumType.STRING)

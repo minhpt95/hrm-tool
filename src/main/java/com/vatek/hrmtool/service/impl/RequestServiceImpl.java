@@ -32,7 +32,10 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.transaction.Transactional;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -52,16 +55,17 @@ public class RequestServiceImpl implements RequestService {
         var userEntity = userRepository.findUserEntityById(currentUser.getId());
 
 
-        var requestEntity = new RequestEntity();
-        requestEntity.setRequestTitle(createRequestForm.getRequestTitle());
-        requestEntity.setRequestReason(createRequestForm.getRequestReason());
-        requestEntity.setStatus(ApprovalStatus.PENDING);
-        requestEntity.setTypeRequest(createRequestForm.getTypeRequest());
-        requestEntity.setCreatedBy(currentUser.getId());
-        requestEntity.setCreatedTime(DateUtil.getInstantNow());
+
 
         switch (createRequestForm.getTypeRequest()){
             case REQUEST_DEVICE -> {
+                var requestEntity = new RequestEntity();
+                requestEntity.setRequestTitle(createRequestForm.getRequestTitle());
+                requestEntity.setRequestReason(createRequestForm.getRequestReason());
+                requestEntity.setStatus(ApprovalStatus.PENDING);
+                requestEntity.setTypeRequest(createRequestForm.getTypeRequest());
+                requestEntity.setCreatedBy(currentUser.getId());
+                requestEntity.setCreatedTime(DateUtil.getInstantNow());
                 requestEntity = requestRepository.save(requestEntity);
                 return requestMapping.toDto(requestEntity);
             }
@@ -84,8 +88,7 @@ public class RequestServiceImpl implements RequestService {
                     var predicates = new ArrayList<Predicate>();
 
                     predicates.add(criteriaBuilder.equal(root.get("typeRequest"),TypeRequest.DAY_OFF));
-                    predicates.add(criteriaBuilder.greaterThan(root.get("toDate"),from));
-                    predicates.add(criteriaBuilder.lessThan(root.get("fromDate"),to));
+                    predicates.add(criteriaBuilder.between(root.get("dayOff"),from,to));
                     predicates.add(criteriaBuilder.notEqual(root.get("status"), ApprovalStatus.REJECTED));
                     predicates.add(criteriaBuilder.equal(root.get("requester").get("id"),currentUser.getId()));
 
@@ -113,15 +116,28 @@ public class RequestServiceImpl implements RequestService {
                             .build()
                     );
                 }
-                requestEntity.setFromDate(from);
-                requestEntity.setToDate(to);
-                requestEntity.setRequester(userEntity);
-                requestEntity.setCreatedBy(currentUser.getId());
-                requestEntity.setCreatedTime(DateUtil.getInstantNow());
-                requestEntity.setTypeDayOff(createRequestForm.getTypeDayoff());
-                requestEntity = requestRepository.save(requestEntity);
-                return requestMapping.toDto(requestEntity);
+                List<RequestEntity> requestEntities = new ArrayList<>();
+                while (!from.isAfter(to)){
+                    var requestEntity = new RequestEntity();
+                    requestEntity.setRequestTitle(createRequestForm.getRequestTitle());
+                    requestEntity.setRequestReason(createRequestForm.getRequestReason());
+                    requestEntity.setStatus(ApprovalStatus.PENDING);
+                    requestEntity.setDateOff(from);
+                    requestEntity.setTypeRequest(createRequestForm.getTypeRequest());
+                    requestEntity.setRequester(userEntity);
+                    requestEntity.setCreatedBy(currentUser.getId());
+                    requestEntity.setCreatedTime(DateUtil.getInstantNow());
+                    requestEntity.setTypeDayOff(createRequestForm.getTypeDayoff());
+                    requestEntities.add(requestEntity);
+                    from = from.plus(1, ChronoUnit.DAYS);
+                }
+                List<RequestEntity> requestEntityList = requestRepository.saveAll(requestEntities);
+
+
+
+
             }
+
             default -> throw new ProductException(
                     ErrorResponse.builder()
                             .code(ErrorConstant.Code.NOT_FOUND)

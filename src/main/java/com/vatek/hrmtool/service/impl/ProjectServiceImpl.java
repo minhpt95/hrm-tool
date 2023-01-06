@@ -88,11 +88,13 @@ public class ProjectServiceImpl implements ProjectService {
 
         var projectEntity = projectRepository.findById(updateMemberProjectForm.getId()).orElseThrow(
                 () ->
-                new ProductException(ErrorResponse.builder()
-                .message(String.format(ErrorConstant.Message.NOT_FOUND,"Project id : " + updateMemberProjectForm.getId()))
-                .code(ErrorConstant.Code.NOT_FOUND)
-                .type(ErrorConstant.Type.NOT_FOUND)
-                .build())
+                new ProductException(
+                        ErrorResponse.builder()
+                                .message(String.format(ErrorConstant.Message.NOT_FOUND,"Project id : " + updateMemberProjectForm.getId()))
+                                .code(ErrorConstant.Code.NOT_FOUND)
+                                .type(ErrorConstant.Type.NOT_FOUND)
+                                .build()
+                )
         );
 
         if(
@@ -102,7 +104,7 @@ public class ProjectServiceImpl implements ProjectService {
             throw new AccessDeniedException(ErrorConstant.Message.CANNOT_UPDATE_ANOTHER_PROJECT);
         }
 
-        var removeMember = updateMemberProjectForm
+        var removeMemberId = updateMemberProjectForm
                 .getMember()
                 .stream()
                 .filter(x -> x.getAction() == Action.DELETE)
@@ -117,7 +119,7 @@ public class ProjectServiceImpl implements ProjectService {
                 .filter(id -> !projectEntity.getMembers().stream().map(CommonEntity::getId).toList().contains(id))
                 .toList();
 
-        var removeMemberEntity = userRepository.findUserEntitiesByIdIn(removeMember);
+        var removeMemberEntity = userRepository.findUserEntitiesByIdIn(removeMemberId);
 
         var addMemberEntity = userRepository.findUserEntitiesByIdIn(addMemberId);
 
@@ -152,7 +154,8 @@ public class ProjectServiceImpl implements ProjectService {
     public ListResponseDto<ProjectDto> getProjectByManager(Pageable pageable) {
         var currentUser = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        Specification<ProjectEntity> specification = (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("managerUser").get("id"),currentUser.getId());
+        Specification<ProjectEntity> specification = (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("managerUser").get("id"),currentUser.getId());
 
         return getProjectDtoListResponseDto(pageable, specification);
     }
@@ -162,7 +165,8 @@ public class ProjectServiceImpl implements ProjectService {
     public ListResponseDto<ProjectDto> getWorkingProjectByUser(Pageable pageable) {
         var currentUser = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        Specification<ProjectEntity> specification = (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.join("memberUser").get("id"),currentUser.getId());
+        Specification<ProjectEntity> specification = (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.join("memberUser").get("id"),currentUser.getId());
 
         return getProjectDtoListResponseDto(pageable, specification);
     }
