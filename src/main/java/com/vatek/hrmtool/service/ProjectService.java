@@ -6,8 +6,7 @@ import com.vatek.hrmtool.readable.form.create.CreateProjectForm;
 import com.vatek.hrmtool.readable.form.update.UpdateMemberProjectForm;
 import org.springframework.data.domain.Pageable;
 
-import javax.transaction.Transactional;
-
+import org.springframework.transaction.annotation.Transactional;
 
 public interface ProjectService {
     ProjectDto createProject(CreateProjectForm createProjectForm);

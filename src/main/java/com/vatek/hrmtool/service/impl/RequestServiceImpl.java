@@ -30,10 +30,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
-import javax.transaction.Transactional;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -49,7 +49,7 @@ public class RequestServiceImpl implements RequestService {
     private final UserRepository userRepository;
     private final RequestMapping requestMapping;
     @Override
-    @Transactional(rollbackOn = Exception.class)
+    @Transactional
     public RequestDto createRequest(CreateRequestForm createRequestForm) {
 
         var currentUser = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -150,12 +150,13 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
+    @Transactional
     public ListResponseDto<RequestDto> getAllRequestsByStatus(Pageable pageable, ApprovalStatus requestStatus){
 
         Specification<RequestEntity> specification = (root, query, criteriaBuilder) -> {
             var predicates = new ArrayList<Predicate>();
 
-            predicates.add(criteriaBuilder.equal(root.get("typeRequest"),TypeRequest.REQUEST_DEVICE));
+            predicates.add(criteriaBuilder.equal(root.get("typeRequest"),TypeRequest.DAY_OFF));
 
             Predicate[] p = new Predicate[predicates.size()];
 

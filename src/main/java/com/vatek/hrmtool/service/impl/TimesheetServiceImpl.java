@@ -3,14 +3,10 @@ package com.vatek.hrmtool.service.impl;
 import com.vatek.hrmtool.constant.ErrorConstant;
 import com.vatek.hrmtool.dto.timesheet.TimesheetDto;
 import com.vatek.hrmtool.entity.ProjectEntity;
-import com.vatek.hrmtool.entity.RequestEntity;
 import com.vatek.hrmtool.entity.TimesheetEntity;
 import com.vatek.hrmtool.entity.UserEntity;
 import com.vatek.hrmtool.entity.common.CommonEntity;
-import com.vatek.hrmtool.enumeration.ApprovalStatus;
 import com.vatek.hrmtool.enumeration.TimesheetType;
-import com.vatek.hrmtool.enumeration.TypeDayOff;
-import com.vatek.hrmtool.enumeration.TypeRequest;
 import com.vatek.hrmtool.exception.ErrorResponse;
 import com.vatek.hrmtool.exception.ProductException;
 import com.vatek.hrmtool.mapping.TimesheetMapping;
@@ -24,17 +20,14 @@ import com.vatek.hrmtool.service.TimesheetService;
 import com.vatek.hrmtool.util.DateUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.Predicate;
 import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -51,6 +44,7 @@ public class TimesheetServiceImpl implements TimesheetService {
     private TimesheetMapping timesheetMapping;
 
     @Override
+    @Transactional
     public TimesheetDto createTimesheet(CreateTimesheetForm form){
         var currentUser = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -99,6 +93,8 @@ public class TimesheetServiceImpl implements TimesheetService {
                             .build()
             );
         }
+
+
 
         TimesheetEntity timesheetEntity = new TimesheetEntity();
         timesheetEntity.setTitle(form.getTitle());

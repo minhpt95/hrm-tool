@@ -14,7 +14,7 @@ import org.springframework.data.domain.Pageable;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.List;
 
@@ -26,8 +26,7 @@ public interface UserService {
     void clearAllToken();
 
     UserEntity findUserEntityByEmail(String email);
-
-    @Transactional
+    
     UserDto findUserEntityById(Long id);
 
     ListResponseDto<UserDto> getUserList

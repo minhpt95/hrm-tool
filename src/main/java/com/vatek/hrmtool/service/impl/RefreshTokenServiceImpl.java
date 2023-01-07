@@ -16,7 +16,7 @@ import com.vatek.hrmtool.util.DateUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
@@ -105,7 +105,6 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     @Override
-    @Transactional
     public Long deleteByUserId(Long userId) {
         refreshTokenRepository.deleteByUserEntityId(userId);
         return userId;
