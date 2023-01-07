@@ -20,7 +20,12 @@ public class RequestEntity extends CommonEntity {
     @Column
     private String requestReason;
 
-    @OneToMany(fetch = FetchType.LAZY,mappedBy = "requestEntity")
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "requestEntity",cascade = {
+            CascadeType.DETACH,
+            CascadeType.MERGE,
+            CascadeType.PERSIST,
+            CascadeType.REFRESH
+    })
     private List<DayOffEntity> dayOffEntityList;
 
     @ManyToOne(fetch = FetchType.LAZY)

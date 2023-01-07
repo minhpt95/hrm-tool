@@ -3,6 +3,7 @@ package com.vatek.hrmtool.service.impl;
 import com.vatek.hrmtool.constant.ErrorConstant;
 import com.vatek.hrmtool.dto.ListResponseDto;
 import com.vatek.hrmtool.dto.request.RequestDto;
+import com.vatek.hrmtool.entity.DayOffEntity;
 import com.vatek.hrmtool.entity.ProjectEntity;
 import com.vatek.hrmtool.entity.RequestEntity;
 import com.vatek.hrmtool.entity.UserEntity;
@@ -14,6 +15,7 @@ import com.vatek.hrmtool.exception.ProductException;
 import com.vatek.hrmtool.mapping.RequestMapping;
 import com.vatek.hrmtool.readable.form.create.CreateRequestForm;
 import com.vatek.hrmtool.readable.form.update.UpdateApprovalStatusForm;
+import com.vatek.hrmtool.respository.DayOffEntityRepository;
 import com.vatek.hrmtool.respository.RequestRepository;
 import com.vatek.hrmtool.respository.UserRepository;
 import com.vatek.hrmtool.security.service.UserPrinciple;
@@ -21,6 +23,7 @@ import com.vatek.hrmtool.service.RequestService;
 import com.vatek.hrmtool.util.CommonUtil;
 import com.vatek.hrmtool.util.DateUtil;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,33 +41,28 @@ import java.util.Collections;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Log4j2
 public class RequestServiceImpl implements RequestService {
-    private RequestRepository requestRepository;
-
-    private UserRepository userRepository;
-
-    private RequestMapping requestMapping;
-
+    private final DayOffEntityRepository dayOffEntityRepository;
+    private final RequestRepository requestRepository;
+    private final UserRepository userRepository;
+    private final RequestMapping requestMapping;
     @Override
-    @Transactional
+    @Transactional(rollbackOn = Exception.class)
     public RequestDto createRequest(CreateRequestForm createRequestForm) {
 
         var currentUser = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var userEntity = userRepository.findUserEntityById(currentUser.getId());
-
-
-
+        var requestEntity = new RequestEntity();
+        requestEntity.setRequestTitle(createRequestForm.getRequestTitle());
+        requestEntity.setRequestReason(createRequestForm.getRequestReason());
+        requestEntity.setTypeRequest(createRequestForm.getTypeRequest());
+        requestEntity.setCreatedBy(currentUser.getId());
+        requestEntity.setCreatedTime(DateUtil.getInstantNow());
 
         switch (createRequestForm.getTypeRequest()){
             case REQUEST_DEVICE -> {
-                var requestEntity = new RequestEntity();
-                requestEntity.setRequestTitle(createRequestForm.getRequestTitle());
-                requestEntity.setRequestReason(createRequestForm.getRequestReason());
-                requestEntity.setTypeRequest(createRequestForm.getTypeRequest());
-                requestEntity.setCreatedBy(currentUser.getId());
-                requestEntity.setCreatedTime(DateUtil.getInstantNow());
                 requestEntity = requestRepository.save(requestEntity);
                 return requestMapping.toDto(requestEntity);
             }
@@ -83,58 +81,62 @@ public class RequestServiceImpl implements RequestService {
                     );
                 }
 
-                Specification<RequestEntity> specification = (root, query, criteriaBuilder) -> {
+
+                Specification<DayOffEntity> dayOffEntitySpecification = (root,query,criteriaBuilder) -> {
                     var predicates = new ArrayList<Predicate>();
 
-                    predicates.add(criteriaBuilder.equal(root.get("typeRequest"),TypeRequest.DAY_OFF));
-                    predicates.add(criteriaBuilder.between(root.get("dayOff"),from,to));
-                    predicates.add(criteriaBuilder.notEqual(root.get("status"), ApprovalStatus.REJECTED));
-                    predicates.add(criteriaBuilder.equal(root.get("requester").get("id"),currentUser.getId()));
+                    predicates.add(criteriaBuilder.equal(root.get("dayoffEntityId").get("userId"),currentUser.getId()));
+                    predicates.add(criteriaBuilder.notEqual(root.get("status"),ApprovalStatus.REJECTED));
+                    predicates.add(criteriaBuilder.between(root.get("dayoffEntityId").get("dateOff"),from,to));
 
-                    switch (createRequestForm.getTypeDayoff()) {
-                        case AFTERNOON, MORNING -> predicates.add(
-                                criteriaBuilder.or(
-                                        criteriaBuilder.equal(root.get("typeDayOff"), createRequestForm.getTypeDayoff()),
-                                        criteriaBuilder.equal(root.get("typeDayOff"), TypeDayOff.FULL)
-                                )
-                        );
+                    switch (createRequestForm.getTypeDayoff()){
+                        case MORNING , AFTERNOON -> {
+                            predicates.add(
+                                    criteriaBuilder.or(
+                                            criteriaBuilder.equal(root.get("dayoffEntityId").get("typeDayOff"),createRequestForm.getTypeDayoff()),
+                                            criteriaBuilder.equal(root.get("dayoffEntityId").get("typeDayOff"), TypeDayOff.FULL)
+                                    )
+                            );
+                        }
                     }
-                    Predicate[] p = new Predicate[predicates.size()];
 
-                    return criteriaBuilder.and(predicates.toArray(p));
+                    Predicate[] p = predicates.toArray(new Predicate[0]);
+
+                    return criteriaBuilder.and(p);
                 };
 
-                var countConditionRequest = requestRepository.count(specification);
+                var countOverlapping = dayOffEntityRepository.count(dayOffEntitySpecification);
 
-                if(countConditionRequest > 0){
+                if(countOverlapping > 0){
                     throw new ProductException(
-                            ErrorResponse.builder()
-                                    .message(ErrorConstant.Message.OVERLAPPING_DATE)
-                                    .type(ErrorConstant.Type.OVERLAPPING_DATE)
+                            ErrorResponse
+                                    .builder()
                                     .code(ErrorConstant.Code.OVERLAPPING_DATE)
-                            .build()
+                                    .type(ErrorConstant.Type.OVERLAPPING_DATE)
+                                    .message(ErrorConstant.Message.OVERLAPPING_DATE)
+                                    .build()
                     );
                 }
-                List<RequestEntity> requestEntities = new ArrayList<>();
-                while (!from.isAfter(to)){
-                    var requestEntity = new RequestEntity();
-                    requestEntity.setRequestTitle(createRequestForm.getRequestTitle());
-                    requestEntity.setRequestReason(createRequestForm.getRequestReason());
-                    requestEntity.setStatus(ApprovalStatus.PENDING);
-                    requestEntity.setDateOff(from);
-                    requestEntity.setTypeRequest(createRequestForm.getTypeRequest());
-                    requestEntity.setRequester(userEntity);
-                    requestEntity.setCreatedBy(currentUser.getId());
-                    requestEntity.setCreatedTime(DateUtil.getInstantNow());
-                    requestEntity.setTypeDayOff(createRequestForm.getTypeDayoff());
-                    requestEntities.add(requestEntity);
-                    from = from.plus(1, ChronoUnit.DAYS);
+
+                var fromCounter = from;
+                List<DayOffEntity> dayOffEntities = new ArrayList<>();
+                while (!fromCounter.isAfter(to)){
+                    var dayOffEntity = new DayOffEntity();
+                    var dayOffEntityId = new DayOffEntity.DayOffEntityId();
+                    dayOffEntityId.setDateOff(fromCounter);
+                    dayOffEntityId.setUserId(currentUser.getId());
+                    dayOffEntityId.setTypeDayOff(createRequestForm.getTypeDayoff());
+                    dayOffEntity.setDayoffEntityId(dayOffEntityId);
+                    dayOffEntity.setStatus(ApprovalStatus.PENDING);
+                    dayOffEntity.setRequestEntity(requestEntity);
+                    dayOffEntities.add(dayOffEntity);
+                    fromCounter = fromCounter.plus(1, ChronoUnit.DAYS);
                 }
-                List<RequestEntity> requestEntityList = requestRepository.saveAll(requestEntities);
+                requestEntity.setDayOffEntityList(dayOffEntities);
+                requestEntity.setRequester(userEntity);
+                RequestEntity requestEntityList = requestRepository.save(requestEntity);
 
-
-
-
+                return requestMapping.toDto(requestEntityList);
             }
 
             default -> throw new ProductException(
@@ -186,7 +188,6 @@ public class RequestServiceImpl implements RequestService {
             );
         }
 
-        requestEntity.setStatus(form.getApprovalStatus());
         requestEntity.setModifiedBy(currentUser.getId());
         requestEntity.setModifiedTime(Instant.now());
 

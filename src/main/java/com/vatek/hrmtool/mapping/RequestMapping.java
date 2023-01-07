@@ -12,6 +12,9 @@ public interface RequestMapping extends EntityMapper<RequestDto, RequestEntity> 
     @Override
     @Mappings({
             @Mapping(target = "id",source = "id"),
+//            @Mapping(target = "dayOffGroupList",expression = "")
     })
     RequestDto toDto(RequestEntity entity);
+
+
 }

@@ -41,11 +41,11 @@ public class HrmToolApplication {
     log.info("TimeZone : {} , Instant : {} , Timestamp : {}", TimeZone::getDefault, Instant::now,() -> Timestamp.from(DateUtil.getInstantNow()));
   }
 
-  @EventListener(ApplicationReadyEvent.class)
-  public void clearToken(){
-    log.info("Clear Token After Start Application : {}", () -> "clear Token");
-    userService.clearAllToken();
-  }
+//  @EventListener(ApplicationReadyEvent.class)
+//  public void clearToken(){
+//    log.info("Clear Token After Start Application : {}", () -> "clear Token");
+//    userService.clearAllToken();
+//  }
 
   @EventListener(ApplicationReadyEvent.class)
   public void version(){

@@ -17,16 +17,13 @@ import java.util.Objects;
 @Table(name = "day_off")
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 public class DayOffEntity {
 
+    @EmbeddedId
+    private DayOffEntityId dayoffEntityId;
     @Column
     @Enumerated(EnumType.STRING)
     private ApprovalStatus status;
-    @EmbeddedId
-    private DayoffEntityId dayoffEntityId;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "request_id")
     private RequestEntity requestEntity;
@@ -34,9 +31,7 @@ public class DayOffEntity {
     @Embeddable
     @Getter
     @Setter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    static class DayoffEntityId implements Serializable {
+    public static class DayOffEntityId implements Serializable {
         @Serial
         private static final long serialVersionUID = -6491357190187436940L;
 
@@ -47,32 +42,9 @@ public class DayOffEntity {
         @Enumerated(EnumType.STRING)
         private TypeDayOff typeDayOff;
 
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            DayoffEntityId dayoffEntityId1 = (DayoffEntityId) o;
-            if (dateOff.compareTo(dayoffEntityId1.dateOff) != 0) return false;
-
-            switch (this.typeDayOff){
-                case FULL -> {
-                    return true;
-                }
-                case MORNING, AFTERNOON -> {
-                    if(dayoffEntityId1.getTypeDayOff() == TypeDayOff.FULL){
-                        return true;
-                    }
-                    return this.typeDayOff == dayoffEntityId1.typeDayOff;
-                }
-                default -> {
-                    return false;
-                }
-            }
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(this.dateOff, this.typeDayOff);
-        }
+        @Column
+        private Long userId;
     }
 }
+
+
