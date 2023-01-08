@@ -26,6 +26,7 @@ public class RequestEntity extends CommonEntity {
             CascadeType.PERSIST,
             CascadeType.REFRESH
     })
+    @OrderBy("dayoffEntityId.dateOff ASC")
     private List<DayOffEntity> dayOffEntityList;
 
     @ManyToOne(fetch = FetchType.LAZY)
