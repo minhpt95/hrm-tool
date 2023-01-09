@@ -1,20 +1,93 @@
 package com.vatek.hrmtool.mapping;
 
 import com.vatek.hrmtool.dto.request.RequestDto;
+import com.vatek.hrmtool.entity.DayOffEntity;
 import com.vatek.hrmtool.entity.RequestEntity;
 import com.vatek.hrmtool.mapping.common.EntityMapper;
+import liquibase.pro.packaged.B;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAmount;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
+import java.util.function.Function;
+import java.util.stream.IntStream;
 
 @Mapper(componentModel = "spring",uses = {UserMapping.class})
 public interface RequestMapping extends EntityMapper<RequestDto, RequestEntity> {
     @Override
     @Mappings({
             @Mapping(target = "id",source = "id"),
-//            @Mapping(target = "dayOffGroupList",expression = "")
+            @Mapping(target = "dayOffGroupList",expression = "java(groupByAdjacent(entity))")
     })
     RequestDto toDto(RequestEntity entity);
 
+    default List<RequestDto.DayOffGroup> groupByAdjacent(RequestEntity entity){
+        Function<RequestEntity, List<DayOffEntity>> selector = requestEntity ->
+                requestEntity
+                        .getDayOffEntityList()
+                        .stream()
+                        .toList();
+
+        BiPredicate<Instant,Instant> comparer = (x, y) -> x.minus(1,ChronoUnit.DAYS).compareTo(y) == 0;
+
+        return groupByAdjacent(entity,selector,comparer);
+    }
+
+    default List<RequestDto.DayOffGroup> groupByAdjacent
+            (
+                RequestEntity requestEntity,
+                Function<RequestEntity, List<DayOffEntity>> fieldSelector,
+                BiPredicate<Instant,Instant> comparer
+            ){
+        var inputList = fieldSelector.apply(requestEntity);
+        var count = inputList.size();
+        var graph = new ArrayList<Integer>();
+
+        for (DayOffEntity currentValue : inputList) {
+            var previous = IntStream.range(0, count).filter(t ->
+                    comparer.test(currentValue.getDayoffEntityId().getDateOff(), inputList.get(t).getDayoffEntityId().getDateOff())
+            ).findFirst().orElse(-1);
+            graph.add(previous);
+        }
+
+        var temp = new HashSet<Integer>();
+
+        var map = new HashMap<Integer,Integer>();
+
+        for(int i = 0; i < count; i++){
+            var current = i;
+            if(temp.contains(current))
+                continue;
+            var rootFound = false;
+            while (!rootFound){
+                var prev = graph.get(current);
+                temp.add(current);
+                if(prev != -1)
+                {
+                    current = prev;
+                }
+                else
+                {
+                    rootFound = true;
+                }
+            }
+            map.put(current,i);
+        }
+
+        return map.entrySet().stream().map(x -> new RequestDto.DayOffGroup(
+                inputList.get(x.getKey()).getDayoffEntityId().getDateOff(),
+                inputList.get(x.getValue()).getDayoffEntityId().getDateOff(),
+                inputList.get(x.getKey()).getDayoffEntityId().getTypeDayOff()
+        )).toList();
+    }
 
 }

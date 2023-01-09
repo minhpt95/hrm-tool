@@ -11,10 +11,7 @@ import com.vatek.hrmtool.exception.ErrorResponse;
 import com.vatek.hrmtool.exception.ProductException;
 import com.vatek.hrmtool.mapping.TimesheetMapping;
 import com.vatek.hrmtool.readable.form.create.CreateTimesheetForm;
-import com.vatek.hrmtool.respository.ProjectRepository;
-import com.vatek.hrmtool.respository.RequestRepository;
-import com.vatek.hrmtool.respository.TimesheetRepository;
-import com.vatek.hrmtool.respository.UserRepository;
+import com.vatek.hrmtool.respository.*;
 import com.vatek.hrmtool.security.service.UserPrinciple;
 import com.vatek.hrmtool.service.TimesheetService;
 import com.vatek.hrmtool.util.DateUtil;
@@ -39,7 +36,7 @@ public class TimesheetServiceImpl implements TimesheetService {
 
     private ProjectRepository projectRepository;
 
-    private RequestRepository requestRepository;
+    private DayOffEntityRepository dayOffEntityRepository;
 
     private TimesheetMapping timesheetMapping;
 
@@ -69,8 +66,6 @@ public class TimesheetServiceImpl implements TimesheetService {
             throw new ProductException(
                     ErrorResponse
                             .builder()
-                            .type("")
-                            .code("")
                             .message("You not working in this project")
                             .build()
             );
@@ -81,8 +76,7 @@ public class TimesheetServiceImpl implements TimesheetService {
         var workingDayInstantDayOfWeek = workingDayInstant.atZone(ZoneId.systemDefault()).getDayOfWeek();
 
         if(
-                form.getTimesheetType() == TimesheetType.NORMAL_WORKING &&
-                        (workingDayInstantDayOfWeek == DayOfWeek.SATURDAY || workingDayInstantDayOfWeek == DayOfWeek.SUNDAY)
+                form.getTimesheetType() == TimesheetType.NORMAL_WORKING && (workingDayInstantDayOfWeek == DayOfWeek.SATURDAY || workingDayInstantDayOfWeek == DayOfWeek.SUNDAY)
         ){
             throw new ProductException(
                     ErrorResponse

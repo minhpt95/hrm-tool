@@ -34,7 +34,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
+import java.time.DayOfWeek;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,7 +52,10 @@ public class RequestServiceImpl implements RequestService {
     private final UserRepository userRepository;
     private final RequestMapping requestMapping;
     @Override
-    @Transactional
+    @Transactional(rollbackFor = {
+            RuntimeException.class,
+            Exception.class
+    })
     public RequestDto createRequest(CreateRequestForm createRequestForm) {
 
         var currentUser = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -119,8 +125,24 @@ public class RequestServiceImpl implements RequestService {
                 }
 
                 var fromCounter = from;
-                List<DayOffEntity> dayOffEntities = new ArrayList<>();
+
+
+
+
+                var dayOffEntities = new ArrayList<DayOffEntity>();
                 while (!fromCounter.isAfter(to)){
+                    var dayOfWeek = fromCounter.atZone(ZoneId.systemDefault()).getDayOfWeek();
+                    if(dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY){
+                        throw new ProductException(
+                                ErrorResponse
+                                        .builder()
+                                        .code(ErrorConstant.Code.CANNOT_LOG_ON_WEEKEND)
+                                        .type(ErrorConstant.Type.CANNOT_LOG_ON_WEEKEND)
+                                        .message(ErrorConstant.Message.CANNOT_LOG_ON_WEEKEND)
+                                        .build()
+                        );
+                    }
+
                     var dayOffEntity = new DayOffEntity();
                     var dayOffEntityId = new DayOffEntity.DayOffEntityId();
                     dayOffEntityId.setDateOff(fromCounter);

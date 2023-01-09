@@ -2,6 +2,7 @@ package com.vatek.hrmtool.dto.request;
 
 import com.vatek.hrmtool.dto.user.UserDto;
 import com.vatek.hrmtool.enumeration.ApprovalStatus;
+import com.vatek.hrmtool.enumeration.TypeDayOff;
 import com.vatek.hrmtool.enumeration.TypeRequest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,7 +20,6 @@ public class RequestDto {
     private Long id;
     private String requestTitle;
     private String requestReason;
-    private ApprovalStatus status;
     private List<DayOffGroup> dayOffGroupList;
     private TypeRequest typeRequest;
     private UserDto requester;
@@ -30,5 +30,6 @@ public class RequestDto {
     public static class DayOffGroup {
         private Instant fromDate;
         private Instant toDate;
+        private TypeDayOff typeDayOff;
     }
 }
