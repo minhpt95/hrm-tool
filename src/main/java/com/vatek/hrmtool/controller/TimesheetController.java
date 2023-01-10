@@ -8,6 +8,7 @@ import com.vatek.hrmtool.service.TimesheetService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,7 +20,7 @@ public class TimesheetController {
     private TimesheetService timesheetService;
 
     @PostMapping("/create")
-    public ResponseDto<TimesheetDto> createTimesheet(CreateTimesheetForm form){
+    public ResponseDto<TimesheetDto> createTimesheet(@RequestBody CreateTimesheetForm form){
         var responseDto = new ResponseDto<TimesheetDto>();
 
         responseDto.setContent(timesheetService.createTimesheet(form));

@@ -10,6 +10,7 @@ import com.vatek.hrmtool.service.UserService;
 import com.vatek.hrmtool.util.DateUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,19 +24,18 @@ import javax.validation.Valid;
 public class AuthController {
 
     final UserService userService;
-
-    @PostMapping(value = "/register",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseDto<UserDto> registerUser(@Valid @ModelAttribute CreateUserForm createUserForm) {
-        var createUserDto = userService.createUser(createUserForm);
-
-        var responseDto = new ResponseDto<UserDto>();
-        responseDto.setContent(createUserDto);
-        responseDto.setCode(ErrorConstant.Code.SUCCESS);
-        responseDto.setType(ErrorConstant.Type.SUCCESS);
-        responseDto.setMessage(ErrorConstant.Message.SUCCESS);
-
-        return responseDto;
-    }
+//    @PostMapping(value = "/register",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    public ResponseDto<UserDto> registerUser(@Valid @ModelAttribute CreateUserForm createUserForm) {
+//        var createUserDto = userService.createUser(createUserForm);
+//
+//        var responseDto = new ResponseDto<UserDto>();
+//        responseDto.setContent(createUserDto);
+//        responseDto.setCode(ErrorConstant.Code.SUCCESS);
+//        responseDto.setType(ErrorConstant.Type.SUCCESS);
+//        responseDto.setMessage(ErrorConstant.Message.SUCCESS);
+//
+//        return responseDto;
+//    }
 
     @PostMapping(value = "/login")
     public ResponseDto<?> authenticateUser(@RequestBody LoginForm loginForm){

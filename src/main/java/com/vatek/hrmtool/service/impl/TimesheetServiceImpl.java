@@ -122,16 +122,14 @@ public class TimesheetServiceImpl implements TimesheetService {
         var getRequestDayOff = dayOffEntityRepository.findAll(dayOffEntitySpecification);
 
         switch (getRequestDayOff.size()){
-            case 2 -> {
-                throw new ProductException(
-                        ErrorResponse
-                                .builder()
-                                .type(ErrorConstant.Type.CANNOT_LOG_TIMESHEET)
-                                .code(ErrorConstant.Code.CANNOT_LOG_TIMESHEET)
-                                .message(String.format(ErrorConstant.Message.CANNOT_LOG_TIMESHEET,8))
-                                .build()
-                );
-            }
+            case 2 -> throw new ProductException(
+                    ErrorResponse
+                            .builder()
+                            .type(ErrorConstant.Type.CANNOT_LOG_TIMESHEET)
+                            .code(ErrorConstant.Code.CANNOT_LOG_TIMESHEET)
+                            .message(String.format(ErrorConstant.Message.CANNOT_LOG_TIMESHEET,8))
+                            .build()
+            );
             case 1 -> {
                 switch (getRequestDayOff.get(0).getDayoffEntityId().getTypeDayOff()){
                     case FULL -> {
