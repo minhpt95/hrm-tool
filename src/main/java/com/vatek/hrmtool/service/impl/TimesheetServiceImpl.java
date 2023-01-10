@@ -7,10 +7,12 @@ import com.vatek.hrmtool.entity.ProjectEntity;
 import com.vatek.hrmtool.entity.TimesheetEntity;
 import com.vatek.hrmtool.entity.UserEntity;
 import com.vatek.hrmtool.entity.common.CommonEntity;
+import com.vatek.hrmtool.enumeration.ApprovalStatus;
 import com.vatek.hrmtool.enumeration.TimesheetType;
 import com.vatek.hrmtool.exception.ErrorResponse;
 import com.vatek.hrmtool.exception.ProductException;
 import com.vatek.hrmtool.mapping.TimesheetMapping;
+import com.vatek.hrmtool.projection.TimesheetWorkingHourProjection;
 import com.vatek.hrmtool.readable.form.create.CreateTimesheetForm;
 import com.vatek.hrmtool.respository.*;
 import com.vatek.hrmtool.security.service.UserPrinciple;
@@ -103,11 +105,19 @@ public class TimesheetServiceImpl implements TimesheetService {
             return criteriaBuilder.and(predicates.toArray(p));
         };
 
-//        Specification<TimesheetEntity> timesheetEntitySpecification = (root, query, criteriaBuilder) -> {
-//            var predicates = new ArrayList<Predicate>();
-//            predicates.add(criteriaBuilder.equal(root.get("")));
-//            predicates.add()
-//        }
+
+
+        var getTimesheetProjection = timesheetRepository
+                .findByUserEntityIdAndWorkingDayAndStatusNot(
+                        currentUser.getId(),
+                        workingDayInstant,
+                        ApprovalStatus.REJECTED
+                );
+
+        var totalWorkingHours = getTimesheetProjection
+                .stream()
+                .map(TimesheetWorkingHourProjection::getWorkingHours)
+                .reduce(0,Integer::sum);
 
         var getRequestDayOff = dayOffEntityRepository.findAll(dayOffEntitySpecification);
 
@@ -116,9 +126,9 @@ public class TimesheetServiceImpl implements TimesheetService {
                 throw new ProductException(
                         ErrorResponse
                                 .builder()
-                                .type(ErrorConstant.Type.CANNOT_LOG_ON_WEEKEND)
-                                .code(ErrorConstant.Code.CANNOT_LOG_ON_WEEKEND)
-                                .message(ErrorConstant.Message.CANNOT_LOG_ON_WEEKEND)
+                                .type(ErrorConstant.Type.CANNOT_LOG_TIMESHEET)
+                                .code(ErrorConstant.Code.CANNOT_LOG_TIMESHEET)
+                                .message(String.format(ErrorConstant.Message.CANNOT_LOG_TIMESHEET,8))
                                 .build()
                 );
             }

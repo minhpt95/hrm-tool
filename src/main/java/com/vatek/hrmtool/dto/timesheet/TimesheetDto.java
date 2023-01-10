@@ -21,7 +21,7 @@ public class TimesheetDto {
     private Integer workingHours;
     private TimesheetType timesheetType;
     private Instant workingDay;
-    private ApprovalStatus requestStatus;
+    private ApprovalStatus status;
     private ProjectDto projectEntity;
     private UserDto userEntity;
 }

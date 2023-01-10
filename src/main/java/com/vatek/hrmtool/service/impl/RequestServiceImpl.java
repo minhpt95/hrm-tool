@@ -173,7 +173,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     @Transactional
-    public ListResponseDto<RequestDto> getAllRequestsByStatus(Pageable pageable, ApprovalStatus requestStatus){
+    public ListResponseDto<RequestDto> getAllRequestsByStatus(Pageable pageable, ApprovalStatus status){
 
         Specification<RequestEntity> specification = (root, query, criteriaBuilder) -> {
             var predicates = new ArrayList<Predicate>();
@@ -220,11 +220,11 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public ListResponseDto<RequestDto> getAllDeviceRequestsByStatus(Pageable pageable, ApprovalStatus requestStatus){
+    public ListResponseDto<RequestDto> getAllDeviceRequestsByStatus(Pageable pageable, ApprovalStatus status){
         Specification<RequestEntity> specification = (root, query, criteriaBuilder) -> {
             var predicates = new ArrayList<Predicate>();
 
-            predicates.add(criteriaBuilder.equal(root.get("status"),requestStatus));
+            predicates.add(criteriaBuilder.equal(root.get("status"),status));
             predicates.add(criteriaBuilder.equal(root.get("typeRequest"),TypeRequest.REQUEST_DEVICE));
 
             Predicate[] p = new Predicate[predicates.size()];
@@ -243,7 +243,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public ListResponseDto<RequestDto> getRequestsByManagerByStatus(Pageable pageable, ApprovalStatus requestStatus){
+    public ListResponseDto<RequestDto> getRequestsByManagerByStatus(Pageable pageable, ApprovalStatus status){
         var currentUser = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         Specification<RequestEntity> specification = (root, query, criteriaBuilder) -> {
@@ -255,7 +255,7 @@ public class RequestServiceImpl implements RequestService {
             Join<ProjectEntity,UserEntity> projectManagerEntityJoin = workingProjectEntityJoin.join("managerUser");
 
             predicates.add(criteriaBuilder.equal(projectManagerEntityJoin.get("id"),currentUser.getId()));
-            predicates.add(criteriaBuilder.equal(root.get("status"),requestStatus));
+            predicates.add(criteriaBuilder.equal(root.get("status"),status));
             predicates.add(criteriaBuilder.equal(root.get("typeRequest"), TypeRequest.DAY_OFF));
 
             query.distinct(true);

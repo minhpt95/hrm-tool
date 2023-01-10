@@ -26,7 +26,7 @@ public class TimesheetEntity extends CommonEntity {
     private Instant workingDay;
     @Column
     @Enumerated(EnumType.STRING)
-    private ApprovalStatus requestStatus;
+    private ApprovalStatus status;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
     private ProjectEntity projectEntity;

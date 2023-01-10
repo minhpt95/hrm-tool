@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 public interface RequestService {
     RequestDto createRequest(CreateRequestForm createRequestForm);
     RequestDto approvalRequest(UpdateApprovalStatusForm updateApprovalStatusForm);
-    ListResponseDto<RequestDto> getAllRequestsByStatus(Pageable pageable, ApprovalStatus requestStatus);
-    ListResponseDto<RequestDto> getAllDeviceRequestsByStatus(Pageable pageable, ApprovalStatus requestStatus);
-    ListResponseDto<RequestDto> getRequestsByManagerByStatus(Pageable pageable, ApprovalStatus requestStatus);
+    ListResponseDto<RequestDto> getAllRequestsByStatus(Pageable pageable, ApprovalStatus status);
+    ListResponseDto<RequestDto> getAllDeviceRequestsByStatus(Pageable pageable, ApprovalStatus status);
+    ListResponseDto<RequestDto> getRequestsByManagerByStatus(Pageable pageable, ApprovalStatus status);
 }
