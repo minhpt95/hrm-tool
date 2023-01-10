@@ -2,6 +2,7 @@ package com.vatek.hrmtool.service.impl;
 
 import com.vatek.hrmtool.constant.ErrorConstant;
 import com.vatek.hrmtool.dto.timesheet.TimesheetDto;
+import com.vatek.hrmtool.entity.DayOffEntity;
 import com.vatek.hrmtool.entity.ProjectEntity;
 import com.vatek.hrmtool.entity.TimesheetEntity;
 import com.vatek.hrmtool.entity.UserEntity;
@@ -17,19 +18,23 @@ import com.vatek.hrmtool.service.TimesheetService;
 import com.vatek.hrmtool.util.DateUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.Predicate;
 import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Collection;
 
 @Service
 @AllArgsConstructor
 @Log4j2
 public class TimesheetServiceImpl implements TimesheetService {
+    private final RequestRepository requestRepository;
     private TimesheetRepository timesheetRepository;
 
     private UserRepository userRepository;
@@ -86,6 +91,52 @@ public class TimesheetServiceImpl implements TimesheetService {
                             .message(ErrorConstant.Message.CANNOT_LOG_ON_WEEKEND)
                             .build()
             );
+        }
+
+
+
+        Specification<DayOffEntity> dayOffEntitySpecification = (root, query, criteriaBuilder) -> {
+            var predicates = new ArrayList<Predicate>();
+            predicates.add(criteriaBuilder.equal(root.get("dayoffEntityId").get("dateOff"),workingDayInstant));
+            predicates.add(criteriaBuilder.equal(root.get("dayoffEntityId").get("userId"),currentUser));
+            Predicate[] p = new Predicate[predicates.size()];
+            return criteriaBuilder.and(predicates.toArray(p));
+        };
+
+//        Specification<TimesheetEntity> timesheetEntitySpecification = (root, query, criteriaBuilder) -> {
+//            var predicates = new ArrayList<Predicate>();
+//            predicates.add(criteriaBuilder.equal(root.get("")));
+//            predicates.add()
+//        }
+
+        var getRequestDayOff = dayOffEntityRepository.findAll(dayOffEntitySpecification);
+
+        switch (getRequestDayOff.size()){
+            case 2 -> {
+                throw new ProductException(
+                        ErrorResponse
+                                .builder()
+                                .type(ErrorConstant.Type.CANNOT_LOG_ON_WEEKEND)
+                                .code(ErrorConstant.Code.CANNOT_LOG_ON_WEEKEND)
+                                .message(ErrorConstant.Message.CANNOT_LOG_ON_WEEKEND)
+                                .build()
+                );
+            }
+            case 1 -> {
+                switch (getRequestDayOff.get(0).getDayoffEntityId().getTypeDayOff()){
+                    case FULL -> {
+
+                    }
+                    case MORNING -> {
+
+                    }
+                    case AFTERNOON -> {
+
+                    }
+                }
+            }
+            case 0 -> {
+            }
         }
 
 
