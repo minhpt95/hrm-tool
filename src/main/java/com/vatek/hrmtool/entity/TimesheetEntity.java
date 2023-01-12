@@ -21,6 +21,7 @@ public class TimesheetEntity extends CommonEntity {
     @Column
     private Integer workingHours;
     @Column
+    @Enumerated(EnumType.STRING)
     private TimesheetType timesheetType;
     @Column(columnDefinition = "DATE")
     private Instant workingDay;

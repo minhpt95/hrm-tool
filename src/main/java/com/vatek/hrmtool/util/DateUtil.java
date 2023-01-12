@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.Date;
 
 @Log4j2
@@ -35,6 +36,21 @@ public class DateUtil {
         }
     }
 
+    public static Instant getEndDateOfMonth(int month,int year){
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.MONTH,month - 1);
+        calendar.set(Calendar.YEAR,year);
+        calendar.set(Calendar.DATE,calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+        return calendar.toInstant();
+    }
+
+    public static Instant getStartDateOfMonth(int month,int year){
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.MONTH,month - 1);
+        calendar.set(Calendar.YEAR,year);
+        calendar.set(Calendar.DATE,calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
+        return calendar.toInstant();
+    }
 
     public static String convertInstantToStringDate(Instant stringDate){
         return convertInstantToStringDate(stringDate,null);

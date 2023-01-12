@@ -15,5 +15,6 @@ import java.util.List;
 @NoArgsConstructor
 public class UserExcelDto {
     private String name;
-    private List<TimesheetExcelDto> timeSheets = new ArrayList<>();
+    private List<TimesheetExcelDto> normalHours = new ArrayList<>();
+    private List<TimesheetExcelDto> overtimeHours = new ArrayList<>();
 }

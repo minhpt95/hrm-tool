@@ -97,18 +97,6 @@ public class TimesheetServiceImpl implements TimesheetService {
             );
         }
 
-        var getTimesheetProjection = timesheetRepository
-                .findByUserEntityIdAndWorkingDayAndStatusNot(
-                        currentUser.getId(),
-                        workingDayInstant,
-                        ApprovalStatus.REJECTED
-                );
-
-        var totalWorkingHours = getTimesheetProjection
-                .stream()
-                .map(TimesheetWorkingHourProjection::getWorkingHours)
-                .reduce(0,Integer::sum);
-
         Specification<DayOffEntity> dayOffEntitySpecification = (root, query, criteriaBuilder) -> {
             var predicates = new ArrayList<Predicate>();
             predicates.add(criteriaBuilder.equal(root.get("dayoffEntityId").get("dateOff"),workingDayInstant));
@@ -119,61 +107,76 @@ public class TimesheetServiceImpl implements TimesheetService {
 
         var getRequestDayOff = dayOffEntityRepository.findAll(dayOffEntitySpecification);
 
-        switch (getRequestDayOff.size()){
-            case 2 -> throw new ProductException(
-                    ErrorResponse
-                            .builder()
-                            .type(ErrorConstant.Type.CANNOT_LOG_ON_FULL_DAY_OFF)
-                            .code(ErrorConstant.Code.CANNOT_LOG_ON_FULL_DAY_OFF)
-                            .message(ErrorConstant.Message.CANNOT_LOG_ON_FULL_DAY_OFF)
-                            .build()
-            );
-            case 1 -> {
-                switch (getRequestDayOff.get(0).getDayoffEntityId().getTypeDayOff()){
-                    case FULL -> {
+        if(form.getTimesheetType() == TimesheetType.NORMAL_WORKING){
+
+            var getTimesheetProjection = timesheetRepository
+                    .findByUserEntityIdAndWorkingDayAndStatusNot(
+                            currentUser.getId(),
+                            workingDayInstant,
+                            ApprovalStatus.REJECTED
+                    );
+
+            var totalWorkingHours = getTimesheetProjection
+                    .stream()
+                    .map(TimesheetWorkingHourProjection::getWorkingHours)
+                    .reduce(0,Integer::sum);
+
+            switch (getRequestDayOff.size()){
+                case 2 -> throw new ProductException(
                         ErrorResponse
                                 .builder()
                                 .type(ErrorConstant.Type.CANNOT_LOG_ON_FULL_DAY_OFF)
                                 .code(ErrorConstant.Code.CANNOT_LOG_ON_FULL_DAY_OFF)
                                 .message(ErrorConstant.Message.CANNOT_LOG_ON_FULL_DAY_OFF)
-                                .build();
-                    }
-                    case MORNING -> {
-                        if(totalWorkingHours + form.getWorkingHours() > 5){
-                            throw new ProductException(
-                                    ErrorResponse
-                                            .builder()
-                                            .type(ErrorConstant.Type.CANNOT_LOG_TIMESHEET)
-                                            .code(ErrorConstant.Code.CANNOT_LOG_TIMESHEET)
-                                            .message(String.format(ErrorConstant.Message.CANNOT_LOG_TIMESHEET,5))
-                                            .build()
-                            );
+                                .build()
+                );
+                case 1 -> {
+                    switch (getRequestDayOff.get(0).getDayoffEntityId().getTypeDayOff()){
+                        case FULL -> {
+                            ErrorResponse
+                                    .builder()
+                                    .type(ErrorConstant.Type.CANNOT_LOG_ON_FULL_DAY_OFF)
+                                    .code(ErrorConstant.Code.CANNOT_LOG_ON_FULL_DAY_OFF)
+                                    .message(ErrorConstant.Message.CANNOT_LOG_ON_FULL_DAY_OFF)
+                                    .build();
                         }
-                    }
-                    case AFTERNOON -> {
-                        if(totalWorkingHours + form.getWorkingHours() > 3){
-                            throw new ProductException(
-                                    ErrorResponse
-                                            .builder()
-                                            .type(ErrorConstant.Type.CANNOT_LOG_TIMESHEET)
-                                            .code(ErrorConstant.Code.CANNOT_LOG_TIMESHEET)
-                                            .message(String.format(ErrorConstant.Message.CANNOT_LOG_TIMESHEET,3))
-                                            .build()
-                            );
+                        case MORNING -> {
+                            if(totalWorkingHours + form.getWorkingHours() > 5){
+                                throw new ProductException(
+                                        ErrorResponse
+                                                .builder()
+                                                .type(ErrorConstant.Type.CANNOT_LOG_TIMESHEET)
+                                                .code(ErrorConstant.Code.CANNOT_LOG_TIMESHEET)
+                                                .message(String.format(ErrorConstant.Message.CANNOT_LOG_TIMESHEET,5))
+                                                .build()
+                                );
+                            }
+                        }
+                        case AFTERNOON -> {
+                            if(totalWorkingHours + form.getWorkingHours() > 3){
+                                throw new ProductException(
+                                        ErrorResponse
+                                                .builder()
+                                                .type(ErrorConstant.Type.CANNOT_LOG_TIMESHEET)
+                                                .code(ErrorConstant.Code.CANNOT_LOG_TIMESHEET)
+                                                .message(String.format(ErrorConstant.Message.CANNOT_LOG_TIMESHEET,3))
+                                                .build()
+                                );
+                            }
                         }
                     }
                 }
-            }
-            case 0 -> {
-                if(totalWorkingHours + form.getWorkingHours() > 8){
-                    throw new ProductException(
-                            ErrorResponse
-                                    .builder()
-                                    .type(ErrorConstant.Type.CANNOT_LOG_TIMESHEET)
-                                    .code(ErrorConstant.Code.CANNOT_LOG_TIMESHEET)
-                                    .message(String.format(ErrorConstant.Message.CANNOT_LOG_TIMESHEET,8))
-                                    .build()
-                    );
+                case 0 -> {
+                    if(totalWorkingHours + form.getWorkingHours() > 8){
+                        throw new ProductException(
+                                ErrorResponse
+                                        .builder()
+                                        .type(ErrorConstant.Type.CANNOT_LOG_TIMESHEET)
+                                        .code(ErrorConstant.Code.CANNOT_LOG_TIMESHEET)
+                                        .message(String.format(ErrorConstant.Message.CANNOT_LOG_TIMESHEET,8))
+                                        .build()
+                        );
+                    }
                 }
             }
         }

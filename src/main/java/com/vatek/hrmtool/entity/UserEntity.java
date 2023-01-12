@@ -1,12 +1,15 @@
 package com.vatek.hrmtool.entity;
 
 import com.vatek.hrmtool.entity.common.CommonEntity;
+import com.vatek.hrmtool.enumeration.TimesheetType;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
@@ -46,7 +49,6 @@ public class UserEntity extends CommonEntity {
             CascadeType.REFRESH
     },mappedBy = "managerUser")
     private Collection<ProjectEntity> projectManagement = new ArrayList<>();
-
     @OneToMany(fetch = FetchType.LAZY,cascade = {
             CascadeType.DETACH,
             CascadeType.MERGE,
@@ -55,7 +57,6 @@ public class UserEntity extends CommonEntity {
     },mappedBy = "userEntity")
     @OrderBy("workingDay asc")
     private Collection<TimesheetEntity> timesheetEntities = new ArrayList<>();
-
     @OneToMany(fetch = FetchType.LAZY,cascade = {
             CascadeType.DETACH,
             CascadeType.MERGE,
@@ -63,7 +64,6 @@ public class UserEntity extends CommonEntity {
             CascadeType.REFRESH
     },mappedBy = "requester")
     private Collection<RequestEntity> userRequest = new ArrayList<>();
-
     @ManyToMany(fetch = FetchType.LAZY,cascade = {
             CascadeType.DETACH,
             CascadeType.MERGE,
@@ -77,7 +77,6 @@ public class UserEntity extends CommonEntity {
             inverseJoinColumns = @JoinColumn(
                     name = "project_id", referencedColumnName = "id"))
     private Collection<ProjectEntity> workingProject = new ArrayList<>();
-
     @ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinTable(
             name = "users_roles",
@@ -87,4 +86,20 @@ public class UserEntity extends CommonEntity {
                     name = "role_id", referencedColumnName = "id"))
     private Collection<RoleEntity> roles;
 
-}
+    @Transient
+    private Collection<TimesheetEntity> normalHours = new ArrayList<>();
+
+    @Transient
+    private Collection<TimesheetEntity> overtimeHours = new ArrayList<>();
+
+    @Transient
+    private Collection<TimesheetEntity> bonusHours = new ArrayList<>();
+
+    @PostLoad
+    private void loadToTransientData(){
+        this.normalHours = timesheetEntities.stream().filter(x -> x.getTimesheetType() == TimesheetType.NORMAL_WORKING).toList();
+        this.overtimeHours = timesheetEntities.stream().filter(x -> x.getTimesheetType() == TimesheetType.OVERTIME).toList();
+        this.bonusHours = timesheetEntities.stream().filter(x -> x.getTimesheetType() == TimesheetType.PROJECT_BONUS).collect(Collectors.toList());
+    }
+
+ }
