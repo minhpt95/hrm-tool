@@ -36,7 +36,6 @@ public class AuthController {
 //
 //        return responseDto;
 //    }
-
     @PostMapping(value = "/login")
     public ResponseDto<?> authenticateUser(@RequestBody LoginForm loginForm){
         JwtResponse jwtResponse = userService.authenticateUser(loginForm);

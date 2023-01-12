@@ -9,7 +9,7 @@ import java.time.Instant;
 public interface TimesheetWorkingHourProjection {
     Integer getWorkingHours();
     TimesheetType getTimesheetType();
-    public Instant getWorkingDay();
+    Instant getWorkingDay();
     ApprovalStatus getStatus();
 
     UserEntity getUserEntity();

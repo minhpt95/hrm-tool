@@ -1,8 +1,8 @@
 FROM openjdk:17-jdk-slim as builder
 
 ENV HOME=/usr/app
-RUN mkdir -p $HOME
 
+RUN mkdir -p $HOME
 WORKDIR $HOME
 COPY . .
 

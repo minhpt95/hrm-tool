@@ -9,12 +9,14 @@ import com.vatek.hrmtool.readable.form.update.UpdateMemberProjectForm;
 import com.vatek.hrmtool.service.ProjectService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.ByteArrayInputStream;
 
 @RestController
 @RequestMapping("/api/project")
@@ -67,4 +69,22 @@ public class ProjectController {
         return projectResponseDto;
     }
 
+    @PostMapping("/export-timesheet-by-project/{projectId}")
+    public ResponseEntity<InputStreamResource> exportTimeSheetByProject(@PathVariable("projectId") Long projectId){
+        byte[] bytes = projectService.exportTimesheetByProject(projectId);
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=timesheet.xlsx");
+        httpHeaders.add(HttpHeaders.CONTENT_TYPE,"application/vnd.ms-excel");
+        httpHeaders.add("Cache-Control", "no-cache, no-store, must-revalidate");
+        httpHeaders.add("Pragma", "no-cache");
+        httpHeaders.add("Expires", "0");
+
+        InputStreamResource resource = new InputStreamResource(new ByteArrayInputStream(bytes));
+
+        return ResponseEntity.ok()
+                .headers(httpHeaders)
+                .contentLength(bytes.length)
+                .body(resource);
+    }
 }

@@ -1,7 +1,9 @@
 package com.vatek.hrmtool.service.impl;
 
 import com.vatek.hrmtool.constant.ErrorConstant;
+import com.vatek.hrmtool.dto.project.ProjectExcelDto;
 import com.vatek.hrmtool.dto.timesheet.TimesheetDto;
+import com.vatek.hrmtool.dto.user.UserDto;
 import com.vatek.hrmtool.entity.DayOffEntity;
 import com.vatek.hrmtool.entity.ProjectEntity;
 import com.vatek.hrmtool.entity.TimesheetEntity;
@@ -11,7 +13,9 @@ import com.vatek.hrmtool.enumeration.ApprovalStatus;
 import com.vatek.hrmtool.enumeration.TimesheetType;
 import com.vatek.hrmtool.exception.ErrorResponse;
 import com.vatek.hrmtool.exception.ProductException;
+import com.vatek.hrmtool.mapping.ProjectMapping;
 import com.vatek.hrmtool.mapping.TimesheetMapping;
+import com.vatek.hrmtool.mapping.excel.ProjectExcelMapping;
 import com.vatek.hrmtool.projection.TimesheetWorkingHourProjection;
 import com.vatek.hrmtool.readable.form.create.CreateTimesheetForm;
 import com.vatek.hrmtool.respository.*;
@@ -26,27 +30,25 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.Predicate;
+import java.io.ByteArrayOutputStream;
 import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
 @Service
 @AllArgsConstructor
 @Log4j2
 public class TimesheetServiceImpl implements TimesheetService {
-    private final RequestRepository requestRepository;
     private TimesheetRepository timesheetRepository;
-
     private UserRepository userRepository;
-
     private ProjectRepository projectRepository;
-
     private DayOffEntityRepository dayOffEntityRepository;
-
     private TimesheetMapping timesheetMapping;
-
+    private ExcelTemplateServiceImpl excelTemplateService;
+    private ProjectExcelMapping projectExcelMapping;
     @Override
     @Transactional
     public TimesheetDto createTimesheet(CreateTimesheetForm form){
@@ -95,18 +97,6 @@ public class TimesheetServiceImpl implements TimesheetService {
             );
         }
 
-
-
-        Specification<DayOffEntity> dayOffEntitySpecification = (root, query, criteriaBuilder) -> {
-            var predicates = new ArrayList<Predicate>();
-            predicates.add(criteriaBuilder.equal(root.get("dayoffEntityId").get("dateOff"),workingDayInstant));
-            predicates.add(criteriaBuilder.equal(root.get("dayoffEntityId").get("userId"),currentUser));
-            Predicate[] p = new Predicate[predicates.size()];
-            return criteriaBuilder.and(predicates.toArray(p));
-        };
-
-
-
         var getTimesheetProjection = timesheetRepository
                 .findByUserEntityIdAndWorkingDayAndStatusNot(
                         currentUser.getId(),
@@ -119,31 +109,72 @@ public class TimesheetServiceImpl implements TimesheetService {
                 .map(TimesheetWorkingHourProjection::getWorkingHours)
                 .reduce(0,Integer::sum);
 
+        Specification<DayOffEntity> dayOffEntitySpecification = (root, query, criteriaBuilder) -> {
+            var predicates = new ArrayList<Predicate>();
+            predicates.add(criteriaBuilder.equal(root.get("dayoffEntityId").get("dateOff"),workingDayInstant));
+            predicates.add(criteriaBuilder.equal(root.get("dayoffEntityId").get("userId"),currentUser.getId()));
+            Predicate[] p = new Predicate[predicates.size()];
+            return criteriaBuilder.and(predicates.toArray(p));
+        };
+
         var getRequestDayOff = dayOffEntityRepository.findAll(dayOffEntitySpecification);
 
         switch (getRequestDayOff.size()){
             case 2 -> throw new ProductException(
                     ErrorResponse
                             .builder()
-                            .type(ErrorConstant.Type.CANNOT_LOG_TIMESHEET)
-                            .code(ErrorConstant.Code.CANNOT_LOG_TIMESHEET)
-                            .message(String.format(ErrorConstant.Message.CANNOT_LOG_TIMESHEET,8))
+                            .type(ErrorConstant.Type.CANNOT_LOG_ON_FULL_DAY_OFF)
+                            .code(ErrorConstant.Code.CANNOT_LOG_ON_FULL_DAY_OFF)
+                            .message(ErrorConstant.Message.CANNOT_LOG_ON_FULL_DAY_OFF)
                             .build()
             );
             case 1 -> {
                 switch (getRequestDayOff.get(0).getDayoffEntityId().getTypeDayOff()){
                     case FULL -> {
-
+                        ErrorResponse
+                                .builder()
+                                .type(ErrorConstant.Type.CANNOT_LOG_ON_FULL_DAY_OFF)
+                                .code(ErrorConstant.Code.CANNOT_LOG_ON_FULL_DAY_OFF)
+                                .message(ErrorConstant.Message.CANNOT_LOG_ON_FULL_DAY_OFF)
+                                .build();
                     }
                     case MORNING -> {
-
+                        if(totalWorkingHours + form.getWorkingHours() > 5){
+                            throw new ProductException(
+                                    ErrorResponse
+                                            .builder()
+                                            .type(ErrorConstant.Type.CANNOT_LOG_TIMESHEET)
+                                            .code(ErrorConstant.Code.CANNOT_LOG_TIMESHEET)
+                                            .message(String.format(ErrorConstant.Message.CANNOT_LOG_TIMESHEET,5))
+                                            .build()
+                            );
+                        }
                     }
                     case AFTERNOON -> {
-
+                        if(totalWorkingHours + form.getWorkingHours() > 3){
+                            throw new ProductException(
+                                    ErrorResponse
+                                            .builder()
+                                            .type(ErrorConstant.Type.CANNOT_LOG_TIMESHEET)
+                                            .code(ErrorConstant.Code.CANNOT_LOG_TIMESHEET)
+                                            .message(String.format(ErrorConstant.Message.CANNOT_LOG_TIMESHEET,3))
+                                            .build()
+                            );
+                        }
                     }
                 }
             }
             case 0 -> {
+                if(totalWorkingHours + form.getWorkingHours() > 8){
+                    throw new ProductException(
+                            ErrorResponse
+                                    .builder()
+                                    .type(ErrorConstant.Type.CANNOT_LOG_TIMESHEET)
+                                    .code(ErrorConstant.Code.CANNOT_LOG_TIMESHEET)
+                                    .message(String.format(ErrorConstant.Message.CANNOT_LOG_TIMESHEET,8))
+                                    .build()
+                    );
+                }
             }
         }
 
@@ -155,6 +186,7 @@ public class TimesheetServiceImpl implements TimesheetService {
         timesheetEntity.setWorkingHours(form.getWorkingHours());
         timesheetEntity.setWorkingDay(workingDayInstant);
         timesheetEntity.setProjectEntity(projectEntity);
+        timesheetEntity.setStatus(ApprovalStatus.PENDING);
         timesheetEntity.setUserEntity(userEntity);
         timesheetEntity.setTimesheetType(form.getTimesheetType());
         timesheetEntity.setCreatedBy(currentUser.getId());

@@ -260,7 +260,7 @@
 
     <build>
         <defaultGoal>install</defaultGoal>
-        <finalName>hrm-tool-${spring.profiles.active}</finalName>
+        <finalName>hrm-tool-${spring.profiles.active}-${version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

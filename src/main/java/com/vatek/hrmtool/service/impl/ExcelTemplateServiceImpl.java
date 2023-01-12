@@ -3,6 +3,7 @@ package com.vatek.hrmtool.service.impl;
 import com.vatek.hrmtool.dto.user.UserDto;
 import lombok.extern.log4j.Log4j2;
 import org.jxls.common.Context;
+import org.jxls.transform.poi.PoiTransformer;
 import org.jxls.util.JxlsHelper;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -21,7 +22,7 @@ public class ExcelTemplateServiceImpl {
         var resource = new ClassPathResource(pathTemplateName);
 
         try(InputStream input = new FileInputStream(resource.getFile())) {//1
-            var context = new Context();
+            var context = PoiTransformer.createInitialContext();
             for (Map.Entry<String, Object> element : data.entrySet()) { // 2
                 context.putVar(element.getKey(), element.getValue());
             }

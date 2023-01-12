@@ -41,6 +41,7 @@ public class ProjectEntity extends CommonEntity {
     private Collection<UserEntity> members;
 
     @OneToMany(fetch = FetchType.LAZY,mappedBy = "projectEntity")
+    @OrderBy("workingDay asc")
     private Collection<TimesheetEntity> timesheetEntities = new ArrayList<>();
 
     @Column

@@ -35,13 +35,10 @@ public class UserEntity extends CommonEntity {
     private boolean tokenStatus;
     @Column
     private boolean isEnabled;
-
     @Column String level;
-
     @Column String programLanguage;
     @Column
     private String position;
-
     @OneToMany(fetch = FetchType.LAZY,cascade = {
             CascadeType.DETACH,
             CascadeType.MERGE,
@@ -56,6 +53,7 @@ public class UserEntity extends CommonEntity {
             CascadeType.PERSIST,
             CascadeType.REFRESH
     },mappedBy = "userEntity")
+    @OrderBy("workingDay asc")
     private Collection<TimesheetEntity> timesheetEntities = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY,cascade = {

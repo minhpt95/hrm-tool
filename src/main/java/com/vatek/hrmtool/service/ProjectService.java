@@ -19,4 +19,6 @@ public interface ProjectService {
 
     @Transactional
     ListResponseDto<ProjectDto> getWorkingProjectByUser(Pageable pageable);
+
+    byte[] exportTimesheetByProject(Long projectId);
 }

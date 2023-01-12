@@ -97,6 +97,7 @@ public class WebSecurityConfig {
         http.authorizeRequests().antMatchers(
                 "/api/auth/**",
                 "/api/user/activateEmail/**",
+                "/api/project/export-timesheet-by-project/**",
                 "/"
         ).permitAll();
 

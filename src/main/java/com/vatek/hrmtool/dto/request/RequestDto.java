@@ -31,5 +31,6 @@ public class RequestDto {
         private Instant fromDate;
         private Instant toDate;
         private TypeDayOff typeDayOff;
+        private ApprovalStatus status;
     }
 }

@@ -11,6 +11,7 @@ import com.vatek.hrmtool.enumeration.Role;
 import com.vatek.hrmtool.exception.ErrorResponse;
 import com.vatek.hrmtool.exception.ProductException;
 import com.vatek.hrmtool.mapping.ProjectMapping;
+import com.vatek.hrmtool.mapping.excel.ProjectExcelMapping;
 import com.vatek.hrmtool.readable.form.create.CreateProjectForm;
 import com.vatek.hrmtool.readable.form.update.UpdateMemberProjectForm;
 import com.vatek.hrmtool.respository.ProjectRepository;
@@ -28,6 +29,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.ByteArrayOutputStream;
+import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -35,11 +39,10 @@ import java.util.Objects;
 @Log4j2
 public class ProjectServiceImpl implements ProjectService {
     private ProjectRepository projectRepository;
-
     private UserRepository userRepository;
-
     private ProjectMapping projectMapping;
-
+    private ProjectExcelMapping projectExcelMapping;
+    private ExcelTemplateServiceImpl excelTemplateService;
     @Override
     @Transactional
     public ProjectDto createProject(CreateProjectForm createProjectForm){
@@ -169,6 +172,36 @@ public class ProjectServiceImpl implements ProjectService {
                 criteriaBuilder.equal(root.join("memberUser").get("id"),currentUser.getId());
 
         return getProjectDtoListResponseDto(pageable, specification);
+    }
+
+    @Override
+    @Transactional
+    public byte[] exportTimesheetByProject(Long projectId) {
+        var projectEntity = projectRepository.findById(projectId).orElse(null);
+
+        if (projectEntity == null) {
+            throw new ProductException(
+                    ErrorResponse
+                            .builder()
+                            .type(ErrorConstant.Type.NOT_FOUND)
+                            .code(ErrorConstant.Code.NOT_FOUND)
+                            .message(String.format(ErrorConstant.Message.NOT_FOUND, "Project id : " + projectId))
+                            .build()
+            );
+        }
+
+        var projectExcelDto = projectExcelMapping.toDto(projectEntity);
+
+
+        Map<String, Object> contextMap = Map.of(
+                "project", projectExcelDto
+        );
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        excelTemplateService.createDocument(outputStream, "project-timesheet", contextMap);
+
+        return outputStream.toByteArray();
     }
 
     private ListResponseDto<ProjectDto> getProjectDtoListResponseDto(Pageable pageable, Specification<ProjectEntity> specification) {

@@ -1,7 +1,6 @@
 package com.vatek.hrmtool.util;
 
 import com.vatek.hrmtool.constant.DateConstant;
-import com.vatek.hrmtool.entity.RequestEntity;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -9,6 +8,8 @@ import org.apache.logging.log4j.MarkerManager;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 @Log4j2
@@ -35,6 +36,14 @@ public class DateUtil {
     }
 
 
+    public static String convertInstantToStringDate(Instant stringDate){
+        return convertInstantToStringDate(stringDate,null);
+    }
+
+    public static String convertInstantToStringDate(Instant instant, String datePattern){
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(datePattern != null ? datePattern : DateConstant.DD_MM_YYYY).withZone(ZoneId.systemDefault());
+        return dateTimeFormatter.format(instant);
+    }
 
     public static Instant convertDateToInstant(Date date){
         return date.toInstant();
