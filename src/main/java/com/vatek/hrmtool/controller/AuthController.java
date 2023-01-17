@@ -24,18 +24,7 @@ import javax.validation.Valid;
 public class AuthController {
 
     final UserService userService;
-//    @PostMapping(value = "/register",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-//    public ResponseDto<UserDto> registerUser(@Valid @ModelAttribute CreateUserForm createUserForm) {
-//        var createUserDto = userService.createUser(createUserForm);
-//
-//        var responseDto = new ResponseDto<UserDto>();
-//        responseDto.setContent(createUserDto);
-//        responseDto.setCode(ErrorConstant.Code.SUCCESS);
-//        responseDto.setType(ErrorConstant.Type.SUCCESS);
-//        responseDto.setMessage(ErrorConstant.Message.SUCCESS);
-//
-//        return responseDto;
-//    }
+
     @PostMapping(value = "/login")
     public ResponseDto<?> authenticateUser(@RequestBody LoginForm loginForm){
         JwtResponse jwtResponse = userService.authenticateUser(loginForm);

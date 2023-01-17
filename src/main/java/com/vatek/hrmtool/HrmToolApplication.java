@@ -36,16 +36,11 @@ public class HrmToolApplication {
   }
 
   @EventListener(ApplicationReadyEvent.class)
-  public void setApplicationTimeZone(){
+  public void setApplicationTimeZone() {
     TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
     log.info("TimeZone : {} , Instant : {} , Timestamp : {}", TimeZone::getDefault, Instant::now,() -> Timestamp.from(DateUtil.getInstantNow()));
   }
 
-//  @EventListener(ApplicationReadyEvent.class)
-//  public void clearToken(){
-//    log.info("Clear Token After Start Application : {}", () -> "clear Token");
-//    userService.clearAllToken();
-//  }
 
   @EventListener(ApplicationReadyEvent.class)
   public void version(){
