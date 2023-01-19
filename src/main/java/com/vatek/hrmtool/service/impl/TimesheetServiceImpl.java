@@ -1,9 +1,7 @@
 package com.vatek.hrmtool.service.impl;
 
 import com.vatek.hrmtool.constant.ErrorConstant;
-import com.vatek.hrmtool.dto.project.ProjectExcelDto;
 import com.vatek.hrmtool.dto.timesheet.TimesheetDto;
-import com.vatek.hrmtool.dto.user.UserDto;
 import com.vatek.hrmtool.entity.DayOffEntity;
 import com.vatek.hrmtool.entity.ProjectEntity;
 import com.vatek.hrmtool.entity.TimesheetEntity;
@@ -13,12 +11,13 @@ import com.vatek.hrmtool.enumeration.ApprovalStatus;
 import com.vatek.hrmtool.enumeration.TimesheetType;
 import com.vatek.hrmtool.exception.ErrorResponse;
 import com.vatek.hrmtool.exception.ProductException;
-import com.vatek.hrmtool.mapping.ProjectMapping;
 import com.vatek.hrmtool.mapping.TimesheetMapping;
-import com.vatek.hrmtool.mapping.excel.ProjectExcelMapping;
 import com.vatek.hrmtool.projection.TimesheetWorkingHourProjection;
 import com.vatek.hrmtool.readable.form.create.CreateTimesheetForm;
-import com.vatek.hrmtool.respository.*;
+import com.vatek.hrmtool.respository.DayOffEntityRepository;
+import com.vatek.hrmtool.respository.ProjectRepository;
+import com.vatek.hrmtool.respository.TimesheetRepository;
+import com.vatek.hrmtool.respository.UserRepository;
 import com.vatek.hrmtool.security.service.UserPrinciple;
 import com.vatek.hrmtool.service.TimesheetService;
 import com.vatek.hrmtool.util.DateUtil;
@@ -30,13 +29,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.Predicate;
-import java.io.ByteArrayOutputStream;
 import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
 
 @Service
 @AllArgsConstructor
@@ -47,8 +44,6 @@ public class TimesheetServiceImpl implements TimesheetService {
     private ProjectRepository projectRepository;
     private DayOffEntityRepository dayOffEntityRepository;
     private TimesheetMapping timesheetMapping;
-    private ExcelTemplateServiceImpl excelTemplateService;
-    private ProjectExcelMapping projectExcelMapping;
     @Override
     @Transactional
     public TimesheetDto createTimesheet(CreateTimesheetForm form){
@@ -132,14 +127,12 @@ public class TimesheetServiceImpl implements TimesheetService {
                 );
                 case 1 -> {
                     switch (getRequestDayOff.get(0).getDayoffEntityId().getTypeDayOff()){
-                        case FULL -> {
-                            ErrorResponse
-                                    .builder()
-                                    .type(ErrorConstant.Type.CANNOT_LOG_ON_FULL_DAY_OFF)
-                                    .code(ErrorConstant.Code.CANNOT_LOG_ON_FULL_DAY_OFF)
-                                    .message(ErrorConstant.Message.CANNOT_LOG_ON_FULL_DAY_OFF)
-                                    .build();
-                        }
+                        case FULL -> ErrorResponse
+                                .builder()
+                                .type(ErrorConstant.Type.CANNOT_LOG_ON_FULL_DAY_OFF)
+                                .code(ErrorConstant.Code.CANNOT_LOG_ON_FULL_DAY_OFF)
+                                .message(ErrorConstant.Message.CANNOT_LOG_ON_FULL_DAY_OFF)
+                                .build();
                         case MORNING -> {
                             if(totalWorkingHours + form.getWorkingHours() > 5){
                                 throw new ProductException(

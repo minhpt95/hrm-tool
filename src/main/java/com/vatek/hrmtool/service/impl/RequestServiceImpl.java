@@ -14,7 +14,7 @@ import com.vatek.hrmtool.exception.ErrorResponse;
 import com.vatek.hrmtool.exception.ProductException;
 import com.vatek.hrmtool.mapping.RequestMapping;
 import com.vatek.hrmtool.readable.form.create.CreateRequestForm;
-import com.vatek.hrmtool.readable.form.update.UpdateApprovalStatusForm;
+import com.vatek.hrmtool.readable.form.update.UpdateRequestStatusForm;
 import com.vatek.hrmtool.respository.DayOffEntityRepository;
 import com.vatek.hrmtool.respository.RequestRepository;
 import com.vatek.hrmtool.respository.UserRepository;
@@ -22,7 +22,6 @@ import com.vatek.hrmtool.security.service.UserPrinciple;
 import com.vatek.hrmtool.service.RequestService;
 import com.vatek.hrmtool.util.CommonUtil;
 import com.vatek.hrmtool.util.DateUtil;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -37,11 +36,8 @@ import javax.persistence.criteria.Predicate;
 import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -196,7 +192,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public RequestDto approvalRequest(UpdateApprovalStatusForm form) {
+    public RequestDto approvalRequest(UpdateRequestStatusForm form) {
         var currentUser = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         RequestEntity requestEntity = requestRepository.findById(form.getId()).orElse(null);
@@ -210,6 +206,8 @@ public class RequestServiceImpl implements RequestService {
                             .build()
             );
         }
+
+
 
         requestEntity.setModifiedBy(currentUser.getId());
         requestEntity.setModifiedTime(Instant.now());

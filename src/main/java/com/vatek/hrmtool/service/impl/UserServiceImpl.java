@@ -217,14 +217,14 @@ public class UserServiceImpl implements UserService {
     @SneakyThrows
     public void forgotPassword(String email) {
 
-        var isValidEmail = isAddressValid(email);
-
-        if(!isValidEmail){
-            log.error("email not valid => {}",() -> email);
-            throw new ProductException(
-                new ErrorResponse()
-            );
-        }
+//        var isValidEmail = isAddressValid(email);
+//
+//        if(!isValidEmail){
+//            log.error("email not valid => {}",() -> email);
+//            throw new ProductException(
+//                new ErrorResponse()
+//            );
+//        }
 
         var userEntity = userRepository.findUserEntityByEmail(email);
         if (userEntity == null) {

@@ -5,14 +5,17 @@ import com.vatek.hrmtool.validator.anotation.EnumPatternConstraint;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
+import java.time.Instant;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class UpdateApprovalStatusForm {
+public class UpdateRequestStatusForm {
     @NotNull
     private Long id;
+
+    private Instant dayOff;
     @EnumPatternConstraint(regexp = "APPROVED|REJECTED")
     private ApprovalStatus approvalStatus;
 }
