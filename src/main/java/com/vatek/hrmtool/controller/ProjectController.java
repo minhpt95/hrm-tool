@@ -69,6 +69,7 @@ public class ProjectController {
         return projectResponseDto;
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_PM')")
     @PostMapping("/export-timesheet-by-project/{projectId}")
     public ResponseEntity<InputStreamResource> exportTimeSheetByProject(@PathVariable("projectId") Long projectId){
         byte[] bytes = projectService.exportTimesheetByProject(projectId);

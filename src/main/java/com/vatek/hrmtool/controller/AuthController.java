@@ -2,19 +2,13 @@ package com.vatek.hrmtool.controller;
 
 import com.vatek.hrmtool.constant.ErrorConstant;
 import com.vatek.hrmtool.dto.ResponseDto;
-import com.vatek.hrmtool.dto.user.UserDto;
 import com.vatek.hrmtool.jwt.JwtResponse;
 import com.vatek.hrmtool.readable.form.LoginForm;
-import com.vatek.hrmtool.readable.form.create.CreateUserForm;
 import com.vatek.hrmtool.service.UserService;
 import com.vatek.hrmtool.util.DateUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 
 @CrossOrigin(origins = "*",maxAge = 3600)
 @RestController
@@ -26,7 +20,7 @@ public class AuthController {
     final UserService userService;
 
     @PostMapping(value = "/login")
-    public ResponseDto<?> authenticateUser(@RequestBody LoginForm loginForm){
+    public ResponseDto<JwtResponse> authenticateUser(@RequestBody LoginForm loginForm){
         JwtResponse jwtResponse = userService.authenticateUser(loginForm);
 
         var responseDto = new ResponseDto<JwtResponse>();
@@ -39,10 +33,10 @@ public class AuthController {
     }
 
     @PutMapping(value = "/activate-email/{id}")
-    public  ResponseDto<?> activateEmail(@PathVariable Long id){
+    public  ResponseDto<Boolean> activateEmail(@PathVariable Long id){
         userService.activateEmail(id, DateUtil.getInstantNow());
 
-        var responseDto = new ResponseDto<>();
+        var responseDto = new ResponseDto<Boolean>();
         responseDto.setCode(ErrorConstant.Code.SUCCESS);
         responseDto.setMessage(ErrorConstant.Message.SUCCESS);
         responseDto.setType(ErrorConstant.Type.SUCCESS);
@@ -51,10 +45,10 @@ public class AuthController {
     }
 
     @PostMapping(value = "/forgot/{email}")
-    public ResponseDto<?> forgotPassword(@PathVariable(name = "email") String email){
+    public ResponseDto<Boolean> forgotPassword(@PathVariable(name = "email") String email){
         userService.forgotPassword(email);
 
-        var responseDto = new ResponseDto<>();
+        var responseDto = new ResponseDto<Boolean>();
         responseDto.setCode(ErrorConstant.Code.SUCCESS);
         responseDto.setType(ErrorConstant.Type.SUCCESS);
         responseDto.setMessage(ErrorConstant.Message.SUCCESS);

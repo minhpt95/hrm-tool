@@ -24,12 +24,6 @@ public class JwtProvider {
     @Value("${hrm.app.jwtExpiration}")
     private int jwtExpiration;
 
-
-
-    public JwtProvider() {
-
-    }
-
     public String generateJwtToken(Authentication authentication) {
         UserPrinciple userPrincipal = (UserPrinciple) authentication.getPrincipal();
         return generateJwtToken(userPrincipal);

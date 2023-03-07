@@ -44,6 +44,9 @@ public class TimesheetServiceImpl implements TimesheetService {
     private ProjectRepository projectRepository;
     private DayOffEntityRepository dayOffEntityRepository;
     private TimesheetMapping timesheetMapping;
+
+    private static final String DAY_OFF_ENTITY_ID = "dayoffEntityId";
+
     @Override
     @Transactional
     public TimesheetDto createTimesheet(CreateTimesheetForm form){

@@ -12,11 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ListResponseDto<T> implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = -3931471505590865499L;
-
+public class ListResponseDto<T>  {
     private int pageSize;
     private List<T> items;
     private int pageIndex;
@@ -24,8 +20,6 @@ public class ListResponseDto<T> implements Serializable {
     private Boolean hasPreviousPage;
     private int pageCount;
     private long totalItemCount;
-
-
     public ListResponseDto(Page<T> page,int pageIndex,int pageSize){
         this.items = page.getContent();
         this.pageSize = pageSize;

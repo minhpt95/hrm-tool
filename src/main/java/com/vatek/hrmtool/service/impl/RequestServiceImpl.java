@@ -92,14 +92,12 @@ public class RequestServiceImpl implements RequestService {
                     predicates.add(criteriaBuilder.between(root.get("dayoffEntityId").get("dateOff"),from,to));
 
                     switch (createRequestForm.getTypeDayoff()){
-                        case MORNING , AFTERNOON -> {
-                            predicates.add(
-                                    criteriaBuilder.or(
-                                            criteriaBuilder.equal(root.get("dayoffEntityId").get("typeDayOff"),createRequestForm.getTypeDayoff()),
-                                            criteriaBuilder.equal(root.get("dayoffEntityId").get("typeDayOff"), TypeDayOff.FULL)
-                                    )
-                            );
-                        }
+                        case MORNING , AFTERNOON -> predicates.add(
+                                criteriaBuilder.or(
+                                        criteriaBuilder.equal(root.get("dayoffEntityId").get("typeDayOff"),createRequestForm.getTypeDayoff()),
+                                        criteriaBuilder.equal(root.get("dayoffEntityId").get("typeDayOff"), TypeDayOff.FULL)
+                                )
+                        );
                     }
 
                     Predicate[] p = predicates.toArray(new Predicate[0]);
@@ -121,9 +119,6 @@ public class RequestServiceImpl implements RequestService {
                 }
 
                 var fromCounter = from;
-
-
-
 
                 var dayOffEntities = new ArrayList<DayOffEntity>();
                 while (!fromCounter.isAfter(to)){
@@ -156,7 +151,6 @@ public class RequestServiceImpl implements RequestService {
 
                 return requestMapping.toDto(requestEntityList);
             }
-
             default -> throw new ProductException(
                     ErrorResponse.builder()
                             .code(ErrorConstant.Code.NOT_FOUND)
@@ -206,8 +200,6 @@ public class RequestServiceImpl implements RequestService {
                             .build()
             );
         }
-
-
 
         requestEntity.setModifiedBy(currentUser.getId());
         requestEntity.setModifiedTime(Instant.now());

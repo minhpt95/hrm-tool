@@ -8,7 +8,4 @@ import lombok.Setter;
 @Setter
 public class ResponseDto<T> extends ErrorResponse {
     private T content;
-
-    public ResponseDto() {
-    }
 }

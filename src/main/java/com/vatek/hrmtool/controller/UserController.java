@@ -113,11 +113,11 @@ public class UserController {
     }
 
     @PostMapping("/logout")
-    public ResponseDto<?> logout(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseDto<Void> logout(HttpServletRequest request, HttpServletResponse response) {
 
         userService.logout(request,response);
 
-        ResponseDto<?> responseDto = new ResponseDto<>();
+        var responseDto = new ResponseDto<Void>();
         responseDto.setMessage(ErrorConstant.Message.SUCCESS);
         responseDto.setCode(ErrorConstant.Code.SUCCESS);
         return responseDto;

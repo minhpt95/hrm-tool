@@ -64,8 +64,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     private Collection<? extends GrantedAuthority> getAuthorities(
-            Collection<RoleEntity> roles) {
-
+            Collection<RoleEntity> roles
+    ) {
         return getGrantedAuthorities(getPrivileges(roles));
     }
     private List<String> getPrivileges(Collection<RoleEntity> roles) {

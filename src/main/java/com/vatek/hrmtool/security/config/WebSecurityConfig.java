@@ -42,7 +42,7 @@ public class WebSecurityConfig {
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        var authProvider = new DaoAuthenticationProvider();
 
         authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
@@ -57,7 +57,7 @@ public class WebSecurityConfig {
 
     @Bean
     public RoleHierarchy roleHierarchy() {
-        RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
+        var roleHierarchy = new RoleHierarchyImpl();
         String hierarchy = "ROLE_ADMIN > ROLE_IT_ADMIN > ROLE_PM > ROLE_USER";
         roleHierarchy.setHierarchy(hierarchy);
         return roleHierarchy;
@@ -70,14 +70,13 @@ public class WebSecurityConfig {
 
     @Bean
     public AffirmativeBased defaultAccessDecisionManager(RoleHierarchy roleHierarchy){
-        List<AccessDecisionVoter<?>> decisionVoters = new ArrayList<>();
 
+        var decisionVoters = new ArrayList<AccessDecisionVoter<?>>();
         var webExpressionVoter = new WebExpressionVoter();
-        DefaultWebSecurityExpressionHandler
-                expressionHandler = new DefaultWebSecurityExpressionHandler();
+        var expressionHandler = new DefaultWebSecurityExpressionHandler();
+
         expressionHandler.setRoleHierarchy(roleHierarchy);
         webExpressionVoter.setExpressionHandler(expressionHandler);
-
         decisionVoters.add(webExpressionVoter);
         decisionVoters.add(roleHierarchyVoter(roleHierarchy));
 
@@ -97,7 +96,6 @@ public class WebSecurityConfig {
         http.authorizeRequests().antMatchers(
                 "/api/auth/**",
                 "/api/user/activateEmail/**",
-                "/api/project/export-timesheet-by-project/**",
                 "/"
         ).permitAll();
 

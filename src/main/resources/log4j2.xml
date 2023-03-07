@@ -142,6 +142,10 @@
             <AppenderRef ref="Console"/>
         </Logger>
 
+        <Logger name="com.vatek.hrmtool" additivity="false" level="debug">
+            <AppenderRef ref="Console" />
+        </Logger>
+
         <Root level="warn">
             <AppenderRef ref="Console"/>
         </Root>

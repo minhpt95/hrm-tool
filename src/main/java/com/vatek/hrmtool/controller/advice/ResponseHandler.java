@@ -29,13 +29,13 @@ public class ResponseHandler {
 
     @ExceptionHandler(ProductException.class)
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleProductException(ProductException ex, WebRequest request) {
+    public ErrorResponse handleProductException(ProductException ex) {
         return ex.getErrorResponse();
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(value = HttpStatus.FORBIDDEN)
-    public ErrorResponse handleAccessDeniedException(AccessDeniedException ex, WebRequest request) {
+    public ErrorResponse handleAccessDeniedException(AccessDeniedException ex) {
         return ErrorResponse
                 .builder()
                 .code(ErrorConstant.Code.PERMISSION_DENIED)
@@ -46,7 +46,7 @@ public class ResponseHandler {
 
     @ExceptionHandler(AuthenticationCredentialsNotFoundException.class)
     @ResponseStatus(value = HttpStatus.FORBIDDEN)
-    public ErrorResponse handleAuthenticationCredentialsNotFoundException(AuthenticationCredentialsNotFoundException ex, WebRequest request) {
+    public ErrorResponse handleAuthenticationCredentialsNotFoundException(AuthenticationCredentialsNotFoundException ex) {
         return ErrorResponse
                 .builder()
                 .code(ErrorConstant.Code.AUTHENTICATION_ERROR)
@@ -80,14 +80,14 @@ public class ResponseHandler {
 
     @ExceptionHandler(value = BindException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseDto<List<?>> handleBindingErrors(BindException ex) {
-        ResponseDto<List<?>> errorResponse = new ResponseDto<>();
+    public ResponseDto<List<ErrorBindingDto>> handleBindingErrors(BindException ex) {
+        var errorResponse = new ResponseDto<List<ErrorBindingDto>>();
         errorResponse.setCode(ErrorConstant.Code.MISSING_FIELD);
         errorResponse.setType(ErrorConstant.Type.MISSING_FIELD);
 
-        List<FieldError> errors = ex.getBindingResult().getFieldErrors();
+        var errors = ex.getBindingResult().getFieldErrors();
 
-        List<ErrorBindingDto> errorBindingDtoList = errors.stream().map(x -> {
+        var errorBindingDtoList = errors.stream().map(x -> {
             ErrorBindingDto errorBindingDto = new ErrorBindingDto();
             errorBindingDto.setFieldError(x.getField());
             errorBindingDto.setErrorMessage(x.getDefaultMessage());

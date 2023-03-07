@@ -76,7 +76,6 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         if(userEntity == null){
             throw new ProductException(new ErrorResponse());
         }
-
         var refreshToken = refreshTokenRepository.findByUserEntityId(userEntity.getId()).orElse(null);
 
         if(refreshToken == null){

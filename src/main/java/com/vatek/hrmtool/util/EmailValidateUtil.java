@@ -79,8 +79,6 @@ public class EmailValidateUtil {
                 wtr.close();
             } catch (Exception ex) {
                 log.error("Exception when checking email",ex);
-            } finally {
-                return valid;
             }
         }
         return false;

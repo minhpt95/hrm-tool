@@ -35,6 +35,8 @@ public class MailServiceImpl implements MailService {
 
     private static final String ERROR_SEND_EMAIL = "error when send email : {}";
 
+    private static final String SPRING_MAIL_USERNAME = "spring.mail.username";
+
     @Override
     @Async
     public void sendEmailAttach(String to, String subject, String body, String fileName, File file) {
@@ -43,7 +45,7 @@ public class MailServiceImpl implements MailService {
             log.error(RECIPIENT_EMPTY);
         } else {
             try {
-                var userName = env.getProperty("spring.mail.username");
+                var userName = env.getProperty(SPRING_MAIL_USERNAME);
                 var message = sender.createMimeMessage();
                 var helper = new MimeMessageHelper(message, true, CHARSET_UTF8);
                 helper.setFrom(userName, userName);
@@ -69,7 +71,7 @@ public class MailServiceImpl implements MailService {
             log.error(RECIPIENT_EMPTY);
         } else {
             try {
-                var userName = env.getProperty("spring.mail.username");
+                var userName = env.getProperty(SPRING_MAIL_USERNAME);
                 var message = sender.createMimeMessage();
                 var helper = new MimeMessageHelper(message, true, CHARSET_UTF8);
                 helper.setText(body, true);
@@ -95,7 +97,7 @@ public class MailServiceImpl implements MailService {
         } else {
             try {
                 log.info("start send email not attach file to: {}; subject: {};", to, subject);
-                var hostingName = env.getProperty("spring.mail.username");
+                var hostingName = env.getProperty(SPRING_MAIL_USERNAME);
                 var hostingEmail = env.getProperty("system.name.mail");
                 var message = sender.createMimeMessage();
                 var helper = new MimeMessageHelper(message, true);
@@ -119,7 +121,7 @@ public class MailServiceImpl implements MailService {
         } else {
             try {
                 log.info("start send email not attach multiple people file to: {}; subject: {};", () -> Arrays.toString(to), () -> subject);
-                var userName = env.getProperty("spring.mail.username");
+                var userName = env.getProperty(SPRING_MAIL_USERNAME);
                 var message = sender.createMimeMessage();
                 var helper = new MimeMessageHelper(message, true);
                 message.setText(body, CHARSET_UTF8, HTML_SUBTYPE);

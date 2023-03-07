@@ -10,13 +10,11 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Builder
-public class ErrorResponse implements Serializable {
+public class ErrorResponse {
 	
 	/**
 	 * 
 	 */
-	@Serial
-	private static final long serialVersionUID = 1L;
 	private String type;
 	private String message;
 	private String code;
