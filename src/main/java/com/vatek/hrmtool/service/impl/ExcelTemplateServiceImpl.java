@@ -15,10 +15,15 @@ import java.util.Map;
 @Service
 @Log4j2
 public class ExcelTemplateServiceImpl {
-    public void createDocument(OutputStream outputStream,String templateName, Map<String, Object> data) {
-        log.debug("Start creation of document");
 
-        var pathTemplateName = ("templates/excels/").concat(templateName).concat(".xlsx");
+    private static final String EXCEL_PATH = "templates/excels/";
+
+    private static final String XLSX_EXTENSION =  ".xlsx";
+
+    public void createDocument(OutputStream outputStream,String templateName, Map<String, Object> data) {
+        log.debug("Start creation of excel document");
+
+        var pathTemplateName = (EXCEL_PATH).concat(templateName).concat(XLSX_EXTENSION);
         var resource = new ClassPathResource(pathTemplateName);
 
         try(InputStream input = new FileInputStream(resource.getFile())) {//1

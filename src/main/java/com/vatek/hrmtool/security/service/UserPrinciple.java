@@ -9,6 +9,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serial;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -26,7 +28,6 @@ public class UserPrinciple implements UserDetails {
     private String username;
 
     private String email;
-
     @JsonIgnore
     private String password;
 

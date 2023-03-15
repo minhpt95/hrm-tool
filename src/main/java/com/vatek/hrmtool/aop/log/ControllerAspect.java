@@ -1,5 +1,6 @@
 package com.vatek.hrmtool.aop.log;
 
+import com.vatek.hrmtool.exception.ProductException;
 import lombok.extern.log4j.Log4j2;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -55,7 +56,7 @@ public class ControllerAspect {
     public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
         if (log.isDebugEnabled()) {
             log.debug("Enter: {}.{}() with argument[s] = {}", joinPoint.getSignature().getDeclaringTypeName(),
-                    joinPoint.getSignature().getName(), joinPoint.getArgs());
+                    joinPoint.getSignature().getName(), Arrays.toString(joinPoint.getArgs()));
         }
         try {
             Object result = joinPoint.proceed();
@@ -64,8 +65,12 @@ public class ControllerAspect {
                         joinPoint.getSignature().getName(), result);
             }
             return result;
-        } catch (IllegalArgumentException e) {
-            log.error("Illegal argument: {} in {}.{}()", Arrays.toString(joinPoint.getArgs()),
+        } catch (ProductException e) {
+            log.error("Product Exception: {} in {}.{}()", Arrays.toString(joinPoint.getArgs()),
+                    joinPoint.getSignature().getDeclaringTypeName(), joinPoint.getSignature().getName());
+            throw e;
+        } catch (NullPointerException e) {
+            log.error("Null Pointer Exception: {} in {}.{}()", Arrays.toString(joinPoint.getArgs()),
                     joinPoint.getSignature().getDeclaringTypeName(), joinPoint.getSignature().getName());
             throw e;
         }

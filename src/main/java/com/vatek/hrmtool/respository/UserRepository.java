@@ -17,6 +17,8 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> , JpaSpe
 
     Optional<UserEntity> findByEmail(String email);
 
+    int countAllByEmail(String email);
+
     Page<UserEntity> findAll(Pageable pageable);
 
     Optional<UserEntity> findAllByEmail(String email);

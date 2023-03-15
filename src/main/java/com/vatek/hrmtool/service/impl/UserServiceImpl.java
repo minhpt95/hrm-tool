@@ -23,6 +23,7 @@ import com.vatek.hrmtool.service.*;
 import com.vatek.hrmtool.util.CommonUtil;
 import com.vatek.hrmtool.util.DateUtil;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -55,7 +56,7 @@ import static com.vatek.hrmtool.util.EmailValidateUtil.isAddressValid;
 
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Log4j2
 public class UserServiceImpl implements UserService {
     final PasswordEncoder passwordEncoder;
@@ -69,9 +70,7 @@ public class UserServiceImpl implements UserService {
     final RefreshTokenService refreshTokenService;
     private final UserMapping userMapping;
     private final ExcelTemplateServiceImpl excelTemplateService;
-
     private UploadImageService uploadImageService;
-
     private final EntityManager entityManager;
     @Override
     public void saveToken(String token, UserEntity userEntity) {
@@ -353,7 +352,7 @@ public class UserServiceImpl implements UserService {
         }
 
         if(
-                !Objects.equals(projectEntity.getId(), userPrinciple.getId()) &&
+                !Objects.equals(projectEntity.getManagerUser().getId(), userPrinciple.getId()) &&
                         userPrinciple.getAuthorities().stream().anyMatch(x -> x.getAuthority().equals(Role.ADMIN.getAuthority()))
         ){
             throw new AccessDeniedException("Cannot access to another project");
@@ -369,9 +368,13 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = userRepository.findUserEntityById(updateUserRoleForm.getId());
 
         if (userEntity == null) {
-            throw new ProductException(new ErrorResponse(ErrorConstant.Code.NOT_FOUND,
-                    String.format(ErrorConstant.Message.NOT_FOUND, updateUserRoleForm.getId()),
-                    ErrorConstant.Type.NOT_FOUND));
+            throw new ProductException(
+                    new ErrorResponse(
+                            ErrorConstant.Code.NOT_FOUND,
+                            String.format(ErrorConstant.Message.NOT_FOUND, updateUserRoleForm.getId()),
+                            ErrorConstant.Type.NOT_FOUND
+                    )
+            );
         }
 
         RoleEntity role = roleRepository.findByRole(updateUserRoleForm.getRole());
