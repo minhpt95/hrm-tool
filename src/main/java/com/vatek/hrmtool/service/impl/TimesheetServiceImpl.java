@@ -20,7 +20,7 @@ import com.vatek.hrmtool.respository.TimesheetRepository;
 import com.vatek.hrmtool.respository.UserRepository;
 import com.vatek.hrmtool.security.service.UserPrinciple;
 import com.vatek.hrmtool.service.TimesheetService;
-import com.vatek.hrmtool.util.DateUtil;
+import com.vatek.hrmtool.util.DateUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.jpa.domain.Specification;
@@ -78,7 +78,7 @@ public class TimesheetServiceImpl implements TimesheetService {
             );
         }
 
-        Instant workingDayInstant = DateUtil.convertStringDateToInstant(form.getWorkingDay());
+        Instant workingDayInstant = DateUtils.convertStringDateToInstant(form.getWorkingDay());
 
         var workingDayInstantDayOfWeek = workingDayInstant.atZone(ZoneId.systemDefault()).getDayOfWeek();
 
@@ -189,7 +189,7 @@ public class TimesheetServiceImpl implements TimesheetService {
         timesheetEntity.setUserEntity(userEntity);
         timesheetEntity.setTimesheetType(form.getTimesheetType());
         timesheetEntity.setCreatedBy(currentUser.getId());
-        timesheetEntity.setCreatedTime(DateUtil.getInstantNow());
+        timesheetEntity.setCreatedTime(DateUtils.getInstantNow());
         timesheetEntity = timesheetRepository.save(timesheetEntity);
 
         return timesheetMapping.toDto(timesheetEntity);

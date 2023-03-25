@@ -11,8 +11,10 @@ import com.vatek.hrmtool.exception.ProductException;
 import com.vatek.hrmtool.jwt.JwtProvider;
 import com.vatek.hrmtool.jwt.JwtResponse;
 import com.vatek.hrmtool.mapping.UserMapping;
+import com.vatek.hrmtool.mapping.dto.CreateUserMapping;
 import com.vatek.hrmtool.readable.form.LoginForm;
 import com.vatek.hrmtool.readable.form.create.CreateUserForm;
+import com.vatek.hrmtool.readable.form.create.RegisterUserForm;
 import com.vatek.hrmtool.readable.form.update.UpdateUserForm;
 import com.vatek.hrmtool.readable.form.update.UpdateUserRoleForm;
 import com.vatek.hrmtool.readable.request.ChangePasswordReq;
@@ -20,9 +22,8 @@ import com.vatek.hrmtool.readable.request.ChangeStatusAccountReq;
 import com.vatek.hrmtool.respository.*;
 import com.vatek.hrmtool.security.service.UserPrinciple;
 import com.vatek.hrmtool.service.*;
-import com.vatek.hrmtool.util.CommonUtil;
-import com.vatek.hrmtool.util.DateUtil;
-import lombok.AllArgsConstructor;
+import com.vatek.hrmtool.util.CommonUtils;
+import com.vatek.hrmtool.util.DateUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
@@ -52,8 +53,6 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
-import static com.vatek.hrmtool.util.EmailValidateUtil.isAddressValid;
-
 
 @Service
 @RequiredArgsConstructor
@@ -69,6 +68,7 @@ public class UserServiceImpl implements UserService {
     final RoleRepository roleRepository;
     final RefreshTokenService refreshTokenService;
     private final UserMapping userMapping;
+    private final CreateUserMapping createUserMapping;
     private final ExcelTemplateServiceImpl excelTemplateService;
     private UploadImageService uploadImageService;
     private final EntityManager entityManager;
@@ -136,7 +136,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public ListResponseDto<UserDto> getUserList(Pageable pageable) {
-        Page<UserEntity> userEntityPage = userRepository.findAll(CommonUtil.buildPageable(pageable.getPageNumber(), pageable.getPageSize()));
+        Page<UserEntity> userEntityPage = userRepository.findAll(CommonUtils.buildPageable(pageable.getPageNumber(), pageable.getPageSize()));
         Page<UserDto> userDtoPage = userEntityPage.map(userMapping::toDto);
         return new ListResponseDto<>(userDtoPage, pageable.getPageSize(), pageable.getPageNumber());
     }
@@ -158,18 +158,20 @@ public class UserServiceImpl implements UserService {
         }
         UserEntity userEntity = new UserEntity();
 
+        String passwordRandom = CommonUtils.randomPassword(12);
+
         userEntity.setCurrentAddress(form.getCurrentAddress());
 
         userEntity.setEmail(form.getEmail());
         userEntity.setIdentityCard(form.getIdentityCard());
         userEntity.setEnabled(false);
         userEntity.setName(form.getName());
-        userEntity.setPassword(passwordEncoder.encode(form.getPassword()));
+        userEntity.setPassword(passwordEncoder.encode(passwordRandom));
         userEntity.setPermanentAddress(form.getPermanentAddress());
         userEntity.setPhoneNumber1(form.getPhoneNumber1());
-        userEntity.setCreatedTime(DateUtil.getInstantNow());
+        userEntity.setCreatedTime(DateUtils.getInstantNow());
         userEntity.setCreatedBy(userPrinciple.getId());
-        userEntity.setModifiedTime(DateUtil.getInstantNow());
+        userEntity.setModifiedTime(DateUtils.getInstantNow());
         userEntity.setModifiedBy(userPrinciple.getId());
 
         if(form.getAvatarImage() != null){
@@ -181,9 +183,15 @@ public class UserServiceImpl implements UserService {
         Collection<RoleEntity> roleEntity = roleRepository.findByRoleIn(form.getRoles());
         userEntity.setRoles(roleEntity);
         userEntity = userRepository.save(userEntity);
-        mailService.sendActivationEmail(userEntity);
+        mailService.sendActivationEmail(userEntity.getId(), userEntity.getEmail(), passwordRandom);
 
         return userMapping.toDto(userEntity);
+    }
+
+    @Override
+    @Transactional
+    public UserDto registerUser(RegisterUserForm form) {
+        return createUser(createUserMapping.toCreateFrom(form));
     }
 
     @Override
@@ -215,16 +223,6 @@ public class UserServiceImpl implements UserService {
     @Override
     @SneakyThrows
     public void forgotPassword(String email) {
-
-//        var isValidEmail = isAddressValid(email);
-//
-//        if(!isValidEmail){
-//            log.error("email not valid => {}",() -> email);
-//            throw new ProductException(
-//                new ErrorResponse()
-//            );
-//        }
-
         var userEntity = userRepository.findUserEntityByEmail(email);
         if (userEntity == null) {
 

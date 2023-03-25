@@ -18,8 +18,8 @@ import com.vatek.hrmtool.respository.ProjectRepository;
 import com.vatek.hrmtool.respository.UserRepository;
 import com.vatek.hrmtool.security.service.UserPrinciple;
 import com.vatek.hrmtool.service.ProjectService;
-import com.vatek.hrmtool.util.CommonUtil;
-import com.vatek.hrmtool.util.DateUtil;
+import com.vatek.hrmtool.util.CommonUtils;
+import com.vatek.hrmtool.util.DateUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
@@ -75,7 +75,7 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
         projectEntity.setCreatedBy(currentUser.getId());
-        projectEntity.setCreatedTime(DateUtil.getInstantNow());
+        projectEntity.setCreatedTime(DateUtils.getInstantNow());
 
         projectEntity.setProjectStatus(createProjectForm.getProjectStatus());
 
@@ -136,7 +136,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         projectEntity.setModifiedBy(currentUser.getId());
 
-        projectEntity.setModifiedTime(DateUtil.getInstantNow());
+        projectEntity.setModifiedTime(DateUtils.getInstantNow());
 
         return projectMapping.toDto(projectRepository.save(projectEntity));
     }
@@ -145,7 +145,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Transactional
     public ListResponseDto<ProjectDto> getProjectPageable(Pageable pageable) {
 
-        var projectEntities = projectRepository.findAll(CommonUtil.buildPageable(pageable.getPageNumber(), pageable.getPageSize()));
+        var projectEntities = projectRepository.findAll(CommonUtils.buildPageable(pageable.getPageNumber(), pageable.getPageSize()));
 
         var projectDtos = projectEntities.map(projectMapping::toDto);
 
@@ -207,7 +207,7 @@ public class ProjectServiceImpl implements ProjectService {
     private ListResponseDto<ProjectDto> getProjectDtoListResponseDto(Pageable pageable, Specification<ProjectEntity> specification) {
         var projectEntities = projectRepository.findAll(
                 specification,
-                CommonUtil.buildPageable(pageable.getPageNumber(), pageable.getPageSize())
+                CommonUtils.buildPageable(pageable.getPageNumber(), pageable.getPageSize())
         );
 
         var projectDtos = projectEntities.map(projectMapping::toDto);

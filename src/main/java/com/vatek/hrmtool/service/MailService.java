@@ -17,7 +17,7 @@ public interface MailService {
     void sendEmail(String [] to, String from, String personal, String subject, String body) throws Exception;
 
     @Async
-    void sendActivationEmail(UserEntity to);
+    void sendActivationEmail(Long id, String email, String password);
 
     void sendForgotEmail(UserEntity to,String newPassword);
 }

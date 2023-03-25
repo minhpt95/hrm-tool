@@ -14,7 +14,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 @Log4j2
-public class DateUtil {
+public class DateUtils {
 
     private static final Marker marker = MarkerManager.getMarker("DateUtil");
     public static Date convertInstantToDate (Instant instant)

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 @Log4j2
-public class EmailValidateUtil {
+public class EmailValidateUtils {
     public static boolean isAddressValid(String address) {
         // Find the separator for the domain name
         int pos = address.indexOf('@');

@@ -1,7 +1,7 @@
 package com.vatek.hrmtool;
 
 import com.vatek.hrmtool.service.UserService;
-import com.vatek.hrmtool.util.DateUtil;
+import com.vatek.hrmtool.util.DateUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.SpringApplication;
@@ -38,7 +38,7 @@ public class HrmToolApplication {
   @EventListener(ApplicationReadyEvent.class)
   public void setApplicationTimeZone() {
     TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-    log.info("TimeZone : {} , Instant : {} , Timestamp : {}", TimeZone::getDefault, Instant::now,() -> Timestamp.from(DateUtil.getInstantNow()));
+    log.info("TimeZone : {} , Instant : {} , Timestamp : {}", TimeZone::getDefault, Instant::now,() -> Timestamp.from(DateUtils.getInstantNow()));
   }
 
 

@@ -1,6 +1,8 @@
 package com.vatek.hrmtool.readable.form.create;
 
 import com.vatek.hrmtool.enumeration.Role;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +16,8 @@ import java.util.Collection;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateUserForm {
+@ApiModel
+public class RegisterUserForm {
     @NotEmpty
     private String name;
     @NotEmpty

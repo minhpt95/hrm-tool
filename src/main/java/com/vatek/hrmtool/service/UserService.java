@@ -6,6 +6,7 @@ import com.vatek.hrmtool.entity.UserEntity;
 import com.vatek.hrmtool.jwt.JwtResponse;
 import com.vatek.hrmtool.readable.form.LoginForm;
 import com.vatek.hrmtool.readable.form.create.CreateUserForm;
+import com.vatek.hrmtool.readable.form.create.RegisterUserForm;
 import com.vatek.hrmtool.readable.form.update.UpdateUserForm;
 import com.vatek.hrmtool.readable.form.update.UpdateUserRoleForm;
 import com.vatek.hrmtool.readable.request.ChangePasswordReq;
@@ -35,6 +36,8 @@ public interface UserService {
     );
     
     UserDto createUser(CreateUserForm form);
+
+    UserDto registerUser(RegisterUserForm form);
 
     void activateEmail(Long id, Instant timeOut);
 

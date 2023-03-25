@@ -2,6 +2,7 @@ package com.vatek.hrmtool.util;
 
 import com.ibm.icu.text.NumberFormat;
 import com.ibm.icu.text.RuleBasedNumberFormat;
+import liquibase.repackaged.org.apache.commons.text.RandomStringGenerator;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -9,7 +10,7 @@ import org.springframework.data.domain.Sort.Direction;
 import java.util.Locale;
 
 
-public class CommonUtil {
+public class CommonUtils {
 
 
     public static Pageable buildPageable(int pageIndex, int pageSize) {
@@ -18,6 +19,11 @@ public class CommonUtil {
 
     public static Pageable buildPageable(int pageIndex, int pageSize,Direction direction,String... properties) {
         return PageRequest.of(pageIndex, pageSize,direction,properties);
+    }
+
+    public static String randomPassword(int length){
+        RandomStringGenerator pwdGenerator = new RandomStringGenerator.Builder().build();
+        return randomPassword(length);
     }
 
     public static String convertMoneyToText(String input) {

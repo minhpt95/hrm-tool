@@ -2,16 +2,20 @@ package com.vatek.hrmtool.controller;
 
 import com.vatek.hrmtool.constant.ErrorConstant;
 import com.vatek.hrmtool.dto.ResponseDto;
+import com.vatek.hrmtool.dto.user.UserDto;
 import com.vatek.hrmtool.jwt.JwtResponse;
 import com.vatek.hrmtool.readable.form.LoginForm;
+import com.vatek.hrmtool.readable.form.create.CreateUserForm;
+import com.vatek.hrmtool.readable.form.create.RegisterUserForm;
 import com.vatek.hrmtool.service.UserService;
-import com.vatek.hrmtool.util.DateUtil;
+import com.vatek.hrmtool.util.DateUtils;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "*",maxAge = 3600)
@@ -44,9 +48,21 @@ public class AuthController {
         return responseDto;
     }
 
+    @PostMapping(value = "register-user",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseDto<UserDto> registerUser(@ModelAttribute RegisterUserForm registerUserForm){
+        ResponseDto<UserDto> responseDto = new ResponseDto<>();
+
+        responseDto.setContent(userService.registerUser(registerUserForm));
+        responseDto.setCode(ErrorConstant.Code.SUCCESS);
+        responseDto.setMessage(ErrorConstant.Message.SUCCESS);
+        responseDto.setType(ErrorConstant.Type.SUCCESS);
+
+        return responseDto;
+    }
+
     @PutMapping(value = "/activate-email/{id}")
     public  ResponseDto<Boolean> activateEmail(@PathVariable Long id){
-        userService.activateEmail(id, DateUtil.getInstantNow());
+        userService.activateEmail(id, DateUtils.getInstantNow());
 
         var responseDto = new ResponseDto<Boolean>();
         responseDto.setCode(ErrorConstant.Code.SUCCESS);

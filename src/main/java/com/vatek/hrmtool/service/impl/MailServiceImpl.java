@@ -12,7 +12,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
@@ -160,15 +159,16 @@ public class MailServiceImpl implements MailService {
 
     @Async
     @Override
-    public void sendActivationEmail(UserEntity to){
+    public void sendActivationEmail(Long id, String email, String password){
         Map<String,Object> map = Map.of(
-            "email",to.getEmail(),
-            "activationLink",env.getProperty("url.activate.account") + to.getId()
+            "email",email,
+            "password",password,
+            "activationLink",env.getProperty("url.activate.account") + id
         );
 
         var htmlContentEmail = thymeleafService.getContent("active-user",map);
 
-        sendEmail(to.getEmail(),"Confirm your email address on Spring Boot App",htmlContentEmail);
+        sendEmail(email,"Confirm your email address on Spring Boot App",htmlContentEmail);
     }
 
     @Async

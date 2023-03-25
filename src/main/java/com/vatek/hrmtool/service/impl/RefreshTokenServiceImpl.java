@@ -11,12 +11,10 @@ import com.vatek.hrmtool.jwt.payload.response.TokenRefreshResponse;
 import com.vatek.hrmtool.respository.RefreshTokenRepository;
 import com.vatek.hrmtool.respository.UserRepository;
 import com.vatek.hrmtool.service.RefreshTokenService;
-import com.vatek.hrmtool.service.UserService;
-import com.vatek.hrmtool.util.DateUtil;
+import com.vatek.hrmtool.util.DateUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
@@ -82,10 +80,10 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
             refreshToken = new RefreshTokenEntity();
             refreshToken.setUserEntity(userEntity);
             refreshToken.setCreatedBy(userEntity.getId());
-            refreshToken.setCreatedTime(DateUtil.getInstantNow());
+            refreshToken.setCreatedTime(DateUtils.getInstantNow());
         }else{
             refreshToken.setModifiedBy(userEntity.getId());
-            refreshToken.setModifiedTime(DateUtil.getInstantNow());
+            refreshToken.setModifiedTime(DateUtils.getInstantNow());
         }
         refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenDurationMs));
         refreshToken.setToken(UUID.randomUUID().toString());
@@ -96,7 +94,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     @Override
     public RefreshTokenEntity verifyExpiration(RefreshTokenEntity token) {
-        if (token.getExpiryDate().isBefore(DateUtil.getInstantNow())) {
+        if (token.getExpiryDate().isBefore(DateUtils.getInstantNow())) {
             refreshTokenRepository.delete(token);
             throw new TokenRefreshException(token.getToken(), "Refresh token was expired. Please make a new signin request");
         }

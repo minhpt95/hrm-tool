@@ -20,8 +20,8 @@ import com.vatek.hrmtool.respository.RequestRepository;
 import com.vatek.hrmtool.respository.UserRepository;
 import com.vatek.hrmtool.security.service.UserPrinciple;
 import com.vatek.hrmtool.service.RequestService;
-import com.vatek.hrmtool.util.CommonUtil;
-import com.vatek.hrmtool.util.DateUtil;
+import com.vatek.hrmtool.util.CommonUtils;
+import com.vatek.hrmtool.util.DateUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -61,7 +61,7 @@ public class RequestServiceImpl implements RequestService {
         requestEntity.setRequestReason(createRequestForm.getRequestReason());
         requestEntity.setTypeRequest(createRequestForm.getTypeRequest());
         requestEntity.setCreatedBy(currentUser.getId());
-        requestEntity.setCreatedTime(DateUtil.getInstantNow());
+        requestEntity.setCreatedTime(DateUtils.getInstantNow());
 
         switch (createRequestForm.getTypeRequest()){
             case REQUEST_DEVICE -> {
@@ -69,8 +69,8 @@ public class RequestServiceImpl implements RequestService {
                 return requestMapping.toDto(requestEntity);
             }
             case DAY_OFF -> {
-                var from = DateUtil.convertStringDateToInstant(createRequestForm.getFromDate());
-                var to = DateUtil.convertStringDateToInstant(createRequestForm.getToDate());
+                var from = DateUtils.convertStringDateToInstant(createRequestForm.getFromDate());
+                var to = DateUtils.convertStringDateToInstant(createRequestForm.getToDate());
 
                 if(!from.isBefore(to)){
                     throw new ProductException(
@@ -177,7 +177,7 @@ public class RequestServiceImpl implements RequestService {
 
         var requestEntities = requestRepository.findAll(
                 specification,
-                CommonUtil.buildPageable(pageable.getPageNumber(),pageable.getPageSize())
+                CommonUtils.buildPageable(pageable.getPageNumber(),pageable.getPageSize())
         );
 
         Page<RequestDto> requestDtos = requestEntities.map(requestMapping::toDto);
@@ -224,7 +224,7 @@ public class RequestServiceImpl implements RequestService {
 
         var requestEntities = requestRepository.findAll(
                 specification,
-                CommonUtil.buildPageable(pageable.getPageNumber(),pageable.getPageSize())
+                CommonUtils.buildPageable(pageable.getPageNumber(),pageable.getPageSize())
         );
 
         Page<RequestDto> requestDtos = requestEntities.map(requestMapping::toDto);
@@ -257,7 +257,7 @@ public class RequestServiceImpl implements RequestService {
 
         var requestEntities = requestRepository.findAll(
                 specification,
-                CommonUtil.buildPageable(pageable.getPageNumber(), pageable.getPageSize())
+                CommonUtils.buildPageable(pageable.getPageNumber(), pageable.getPageSize())
         );
 
         Page<RequestDto> requestDtos = requestEntities.map(requestMapping::toDto);

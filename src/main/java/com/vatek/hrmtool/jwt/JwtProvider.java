@@ -1,7 +1,7 @@
 package com.vatek.hrmtool.jwt;
 
 import com.vatek.hrmtool.security.service.UserPrinciple;
-import com.vatek.hrmtool.util.DateUtil;
+import com.vatek.hrmtool.util.DateUtils;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.log4j.Log4j2;
@@ -39,8 +39,8 @@ public class JwtProvider {
 
         return Jwts.builder()
                 .setSubject(email)
-                .setIssuedAt(DateUtil.convertInstantToDate(DateUtil.getInstantNow()))
-                .setExpiration(DateUtil.convertInstantToDate(Instant.now().plus(jwtExpiration,ChronoUnit.SECONDS)))
+                .setIssuedAt(DateUtils.convertInstantToDate(DateUtils.getInstantNow()))
+                .setExpiration(DateUtils.convertInstantToDate(Instant.now().plus(jwtExpiration,ChronoUnit.SECONDS)))
                 .signWith(key,SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -58,7 +58,7 @@ public class JwtProvider {
                 .setSigningKey(jwtSecret.getBytes())
                 .build()
                 .parseClaimsJws(token)
-                .getBody().getExpiration().getTime() - DateUtil.getInstantNow().get(ChronoField.MILLI_OF_SECOND);
+                .getBody().getExpiration().getTime() - DateUtils.getInstantNow().get(ChronoField.MILLI_OF_SECOND);
     }
 
     public boolean validateJwtToken(String authToken) {

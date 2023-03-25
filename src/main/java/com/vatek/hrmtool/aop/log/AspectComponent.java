@@ -15,7 +15,7 @@ import java.util.Arrays;
 @Component
 @Aspect
 @Log4j2
-public class ControllerAspect {
+public class AspectComponent {
     @Pointcut("within(@org.springframework.stereotype.Repository *)" +
             " || within(@org.springframework.stereotype.Service *)" +
             " || within(@org.springframework.web.bind.annotation.RestController *)")
