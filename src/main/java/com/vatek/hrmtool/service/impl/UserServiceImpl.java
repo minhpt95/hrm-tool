@@ -191,6 +191,14 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto registerUser(RegisterUserForm form) {
+        boolean hasOtherUserRole = form.getRoles().stream().anyMatch(role -> role != Role.USER);
+        if(hasOtherUserRole)
+            throw new ProductException(
+                    new ErrorResponse()
+            );
+
+
+
         return createUser(createUserMapping.toCreateFrom(form));
     }
 

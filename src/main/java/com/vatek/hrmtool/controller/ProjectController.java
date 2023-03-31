@@ -35,15 +35,16 @@ public class ProjectController {
 
 
     @PreAuthorize("hasAnyRole('ROLE_PM')")
-    @PostMapping("/modify-member-project")
+    @PostMapping("/add-member")
     public ResponseDto<ProjectDto> addMemberToProject(@RequestBody UpdateMemberProjectForm updateMemberProjectForm){
         var projectDto = projectService.updateMemberProject(updateMemberProjectForm);
 
         return getProjectDtoResponseDto(projectDto);
     }
 
+
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    @PostMapping("/get-all-projects-pageable")
+    @PostMapping("/get-all-projects")
     public ListResponseDto<ProjectDto> getAllProjectPageable(Pageable pageable){
         return projectService.getProjectPageable(pageable);
     }

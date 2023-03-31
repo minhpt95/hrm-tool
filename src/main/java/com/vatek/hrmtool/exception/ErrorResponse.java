@@ -2,9 +2,6 @@ package com.vatek.hrmtool.exception;
 
 import lombok.*;
 
-import java.io.Serial;
-import java.io.Serializable;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
