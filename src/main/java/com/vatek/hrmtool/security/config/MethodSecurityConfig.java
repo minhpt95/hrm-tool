@@ -22,7 +22,7 @@ public class MethodSecurityConfig extends GlobalMethodSecurityConfiguration {
 
     @Override
     protected MethodSecurityExpressionHandler createExpressionHandler() {
-        DefaultMethodSecurityExpressionHandler d = new DefaultMethodSecurityExpressionHandler();
+        var d = new DefaultMethodSecurityExpressionHandler();
         d.setRoleHierarchy(webSecurityConfig.roleHierarchy());
         return d;
     }

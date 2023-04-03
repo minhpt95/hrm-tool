@@ -5,13 +5,9 @@ import com.vatek.hrmtool.dto.ResponseDto;
 import com.vatek.hrmtool.dto.user.UserDto;
 import com.vatek.hrmtool.jwt.JwtResponse;
 import com.vatek.hrmtool.readable.form.LoginForm;
-import com.vatek.hrmtool.readable.form.create.CreateUserForm;
 import com.vatek.hrmtool.readable.form.create.RegisterUserForm;
 import com.vatek.hrmtool.service.UserService;
 import com.vatek.hrmtool.util.DateUtils;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -22,19 +18,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @AllArgsConstructor
 @Log4j2
-@ApiOperation(value = "Login Controller", notes = "Auth controller without bearer token")
 @RequestMapping("/api/auth")
 public class AuthController {
 
     final UserService userService;
 
-    @ApiOperation(value = "Login API", notes = "Returns token and refresh token")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Login Successfully"),
-            @ApiResponse(code = 400, message = "Bad Request"),
-            @ApiResponse(code = 404, message = "Not Found"),
-            @ApiResponse(code = 500, message = "Internal Server Error")
-    })
     @PostMapping(value = "/login")
     public ResponseDto<JwtResponse> authenticateUser(@RequestBody LoginForm loginForm){
         JwtResponse jwtResponse = userService.authenticateUser(loginForm);

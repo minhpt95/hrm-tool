@@ -11,6 +11,5 @@ public interface TimesheetWorkingHourProjection {
     TimesheetType getTimesheetType();
     Instant getWorkingDay();
     ApprovalStatus getStatus();
-
     UserEntity getUserEntity();
 }

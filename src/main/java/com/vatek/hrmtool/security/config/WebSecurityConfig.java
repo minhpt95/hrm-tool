@@ -24,7 +24,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
 import org.springframework.security.web.access.expression.WebExpressionVoter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,7 +57,7 @@ public class WebSecurityConfig {
     @Bean
     public RoleHierarchy roleHierarchy() {
         var roleHierarchy = new RoleHierarchyImpl();
-        String hierarchy = "ROLE_ADMIN > ROLE_IT_ADMIN > ROLE_PM > ROLE_USER";
+        var hierarchy = "ROLE_ADMIN > ROLE_IT_ADMIN > ROLE_PM > ROLE_USER";
         roleHierarchy.setHierarchy(hierarchy);
         return roleHierarchy;
     }
@@ -95,16 +94,14 @@ public class WebSecurityConfig {
 
         http.authorizeRequests().antMatchers(
                 "/api/auth/**",
-                "/api/user/activateEmail/**",
+                "/api/auth/activate-email/**",
                 "/"
         ).permitAll();
 
-        //skip for swagger ui
+        //skip for swagger
         http.authorizeRequests().antMatchers(
-                "/swagger-ui/",
                 "/swagger-ui/**",
-                "/swagger-resources/**",
-                "/v2/**",
+                "/swagger-ui/index.html",
                 "/v3/**"
         ).permitAll();
 
