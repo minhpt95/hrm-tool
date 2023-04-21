@@ -1,0 +1,47 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hrm-production
+spec:
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: backend
+          image: hrm-production
+          envFrom:
+            - configMapRef:
+                name: backend-config-file
+          # resources:
+          #   requests:
+          #     cpu: 25m
+          #     memory: 300M
+          #   limits:
+          #     cpu: 50m
+          #     memory: 400M
+          ports:
+            - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: frontend
+  ports:
+    - port: 8090
+      targetPort: 3000
+      name: frontend
+    - port: 80
+      targetPort: 3000
+      name: frontend-http

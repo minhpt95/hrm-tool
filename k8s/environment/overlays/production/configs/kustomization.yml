@@ -1,0 +1,5 @@
+configMapGenerator:
+  - name: backend-config-file
+    envs:
+      - application.properties
+      - application-local.properties

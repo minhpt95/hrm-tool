@@ -1,0 +1,3 @@
+kustomize:
+  images:
+  - registry.hub.docker.com/minhpt10595/hrm-tool:latest

@@ -12,3 +12,4 @@ FROM openjdk:17-jdk-slim
 COPY --from=builder /usr/app/target/*.war app.jar
 
 ENTRYPOINT ["java","-jar","-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005","app.jar"]
+EXPOSE 8090
