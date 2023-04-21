@@ -1,4 +1,6 @@
 resources:
+  - mysql-deployment.yml
   - regcred.yml
   - backend.yml
+
 namespace: base-app
