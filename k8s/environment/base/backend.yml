@@ -48,6 +48,6 @@ spec:
     app: hrm-backend-production
   ports:
     - protocol: "TCP"
-      port: 8080 # The port that the service is running on in the cluster
-      targetPort: 8080 # The port exposed by the service
+      port: 9800 # The port that the service is running on in the cluster
+      targetPort: 9800 # The port exposed by the service
   type: LoadBalancer
