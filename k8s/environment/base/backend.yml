@@ -48,7 +48,7 @@ spec:
   selector:
     app: backend
   ports:
-    - port: 8090
-      targetPort: 8090
+    - port: 9800
+      targetPort: 9800
       name: backend
       protocol: "TCP"
