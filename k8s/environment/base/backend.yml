@@ -21,14 +21,14 @@ spec:
             - configMapRef:
                 name: backend-config-file
           env: # Setting Environmental Variables
-            - name: host   # Setting Database host address
-              value: mysql
-            - name: dbname  # Setting Database name
-              value: fleetdb
-            - name: username  # Setting Database username
-              value: root
-            - name: password # Setting Database password
-              value: root
+            - name: DB_HOST   # Setting Database host address
+              value: host.docker.internal:3306
+            - name: DB_NAME  # Setting Database name
+              value: hrm
+            - name: DB_USERNAME  # Setting Database username
+              value: admin
+            - name: DB_PASSWORD # Setting Database password
+              value: admin
           # resources:
           #   requests:
           #     cpu: 25m

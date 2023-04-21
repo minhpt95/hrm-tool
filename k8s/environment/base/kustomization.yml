@@ -1,5 +1,4 @@
 resources:
-  - mysql-deployment.yml
   - regcred.yml
   - backend.yml
 
