@@ -6,16 +6,16 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: backend
+      app: hrm-backend-production
   template:
     metadata:
       labels:
-        app: backend
+        app: hrm-backend-production
     spec:
       imagePullSecrets:
         - name: regcred
       containers:
-        - name: backend
+        - name: hrm-backend-production
           image: hrm-production
           envFrom:
             - configMapRef:
@@ -39,16 +39,15 @@ spec:
           ports:
             - containerPort: 9800
 ---
-apiVersion: v1
-kind: Service
-metadata:
-  name: backend-svc
+apiVersion: v1 # Kubernetes API version
+kind: Service # Kubernetes resource kind we are creating
+metadata: # Metadata of the resource kind we are creating
+  name: spring-test-service
 spec:
-  type: NodePort
   selector:
-    app: backend
+    app: hrm-backend-production
   ports:
-    - port: 9800
-      targetPort: 9800
-      name: backend
-      protocol: "TCP"
+    - protocol: "TCP"
+      port: 8080 # The port that the service is running on in the cluster
+      targetPort: 8080 # The port exposed by the service
+  type: LoadBalancer
