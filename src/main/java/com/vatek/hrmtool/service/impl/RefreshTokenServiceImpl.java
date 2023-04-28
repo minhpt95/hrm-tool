@@ -3,7 +3,7 @@ package com.vatek.hrmtool.service.impl;
 import com.vatek.hrmtool.entity.RefreshTokenEntity;
 import com.vatek.hrmtool.entity.UserEntity;
 import com.vatek.hrmtool.exception.ErrorResponse;
-import com.vatek.hrmtool.exception.ProductException;
+import com.vatek.hrmtool.exception.HrmToolException;
 import com.vatek.hrmtool.exception.TokenRefreshException;
 import com.vatek.hrmtool.jwt.JwtProvider;
 import com.vatek.hrmtool.jwt.payload.request.TokenRefreshRequest;
@@ -72,7 +72,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Override
     public RefreshTokenEntity createRefreshToken(UserEntity userEntity) {
         if(userEntity == null){
-            throw new ProductException(new ErrorResponse());
+            throw new HrmToolException(new ErrorResponse());
         }
         var refreshToken = refreshTokenRepository.findByUserEntityId(userEntity.getId()).orElse(null);
 

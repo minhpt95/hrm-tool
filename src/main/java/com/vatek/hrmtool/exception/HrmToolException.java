@@ -1,9 +1,9 @@
 package com.vatek.hrmtool.exception;
 
-public class ProductException extends RuntimeException {
+public class HrmToolException extends RuntimeException {
     private ErrorResponse errorResponse;
 
-    public ProductException(ErrorResponse errorResponse) {
+    public HrmToolException(ErrorResponse errorResponse) {
         this.errorResponse = errorResponse;
     }
 

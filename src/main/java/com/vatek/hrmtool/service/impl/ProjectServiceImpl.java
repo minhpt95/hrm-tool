@@ -9,7 +9,7 @@ import com.vatek.hrmtool.entity.common.CommonEntity;
 import com.vatek.hrmtool.enumeration.Action;
 import com.vatek.hrmtool.enumeration.Role;
 import com.vatek.hrmtool.exception.ErrorResponse;
-import com.vatek.hrmtool.exception.ProductException;
+import com.vatek.hrmtool.exception.HrmToolException;
 import com.vatek.hrmtool.mapping.ProjectMapping;
 import com.vatek.hrmtool.mapping.excel.ProjectExcelMapping;
 import com.vatek.hrmtool.readable.form.create.CreateProjectForm;
@@ -56,7 +56,7 @@ public class ProjectServiceImpl implements ProjectService {
         var projectManagerUser = userRepository.findUserEntityById(createProjectForm.getProjectManager());
 
         if(projectManagerUser == null){
-            throw new ProductException(
+            throw new HrmToolException(
                     ErrorResponse.builder()
                     .message(String.format(ErrorConstant.Message.NOT_FOUND,"Project Manager with id : " + createProjectForm.getProjectManager()))
                     .code(ErrorConstant.Code.NOT_FOUND)
@@ -91,7 +91,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         var projectEntity = projectRepository.findById(updateMemberProjectForm.getId()).orElseThrow(
                 () ->
-                new ProductException(
+                new HrmToolException(
                         ErrorResponse.builder()
                                 .message(String.format(ErrorConstant.Message.NOT_FOUND,"Project id : " + updateMemberProjectForm.getId()))
                                 .code(ErrorConstant.Code.NOT_FOUND)
@@ -180,7 +180,7 @@ public class ProjectServiceImpl implements ProjectService {
         var projectEntity = projectRepository.findById(projectId).orElse(null);
 
         if (projectEntity == null) {
-            throw new ProductException(
+            throw new HrmToolException(
                     ErrorResponse
                             .builder()
                             .type(ErrorConstant.Type.NOT_FOUND)

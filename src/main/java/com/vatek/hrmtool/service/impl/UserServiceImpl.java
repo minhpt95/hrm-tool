@@ -7,7 +7,7 @@ import com.vatek.hrmtool.dto.user.UserDto;
 import com.vatek.hrmtool.entity.*;
 import com.vatek.hrmtool.enumeration.Role;
 import com.vatek.hrmtool.exception.ErrorResponse;
-import com.vatek.hrmtool.exception.ProductException;
+import com.vatek.hrmtool.exception.HrmToolException;
 import com.vatek.hrmtool.jwt.JwtProvider;
 import com.vatek.hrmtool.jwt.JwtResponse;
 import com.vatek.hrmtool.mapping.UserMapping;
@@ -118,7 +118,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDto findUserEntityById(Long id){
 
-        UserEntity userEntity = userRepository.findById(id).orElseThrow(() -> new ProductException(
+        UserEntity userEntity = userRepository.findById(id).orElseThrow(() -> new HrmToolException(
                 ErrorResponse
                         .builder()
                         .code(ErrorConstant.Code.NOT_FOUND)
@@ -148,7 +148,7 @@ public class UserServiceImpl implements UserService {
 
         Optional<UserEntity> userEntityList = userRepository.findAllByEmail(form.getEmail());
         if (userEntityList.isPresent()) {
-            throw new ProductException(
+            throw new HrmToolException(
                     new ErrorResponse(
                             ErrorConstant.Code.ALREADY_EXISTS,
                             ErrorConstant.Type.FAILURE,
@@ -193,7 +193,7 @@ public class UserServiceImpl implements UserService {
     public UserDto registerUser(RegisterUserForm form) {
         boolean hasOtherUserRole = form.getRoles().stream().anyMatch(role -> role != Role.USER);
         if(hasOtherUserRole)
-            throw new ProductException(
+            throw new HrmToolException(
                     new ErrorResponse()
             );
 
@@ -207,7 +207,7 @@ public class UserServiceImpl implements UserService {
         var userEntity = userRepository.findUserEntityById(id);
         if (userEntity == null)
         {
-            throw new ProductException(
+            throw new HrmToolException(
                     new ErrorResponse(ErrorConstant.Code.NOT_FOUND,
                     String.format(ErrorConstant.Message.NOT_FOUND, id),
                     ErrorConstant.Type.FAILURE)
@@ -218,7 +218,7 @@ public class UserServiceImpl implements UserService {
         var timeExpired = timeCreate.plus(7, ChronoUnit.DAYS);
 
         if (timeExpired.isBefore(currentTime)) {
-            throw new ProductException(
+            throw new HrmToolException(
                     new ErrorResponse(ErrorConstant.Code.NOT_FOUND,
                     ErrorConstant.Message.END_OF_TIME,
                     ErrorConstant.Type.FAILURE)
@@ -236,7 +236,7 @@ public class UserServiceImpl implements UserService {
 
             log.error("User with email not found in database => {}",() -> email);
 
-            throw new ProductException(
+            throw new HrmToolException(
                     ErrorResponse
                             .builder()
                             .code(ErrorConstant.Code.NOT_FOUND)
@@ -261,7 +261,7 @@ public class UserServiceImpl implements UserService {
     public void changePassword(ChangePasswordReq changePasswordReq) {
         UserEntity userEntity = userRepository.findUserEntityById(changePasswordReq.getId());
         if (userEntity == null) {
-            throw new ProductException(
+            throw new HrmToolException(
                     new ErrorResponse(ErrorConstant.Code.NOT_FOUND,
                     String.format(ErrorConstant.Message.NOT_FOUND, changePasswordReq.getId()),
                     ErrorConstant.Type.NOT_FOUND)
@@ -280,7 +280,7 @@ public class UserServiceImpl implements UserService {
 
         if (userEntity == null) {
 
-            throw new ProductException(new ErrorResponse(ErrorConstant.Code.NOT_FOUND,
+            throw new HrmToolException(new ErrorResponse(ErrorConstant.Code.NOT_FOUND,
                     String.format(ErrorConstant.Message.NOT_FOUND, changeStatusAccountReq.getId()),
                     ErrorConstant.Type.NOT_FOUND));
 
@@ -297,7 +297,7 @@ public class UserServiceImpl implements UserService {
         Optional<UserEntity> optionalUserEntity = userRepository.findByEmail(loginForm.getEmail());
 
         UserEntity userEntity = optionalUserEntity.orElseThrow(() -> {
-            throw new ProductException(new ErrorResponse(
+            throw new HrmToolException(new ErrorResponse(
                     ErrorConstant.Code.LOGIN_INVALID,
                     ErrorConstant.Type.LOGIN_INVALID,
                     ErrorConstant.Message.LOGIN_INVALID
@@ -305,7 +305,7 @@ public class UserServiceImpl implements UserService {
         });
 
         if(!passwordEncoder.matches(loginForm.getPassword(),userEntity.getPassword())){
-            throw new ProductException(new ErrorResponse(
+            throw new HrmToolException(new ErrorResponse(
                     ErrorConstant.Code.LOGIN_INVALID,
                     ErrorConstant.Type.LOGIN_INVALID,
                     ErrorConstant.Message.LOGIN_INVALID
@@ -347,7 +347,7 @@ public class UserServiceImpl implements UserService {
         var userPrinciple = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if(projectEntity == null){
-            throw new ProductException(
+            throw new HrmToolException(
                     ErrorResponse
                             .builder()
                             .type(ErrorConstant.Type.NOT_FOUND)
@@ -374,7 +374,7 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = userRepository.findUserEntityById(updateUserRoleForm.getId());
 
         if (userEntity == null) {
-            throw new ProductException(
+            throw new HrmToolException(
                     new ErrorResponse(
                             ErrorConstant.Code.NOT_FOUND,
                             String.format(ErrorConstant.Message.NOT_FOUND, updateUserRoleForm.getId()),
@@ -402,7 +402,7 @@ public class UserServiceImpl implements UserService {
 
 
         if (userEntity == null) {
-            throw new ProductException(new ErrorResponse(ErrorConstant.Code.NOT_FOUND,
+            throw new HrmToolException(new ErrorResponse(ErrorConstant.Code.NOT_FOUND,
                     String.format(ErrorConstant.Message.NOT_FOUND, form.getId()),
                     ErrorConstant.Type.NOT_FOUND));
         }

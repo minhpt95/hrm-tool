@@ -8,7 +8,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.vatek.hrmtool.constant.CommonConstant;
 import com.vatek.hrmtool.exception.ErrorResponse;
-import com.vatek.hrmtool.exception.ProductException;
+import com.vatek.hrmtool.exception.HrmToolException;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Bean;
@@ -33,7 +33,7 @@ public class S3Config {
             errorResponse.setCode("NOT_NULL");
             errorResponse.setType("NOT_NULL_AWS_CREDENTIAL");
             errorResponse.setMessage("AccessKey and SecretKey must not be null");
-            throw new ProductException(errorResponse);
+            throw new HrmToolException(errorResponse);
         }
 
         AWSCredentials credentials = new BasicAWSCredentials(

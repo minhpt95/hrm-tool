@@ -11,7 +11,7 @@ import com.vatek.hrmtool.enumeration.ApprovalStatus;
 import com.vatek.hrmtool.enumeration.TypeDayOff;
 import com.vatek.hrmtool.enumeration.TypeRequest;
 import com.vatek.hrmtool.exception.ErrorResponse;
-import com.vatek.hrmtool.exception.ProductException;
+import com.vatek.hrmtool.exception.HrmToolException;
 import com.vatek.hrmtool.mapping.RequestMapping;
 import com.vatek.hrmtool.readable.form.create.CreateRequestForm;
 import com.vatek.hrmtool.readable.form.update.UpdateRequestStatusForm;
@@ -73,7 +73,7 @@ public class RequestServiceImpl implements RequestService {
                 var to = DateUtils.convertStringDateToInstant(createRequestForm.getToDate());
 
                 if(!from.isBefore(to)){
-                    throw new ProductException(
+                    throw new HrmToolException(
                             ErrorResponse
                             .builder()
                                     .code(ErrorConstant.Code.FROM_DATE_TO_DATE_VALIDATE)
@@ -108,7 +108,7 @@ public class RequestServiceImpl implements RequestService {
                 var countOverlapping = dayOffEntityRepository.count(dayOffEntitySpecification);
 
                 if(countOverlapping > 0){
-                    throw new ProductException(
+                    throw new HrmToolException(
                             ErrorResponse
                                     .builder()
                                     .code(ErrorConstant.Code.OVERLAPPING_DATE)
@@ -124,7 +124,7 @@ public class RequestServiceImpl implements RequestService {
                 while (!fromCounter.isAfter(to)){
                     var dayOfWeek = fromCounter.atZone(ZoneId.systemDefault()).getDayOfWeek();
                     if(dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY){
-                        throw new ProductException(
+                        throw new HrmToolException(
                                 ErrorResponse
                                         .builder()
                                         .code(ErrorConstant.Code.CANNOT_LOG_ON_WEEKEND)
@@ -151,7 +151,7 @@ public class RequestServiceImpl implements RequestService {
 
                 return requestMapping.toDto(requestEntityList);
             }
-            default -> throw new ProductException(
+            default -> throw new HrmToolException(
                     ErrorResponse.builder()
                             .code(ErrorConstant.Code.NOT_FOUND)
                             .message(ErrorConstant.Message.NOT_FOUND)
@@ -192,7 +192,7 @@ public class RequestServiceImpl implements RequestService {
         RequestEntity requestEntity = requestRepository.findById(form.getId()).orElse(null);
 
         if(requestEntity == null){
-            throw new ProductException(
+            throw new HrmToolException(
                     ErrorResponse.builder()
                             .message(String.format(ErrorConstant.Message.NOT_FOUND,"Request with id : " + form.getId()))
                             .code(ErrorConstant.Code.NOT_FOUND)

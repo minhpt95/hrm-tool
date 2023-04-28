@@ -1,5 +1,6 @@
 package com.vatek.hrmtool.service.impl;
 
+import com.vatek.hrmtool.constant.DateConstant;
 import com.vatek.hrmtool.constant.ErrorConstant;
 import com.vatek.hrmtool.dto.timesheet.TimesheetDto;
 import com.vatek.hrmtool.entity.DayOffEntity;
@@ -10,10 +11,12 @@ import com.vatek.hrmtool.entity.common.CommonEntity;
 import com.vatek.hrmtool.enumeration.ApprovalStatus;
 import com.vatek.hrmtool.enumeration.TimesheetType;
 import com.vatek.hrmtool.exception.ErrorResponse;
-import com.vatek.hrmtool.exception.ProductException;
+import com.vatek.hrmtool.exception.HrmToolException;
 import com.vatek.hrmtool.mapping.TimesheetMapping;
 import com.vatek.hrmtool.projection.TimesheetWorkingHourProjection;
+import com.vatek.hrmtool.readable.form.approval.ApprovalForm;
 import com.vatek.hrmtool.readable.form.create.CreateTimesheetForm;
+import com.vatek.hrmtool.readable.form.update.UpdateTimesheetForm;
 import com.vatek.hrmtool.respository.DayOffEntityRepository;
 import com.vatek.hrmtool.respository.ProjectRepository;
 import com.vatek.hrmtool.respository.TimesheetRepository;
@@ -57,7 +60,7 @@ public class TimesheetServiceImpl implements TimesheetService {
         ProjectEntity projectEntity = projectRepository.findById(form.getProjectId()).orElse(null);
 
         if(projectEntity == null){
-            throw new ProductException(
+            throw new HrmToolException(
                     ErrorResponse
                             .builder()
                             .type(ErrorConstant.Type.NOT_FOUND)
@@ -70,7 +73,7 @@ public class TimesheetServiceImpl implements TimesheetService {
         Collection<Long> projectIds = userEntity.getWorkingProject().stream().map(CommonEntity::getId).toList();
 
         if(!projectIds.contains(form.getProjectId())){
-            throw new ProductException(
+            throw new HrmToolException(
                     ErrorResponse
                             .builder()
                             .message("You not working in this project")
@@ -85,7 +88,7 @@ public class TimesheetServiceImpl implements TimesheetService {
         if(
                 form.getTimesheetType() == TimesheetType.NORMAL_WORKING && (workingDayInstantDayOfWeek == DayOfWeek.SATURDAY || workingDayInstantDayOfWeek == DayOfWeek.SUNDAY)
         ){
-            throw new ProductException(
+            throw new HrmToolException(
                     ErrorResponse
                             .builder()
                             .type(ErrorConstant.Type.CANNOT_LOG_ON_WEEKEND)
@@ -120,7 +123,7 @@ public class TimesheetServiceImpl implements TimesheetService {
                     .reduce(0,Integer::sum);
 
             switch (getRequestDayOff.size()){
-                case 2 -> throw new ProductException(
+                case 2 -> throw new HrmToolException(
                         ErrorResponse
                                 .builder()
                                 .type(ErrorConstant.Type.CANNOT_LOG_ON_FULL_DAY_OFF)
@@ -138,7 +141,7 @@ public class TimesheetServiceImpl implements TimesheetService {
                                 .build();
                         case MORNING -> {
                             if(totalWorkingHours + form.getWorkingHours() > 5){
-                                throw new ProductException(
+                                throw new HrmToolException(
                                         ErrorResponse
                                                 .builder()
                                                 .type(ErrorConstant.Type.CANNOT_LOG_TIMESHEET)
@@ -150,7 +153,7 @@ public class TimesheetServiceImpl implements TimesheetService {
                         }
                         case AFTERNOON -> {
                             if(totalWorkingHours + form.getWorkingHours() > 3){
-                                throw new ProductException(
+                                throw new HrmToolException(
                                         ErrorResponse
                                                 .builder()
                                                 .type(ErrorConstant.Type.CANNOT_LOG_TIMESHEET)
@@ -164,7 +167,7 @@ public class TimesheetServiceImpl implements TimesheetService {
                 }
                 case 0 -> {
                     if(totalWorkingHours + form.getWorkingHours() > 8){
-                        throw new ProductException(
+                        throw new HrmToolException(
                                 ErrorResponse
                                         .builder()
                                         .type(ErrorConstant.Type.CANNOT_LOG_TIMESHEET)
@@ -195,11 +198,79 @@ public class TimesheetServiceImpl implements TimesheetService {
         return timesheetMapping.toDto(timesheetEntity);
     }
 
-    public TimesheetDto approvalTimesheet(){
+    @Override
+    public TimesheetDto updateTimesheet(UpdateTimesheetForm form) {
         var currentUser = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        TimesheetEntity timesheetEntity = timesheetRepository.findById(form.getId()).orElseThrow(
+                () -> new HrmToolException(
+                        new ErrorResponse(
+                                ErrorConstant.Type.NOT_FOUND,
+                                ErrorConstant.Code.NOT_FOUND,
+                                String.format(ErrorConstant.Message.NOT_FOUND,"Timesheet with id : " + form.getId())
+                        )
+                )
+        );
+
+        if(form.getTitle() != null){
+            timesheetEntity.setTitle(form.getTitle());
+        }
+
+        if(form.getDescription() != null){
+            timesheetEntity.setDescription(form.getDescription());
+        }
+
+        if(form.getTimesheetType() != null){
+            timesheetEntity.setTimesheetType(form.getTimesheetType());
+        }
+
+        if(form.getProjectId() != null){
+            ProjectEntity projectEntity = projectRepository.findById(form.getProjectId()).orElseThrow(
+                    () -> new HrmToolException(
+                            new ErrorResponse(
+                                    ErrorConstant.Type.NOT_FOUND,
+                                    ErrorConstant.Code.NOT_FOUND,
+                                    String.format(ErrorConstant.Message.NOT_FOUND,"Project with id : " + form.getId())
+                            )
+                    )
+            );
+            timesheetEntity.setProjectEntity(projectEntity);
+        }
+
+        if(form.getWorkingHours() != null){
+            timesheetEntity.setWorkingHours(form.getWorkingHours());
+        }
+
+        if(form.getWorkingDay() != null)
+            timesheetEntity.setWorkingDay(DateUtils.convertStringDateToInstant(form.getWorkingDay(), DateConstant.DD_MM_YYYY));
+
+        timesheetEntity.setModifiedBy(currentUser.getId());
+        timesheetEntity.setModifiedTime(Instant.now());
+
+        timesheetEntity = timesheetRepository.save(timesheetEntity);
+
+        return timesheetMapping.toDto(timesheetEntity);
+    }
+
+    @Override
+    public TimesheetDto decisionTimesheet(ApprovalForm form) {
+        var currentUser = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        TimesheetEntity timesheetEntity = timesheetRepository.findById(form.getId()).orElseThrow(
+                () -> new HrmToolException(
+                        new ErrorResponse(
+                                ErrorConstant.Type.NOT_FOUND,
+                                ErrorConstant.Code.NOT_FOUND,
+                                String.format(ErrorConstant.Message.NOT_FOUND,"Timesheet with id : " + form.getId())
+                        )
+                )
+        );
+
+        timesheetEntity.setStatus(form.getApprovalStatus());
+        timesheetEntity.setModifiedBy(currentUser.getId());
+        timesheetEntity.setModifiedTime(Instant.now());
+
+        timesheetEntity = timesheetRepository.save(timesheetEntity);
 
 
-
-        return null;
+        return timesheetMapping.toDto(timesheetEntity);
     }
 }

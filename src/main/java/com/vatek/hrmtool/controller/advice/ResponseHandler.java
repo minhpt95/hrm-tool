@@ -4,7 +4,7 @@ import com.vatek.hrmtool.constant.ErrorConstant;
 import com.vatek.hrmtool.dto.ErrorBindingDto;
 import com.vatek.hrmtool.dto.ResponseDto;
 import com.vatek.hrmtool.exception.ErrorResponse;
-import com.vatek.hrmtool.exception.ProductException;
+import com.vatek.hrmtool.exception.HrmToolException;
 import com.vatek.hrmtool.exception.TokenRefreshException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,11 +13,9 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.validation.BindException;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.context.request.WebRequest;
 
 
 import java.util.List;
@@ -27,9 +25,9 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class ResponseHandler {
 
-    @ExceptionHandler(ProductException.class)
+    @ExceptionHandler(HrmToolException.class)
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleProductException(ProductException ex) {
+    public ErrorResponse handleProductException(HrmToolException ex) {
         return ex.getErrorResponse();
     }
 

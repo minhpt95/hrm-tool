@@ -6,7 +6,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.Region;
 import com.vatek.hrmtool.constant.CommonConstant;
 import com.vatek.hrmtool.exception.ErrorResponse;
-import com.vatek.hrmtool.exception.ProductException;
+import com.vatek.hrmtool.exception.HrmToolException;
 import com.vatek.hrmtool.service.S3Service;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -58,7 +58,7 @@ public class S3ServiceImpl implements S3Service {
             return env.getProperty("aws.s3.object.url") + pathFile;
         }catch (Exception e){
             log.error("Error when put object to S3",e);
-            throw new ProductException(
+            throw new HrmToolException(
                     ErrorResponse
                     .builder()
                     .code("")

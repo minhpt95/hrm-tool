@@ -1,6 +1,6 @@
 package com.vatek.hrmtool.aop.log;
 
-import com.vatek.hrmtool.exception.ProductException;
+import com.vatek.hrmtool.exception.HrmToolException;
 import lombok.extern.log4j.Log4j2;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -65,7 +65,7 @@ public class AspectComponent {
                         joinPoint.getSignature().getName(), result);
             }
             return result;
-        } catch (ProductException e) {
+        } catch (HrmToolException e) {
             log.error("Product Exception: {} in {}.{}()", Arrays.toString(joinPoint.getArgs()),
                     joinPoint.getSignature().getDeclaringTypeName(), joinPoint.getSignature().getName());
             throw e;
