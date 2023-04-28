@@ -7,6 +7,5 @@ public class CommonConstant {
     public static final String AWS_S3_REGION = "aws.s3.region";
     public static final String AWS_S3_BUCKET = "aws.s3.bucket";
     public static final String AWS_S3_HRM_TOOL_FOLDER = "hrm-tool";
-
     public static final String AWS_S3_AVATAR_IMAGES_FOLDER = "avatar-images";
 }

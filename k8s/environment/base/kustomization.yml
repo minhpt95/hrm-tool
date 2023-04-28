@@ -1,5 +1,0 @@
-resources:
-  - regcred.yml
-  - backend.yml
-
-namespace: base-app

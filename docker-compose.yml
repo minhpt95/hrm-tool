@@ -1,0 +1,77 @@
+version: "3.3"
+
+name: Vatek HRM
+
+networks:
+  hrm-tool-bridge:
+      driver: bridge
+      ipam:
+          driver: default
+          config:
+              - subnet: "192.170.0.0/24"
+
+volumes:
+  db:
+  mysql-logs:
+
+services:
+  mysqldb:
+    image: mysql:8
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      - MYSQL_ROOT_PASSWORD=$MYSQLDB_ROOT_PASSWORD
+    ports:
+      - $MYSQLDB_EXPOSE_PORT:$MYSQLDB_CONTAINER_PORT
+    command:
+      --sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'
+      --table_definition_cache=100
+      --performance_schema=0 
+      --character-set-server=utf8mb4 
+      --collation-server=utf8mb4_unicode_ci
+      --general-log=1
+      --general-log-file=/var/log/mysql/mysql-general.log
+      --log-error=/var/log/mysql/mysql-error.log
+      --slow-query-log=1
+      --slow-query-log-file=/var/log/mysql/mysql-slow.log
+    volumes:
+      - ./db:/var/lib/mysql
+      - ./mysql-logs:/var/log/mysql 
+      - ./init:/docker-entrypoint-initdb.d
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: "2G"
+    networks:
+      - hrm-tool-bridge
+    
+  hrm-tool:
+    depends_on:
+      - mysqldb 
+    image: minhpt10595/hrm-tool-spring:latest
+    pull_policy: always
+    restart: on-failure
+    env_file: ./.env
+    ports:
+      - 8080:$SPRING_BOOT_DOCKER_PORT
+      - 443:$SPRING_BOOT_DOCKER_SSL_PORT
+      - 5005:$SPRING_BOOT_DOCKER_DEBUG_PORT
+    environment:
+      SERVER_ADDRESS: 0.0.0.0
+      SERVER_PORT: $SPRING_BOOT_DOCKER_PORT
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:$MYSQLDB_CONTAINER_PORT/hrm-tool?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useUnicode=true&character_set_server=utf8mb4&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: $MYSQLDB_SPRING_APP_USER
+      SPRING_DATASOURCE_PASSWORD: $MYSQLDB_SPRING_APP_PASSWORD
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQL5InnoDBDialect
+      SPRING_PROFILES_ACTIVE: local
+    stdin_open: true
+    tty: true
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: "1G"
+    networks:
+      - hrm-tool-bridge
+

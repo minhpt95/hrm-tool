@@ -38,7 +38,6 @@ public class ProjectController {
     @PostMapping("/add-member")
     public ResponseDto<ProjectDto> addMemberToProject(@RequestBody UpdateMemberProjectForm updateMemberProjectForm){
         var projectDto = projectService.updateMemberProject(updateMemberProjectForm);
-
         return getProjectDtoResponseDto(projectDto);
     }
 

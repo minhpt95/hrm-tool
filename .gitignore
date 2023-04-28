@@ -4,6 +4,8 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 logs/
+db/
+mysql-logs/
 
 ### STS ###
 .apt_generated
@@ -13,6 +15,9 @@ logs/
 .settings
 .springBeans
 .sts4-cache
+
+
+
 
 ### IntelliJ IDEA ###
 .idea

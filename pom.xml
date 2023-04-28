@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.vatek</groupId>
     <artifactId>hrm-tool</artifactId>
-    <version>1.0.1</version>
+    <version>${version}</version>
     <packaging>war</packaging>
     <name>hrm-tool</name>
     <description>hrm-tool</description>

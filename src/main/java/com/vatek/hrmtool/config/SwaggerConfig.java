@@ -12,7 +12,6 @@ import org.springframework.core.env.Environment;
 
 
 @Configuration
-
 @RequiredArgsConstructor
 public class SwaggerConfig {
 
@@ -21,12 +20,21 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI hrmToolOpenAPI() {
         return new OpenAPI()
-                .info(new Info().title("Vatek Internal Backend")
-                        .description("Vatek HRM Tool for HRM Web")
-                        .version(env.getProperty("build.version","v1.0.0"))
-                        .license(new License().name("OpenApi v1.7.0").url("https://springdoc.org")))
-                .externalDocs(new ExternalDocumentation()
+                .info(
+                        new Info()
+                                .title("Vatek Internal Backend")
+                                .description("Vatek HRM Tool for HRM Web")
+                                .version(env.getProperty("build.version","v1.0.0"))
+                                .license(
+                                        new License()
+                                                .name("OpenApi v1.7.0")
+                                                .url("https://springdoc.org")
+                                )
+                )
+                .externalDocs(
+                        new ExternalDocumentation()
                         .description("Vatek JSC Asia")
-                        .url("https://vatek.asia"));
+                        .url("https://vatek.asia"))
+                ;
     }
 }
