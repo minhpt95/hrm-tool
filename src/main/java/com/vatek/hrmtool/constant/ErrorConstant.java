@@ -20,6 +20,8 @@ public class ErrorConstant {
         public static final String CANNOT_LOG_TIMESHEET = "13";
         public static final String CANNOT_LOG_ON_WEEKEND = "14";
         public static final String CANNOT_LOG_ON_FULL_DAY_OFF = "15";
+        public static final String NOT_NULL = "16";
+        public static final String NOT_EMPTY = "17";
     }
 
     public static class Type {
@@ -39,6 +41,8 @@ public class ErrorConstant {
         public static final String CANNOT_LOG_TIMESHEET = "CANNOT_LOG_TIMESHEET";
         public static final String CANNOT_LOG_ON_WEEKEND = "CANNOT_LOG_ON_WEEKEND";
         public static final String CANNOT_LOG_ON_FULL_DAY_OFF = "CANNOT_LOG_ON_FULL_DAY_OFF";
+        public static final String NOT_NULL = "NOT_NULL";
+        public static final String NOT_BLANK = "NOT_BLANK";
     }
 
     public static class Message {
@@ -48,14 +52,14 @@ public class ErrorConstant {
         public static final String SUCCESS = "SUCCESS.";
         public static final String ALREADY_EXISTS = "%s already exists.";
         public static final String NOT_FOUND = "%s not found.";
-        public static final String BLANK =" %s not blank.";
+        public static final String NOT_BLANK =" %s not blank.";
+        public static final String NOT_NULL =" %s not null.";
         public static final String END_OF_TIME ="Time activate expired";
         public static final String UNAUTHORIZED = "Unauthorized";
         public static final String OVERLAPPING_DATE = "Range date is overlapping";
         public static final String FROM_DATE_TO_DATE_VALIDATE = "From date must be less than to date";
         public static final String CANNOT_LOG_TIMESHEET = "Cannot log timesheet, total normal working hours must not be greater than %s";
         public static final String CANNOT_LOG_ON_WEEKEND = "Cannot Log On Weekend";
-
         public static final String CANNOT_LOG_ON_FULL_DAY_OFF = "Cannot Log On Full Day Off";
     }
 }

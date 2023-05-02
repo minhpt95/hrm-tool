@@ -264,12 +264,26 @@ public class TimesheetServiceImpl implements TimesheetService {
                 )
         );
 
-        timesheetEntity.setStatus(form.getApprovalStatus());
+        switch (timesheetEntity.getStatus()) {
+            case PENDING -> {
+                if(form.getApprovalStatus() == null){
+                    throw new HrmToolException(
+                            new ErrorResponse(
+                                    ErrorConstant.Type.NOT_NULL,
+                                    ErrorConstant.Code.NOT_NULL,
+                                    String.format(ErrorConstant.Message.NOT_FOUND,"Status ")
+                            )
+                    );
+                }
+                timesheetEntity.setStatus(form.getApprovalStatus());
+            }
+            case APPROVED -> timesheetEntity.setStatus(ApprovalStatus.REJECTED);
+            case REJECTED -> timesheetEntity.setStatus(ApprovalStatus.APPROVED);
+        }
         timesheetEntity.setModifiedBy(currentUser.getId());
         timesheetEntity.setModifiedTime(Instant.now());
 
         timesheetEntity = timesheetRepository.save(timesheetEntity);
-
 
         return timesheetMapping.toDto(timesheetEntity);
     }
