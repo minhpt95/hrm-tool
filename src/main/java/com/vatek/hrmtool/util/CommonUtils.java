@@ -3,10 +3,13 @@ package com.vatek.hrmtool.util;
 import com.ibm.icu.text.NumberFormat;
 import com.ibm.icu.text.RuleBasedNumberFormat;
 import liquibase.repackaged.org.apache.commons.text.RandomStringGenerator;
+import net.bytebuddy.utility.RandomString;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 
+import java.util.Currency;
 import java.util.Locale;
 
 
@@ -22,17 +25,24 @@ public class CommonUtils {
     }
 
     public static String randomPassword(int length){
-        RandomStringGenerator pwdGenerator = new RandomStringGenerator.Builder().build();
-        return randomPassword(length);
+        String pwdGenerator = RandomStringUtils.randomAlphanumeric(length);
+        return pwdGenerator;
     }
 
-    public static String convertMoneyToText(String input) {
+    public static String convertMoneyToText(String input,Locale locale) {
         String output = "";
+
+        if(locale == null){
+            locale = Locale.getDefault();
+        }
+
+        Currency currency = Currency.getInstance(locale);
+
         try {
-            NumberFormat ruleBasedNumberFormat = new RuleBasedNumberFormat(new Locale("vi", "VN"), RuleBasedNumberFormat.SPELLOUT);
-            output = ruleBasedNumberFormat.format(Long.parseLong(input)) + " Đồng";
+            NumberFormat ruleBasedNumberFormat = new RuleBasedNumberFormat(locale, RuleBasedNumberFormat.SPELLOUT);
+            output = ruleBasedNumberFormat.format(Long.parseLong(input)) + " " + currency;
         } catch (Exception e) {
-            output = "Không đồng";
+            output = 0 + " " + currency;
         }
         return output.toUpperCase();
     }

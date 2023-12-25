@@ -17,8 +17,8 @@ import java.util.Map;
 public class ExcelTemplateServiceImpl {
 
     private static final String EXCEL_PATH = "templates/excels/";
-
     private static final String XLSX_EXTENSION =  ".xlsx";
+    private static final String XLS_EXTENSION = ".xls";
 
     public void createDocument(OutputStream outputStream,String templateName, Map<String, Object> data) {
         log.debug("Start creation of excel document");

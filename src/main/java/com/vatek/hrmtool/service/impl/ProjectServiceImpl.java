@@ -67,7 +67,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         projectEntity.setManagerUser(projectManagerUser);
 
-        if(createProjectForm.getMemberId().size() > 0){
+        if(!createProjectForm.getMemberId().isEmpty()){
             var listMemberUser = userRepository.findUserEntitiesByIdIn(createProjectForm.getMemberId());
             for(var memberUser : listMemberUser){
                 projectEntity.addMemberToProject(memberUser);
@@ -165,11 +165,11 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional
-    public ListResponseDto<ProjectDto> getWorkingProjectByUser(Pageable pageable) {
+    public ListResponseDto<ProjectDto>  getWorkingProjectByUser(Pageable pageable) {
         var currentUser = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         Specification<ProjectEntity> specification = (root, query, criteriaBuilder) ->
-                criteriaBuilder.equal(root.join("memberUser").get("id"),currentUser.getId());
+                criteriaBuilder.equal(root.join("members").get("id"),currentUser.getId());
 
         return getProjectDtoListResponseDto(pageable, specification);
     }

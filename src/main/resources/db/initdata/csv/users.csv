@@ -1,2 +1,2 @@
 'id','created_by','created_time','modified_by','modified_time','access_token','current_address','email','identity_card','is_enabled','name','password','permanent_address','phone_number1','position','token_status','level','program_language'
-'1','0',now,,,,,'admin@vatek.asia','0981737983','1','admin','$2a$10$d7yuKnYZhXqqMUyfgYsQ4u02HNGmGYTfqfXwIwgZwZTPa5z91UIZ6',,'0981737983',,'0',,
+'1','0',now,,,,,'admin@vatek.asia','0981737983','1','admin',$2a$10$ymXcuVfPhygrj/Y87WJVre6mqYt.kh1srN27YN1lYKBpcvw3urADu,,'0981737983',,'0',,

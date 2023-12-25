@@ -54,7 +54,7 @@ public class ProjectController {
         return projectService.getProjectByManager(pageable);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/get-all-projects-by-user")
     public ListResponseDto<ProjectDto> getAllProjectByUser(Pageable pageable){
         return projectService.getWorkingProjectByUser(pageable);
