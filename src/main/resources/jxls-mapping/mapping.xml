@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<workbook>
+    <worksheet name="Sheet1">
+        <section startRow="0" endRow="0"/>
+        <loop startRow="1" endRow="1" items="childrens" var="children"
+              varType="com.vatek.hrmtool.dto.excel.ChildrenMapper">
+            <section startRow="1" endRow="1">
+                <mapping row="1" col="0">children.surName</mapping>
+                <mapping row="1" col="1">children.preferredName</mapping>
+                <mapping row="1" col="2">children.userName</mapping>
+                <mapping row="1" col="3">children.child1</mapping>
+                <mapping row="1" col="4">children.child2</mapping>
+                <mapping row="1" col="5">children.child3</mapping>
+                <mapping row="1" col="6">children.child4</mapping>
+                <mapping row="1" col="7">children.child5</mapping>
+                <mapping row="1" col="8">children.child6</mapping>
+                <mapping row="1" col="9">children.child7</mapping>
+                <mapping row="1" col="10">children.child8</mapping>
+                <mapping row="1" col="11">children.child9</mapping>
+                <mapping row="1" col="12">children.child10</mapping>
+                <mapping row="1" col="13">children.child11</mapping>
+                <mapping row="1" col="13">children.child12</mapping>
+            </section>
+            <loopbreakcondition>
+                <rowcheck offset="0">
+                    <cellcheck offset="0" />
+                </rowcheck>
+            </loopbreakcondition>
+        </loop>
+    </worksheet>
+</workbook>
