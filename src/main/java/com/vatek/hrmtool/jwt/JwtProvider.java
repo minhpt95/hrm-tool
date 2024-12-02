@@ -3,6 +3,7 @@ package com.vatek.hrmtool.jwt;
 import com.vatek.hrmtool.security.service.UserPrinciple;
 import com.vatek.hrmtool.util.DateUtils;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,28 +38,24 @@ public class JwtProvider {
 
         SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
 
-        return Jwts.builder()
-                .setSubject(email)
-                .setIssuedAt(DateUtils.convertInstantToDate(DateUtils.getInstantNow()))
-                .setExpiration(DateUtils.convertInstantToDate(Instant.now().plus(jwtExpiration,ChronoUnit.SECONDS)))
-                .signWith(key,SignatureAlgorithm.HS256)
+        return Jwts
+                .builder()
+                .subject(email)
+                .issuedAt(DateUtils.convertInstantToDate(DateUtils.getInstantNow()))
+                .expiration(DateUtils.convertInstantToDate(Instant.now().plus(jwtExpiration,ChronoUnit.SECONDS)))
+                .signWith(key)
                 .compact();
     }
 
     public String getEmailFromJwtToken(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(jwtSecret.getBytes())
-                .build()
-                .parseClaimsJws(token)
-                .getBody().getSubject();
+        return getSignedClaims(token).getPayload().getSubject();
     }
 
     public Long getRemainTimeFromJwtToken(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(jwtSecret.getBytes())
-                .build()
-                .parseClaimsJws(token)
-                .getBody().getExpiration().getTime() - DateUtils.getInstantNow().get(ChronoField.MILLI_OF_SECOND);
+        return getSignedClaims(token)
+                .getPayload()
+                .getExpiration()
+                .getTime() - DateUtils.getInstantNow().get(ChronoField.MILLI_OF_SECOND);
     }
 
     public boolean validateJwtToken(String authToken) {
@@ -68,5 +65,12 @@ public class JwtProvider {
             log.error("Error validateJwtToken -> Message : ",e);
         }
         return false;
+    }
+
+    private Jws<Claims> getSignedClaims(String authToken) {
+
+        SecretKey secret = Keys.hmacShaKeyFor(jwtSecret.getBytes());
+
+        return Jwts.parser().verifyWith(secret).build().parseSignedClaims(authToken);
     }
 }

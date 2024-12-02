@@ -17,5 +17,4 @@ import java.util.List;
 public class ProjectExcelDto {
     private String name;
     private List<UserExcelDto> members = new ArrayList<>();
-
 }

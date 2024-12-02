@@ -16,7 +16,7 @@ services:
   mysqldb:
     image: mysql:8
     restart: unless-stopped
-    env_file: ./.env
+    env_file: .env
     environment:
       - MYSQL_ROOT_PASSWORD=$MYSQLDB_ROOT_PASSWORD
     ports:
@@ -57,7 +57,6 @@ services:
         VERSION: 1.0.5
     ports:
       - 8080:$SPRING_BOOT_DOCKER_PORT
-      - 443:$SPRING_BOOT_DOCKER_SSL_PORT
       - 5005:$SPRING_BOOT_DOCKER_DEBUG_PORT
     environment:
       SERVER_ADDRESS: 0.0.0.0

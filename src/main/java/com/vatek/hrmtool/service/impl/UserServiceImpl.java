@@ -249,12 +249,9 @@ public class UserServiceImpl implements UserService {
         var pwd = RandomStringUtils.random(12, CommonConstant.CHARACTERS);
 
         log.info("start sendEmail forgotPassword()");
-
         userEntity.setPassword(passwordEncoder.encode(pwd));
         userRepository.save(userEntity);
-
         mailService.sendForgotEmail(userEntity,pwd);
-
     }
 
     @Override
@@ -341,7 +338,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> getUsersByProjectId(Long projectId) {
+    public List<UserDto> getUsersByProjectId(
+            Long projectId
+    ) {
         ProjectEntity projectEntity = projectRepository.findById(projectId).orElse(null);
 
         var userPrinciple = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

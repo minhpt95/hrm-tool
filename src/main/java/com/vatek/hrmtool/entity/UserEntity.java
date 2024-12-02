@@ -77,7 +77,8 @@ public class UserEntity extends CommonEntity {
             inverseJoinColumns = @JoinColumn(
                     name = "project_id", referencedColumnName = "id"))
     private Collection<ProjectEntity> workingProject = new ArrayList<>();
-    @ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(

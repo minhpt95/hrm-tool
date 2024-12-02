@@ -9,14 +9,15 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.vatek.hrmtool.constant.CommonConstant;
 import com.vatek.hrmtool.exception.ErrorResponse;
 import com.vatek.hrmtool.exception.HrmToolException;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class S3Config {
 
     private Environment env;

@@ -68,6 +68,17 @@ public interface RequestMapping extends EntityMapper<RequestDto, RequestEntity> 
             graph.add(previous);
         }
 
+        var map = getIntegerHashMap(count, graph);
+
+        return map.entrySet().stream().map(x -> new RequestDto.DayOffGroup(
+                inputList.get(x.getKey()).getDayoffEntityId().getDateOff(),
+                inputList.get(x.getValue()).getDayoffEntityId().getDateOff(),
+                inputList.get(x.getKey()).getDayoffEntityId().getTypeDayOff(),
+                inputList.get(x.getKey()).getStatus()
+        )).toList();
+    }
+
+    private static HashMap<Integer, Integer> getIntegerHashMap(int count, ArrayList<Integer> graph) {
         var temp = new HashSet<Integer>();
 
         var map = new HashMap<Integer,Integer>();
@@ -91,13 +102,7 @@ public interface RequestMapping extends EntityMapper<RequestDto, RequestEntity> 
             }
             map.put(current,i);
         }
-
-        return map.entrySet().stream().map(x -> new RequestDto.DayOffGroup(
-                inputList.get(x.getKey()).getDayoffEntityId().getDateOff(),
-                inputList.get(x.getValue()).getDayoffEntityId().getDateOff(),
-                inputList.get(x.getKey()).getDayoffEntityId().getTypeDayOff(),
-                inputList.get(x.getKey()).getStatus()
-        )).toList();
+        return map;
     }
 
 }

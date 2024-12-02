@@ -25,7 +25,6 @@ import org.springframework.security.web.access.expression.DefaultWebSecurityExpr
 import org.springframework.security.web.access.expression.WebExpressionVoter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import java.util.ArrayList;
-import java.util.List;
 
 @Log4j2
 @Configuration
@@ -84,7 +83,7 @@ public class WebSecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(BCryptPasswordEncoder.BCryptVersion.$2Y,10);
     }
 
     @Bean
@@ -95,13 +94,13 @@ public class WebSecurityConfig {
         http.authorizeRequests().antMatchers(
                 "/api/auth/**",
                 "/api/auth/activate-email/**",
-                "/"
+                "/",
+                "/api/user/create"
         ).permitAll();
 
         //skip for swagger
         http.authorizeRequests().antMatchers(
                 "/swagger-ui/**",
-                "/swagger-ui/index.html",
                 "/v3/**"
         ).permitAll();
 

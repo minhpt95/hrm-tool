@@ -80,10 +80,10 @@ public class JwtAuthTokenFilter extends OncePerRequestFilter {
             return null;
         }
 
-        if (!authHeader.startsWith("Bearer ")) {
+        if (StringUtils.containsIgnoreCase(authHeader,"Bearer ")) {
             return authHeader.trim();
         }
 
-        return authHeader.replace("Bearer ","");
+        return StringUtils.replaceIgnoreCase(authHeader,"bearer","",0);
     }
 }

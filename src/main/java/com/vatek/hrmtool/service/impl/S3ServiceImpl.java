@@ -13,8 +13,12 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 
 import javax.annotation.PostConstruct;
+import java.time.Duration;
 
 
 @Service
@@ -22,8 +26,8 @@ import javax.annotation.PostConstruct;
 @Log4j2
 public class S3ServiceImpl implements S3Service {
 
-    private AmazonS3 s3;
-    private Environment env;
+    private final AmazonS3 s3;
+    private final Environment env;
 
     @PostConstruct
     private void createBucket(){

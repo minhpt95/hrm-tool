@@ -25,12 +25,11 @@ public class CommonUtils {
     }
 
     public static String randomPassword(int length){
-        String pwdGenerator = RandomStringUtils.randomAlphanumeric(length);
-        return pwdGenerator;
+        return RandomStringUtils.randomAlphanumeric(length);
     }
 
     public static String convertMoneyToText(String input,Locale locale) {
-        String output = "";
+        String output;
 
         if(locale == null){
             locale = Locale.getDefault();

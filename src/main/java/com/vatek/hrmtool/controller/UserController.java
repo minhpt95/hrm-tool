@@ -56,7 +56,6 @@ public class UserController {
         return responseDto;
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @PostMapping(value = "/create",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseDto<UserDto> createUser (@ModelAttribute CreateUserForm createUserForm) {
         ResponseDto<UserDto> responseDto = new ResponseDto<>();

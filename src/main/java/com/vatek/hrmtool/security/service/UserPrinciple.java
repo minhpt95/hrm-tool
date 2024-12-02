@@ -21,12 +21,14 @@ public class UserPrinciple implements UserDetails {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    @Getter
     private Long id;
 
     private String name;
 
     private String username;
 
+    @Getter
     private String email;
     @JsonIgnore
     private String password;
@@ -56,14 +58,6 @@ public class UserPrinciple implements UserDetails {
                 .accessToken(userEntity.getAccessToken());
     }
 
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
 
     @Override
     public String getUsername() {
